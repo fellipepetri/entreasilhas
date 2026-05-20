@@ -12,7 +12,8 @@ html {
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #163a70;
 }
 
 a {
@@ -24,6 +25,17 @@ a {
   box-sizing: border-box;
 }
 
+*::selection {
+  background: rgba(20, 152, 213, 0.18);
+}
+
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: default;
+  }
+}
+
 @layer base {
   h1,
   h2,
@@ -33,4 +45,317 @@ a {
   h6 {
     @apply tracking-tight text-brand-deep;
   }
+
+  p {
+    @apply text-slate-700;
+  }
+}
+
+@layer utilities {
+  .top-header-shell {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-color: rgba(140, 214, 236, 0.58);
+    background:
+      linear-gradient(90deg, rgba(44, 88, 119, 0.96) 0%, rgba(30, 65, 103, 0.95) 42%, rgba(19, 47, 80, 0.97) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(182, 231, 244, 0.18),
+      inset 0 -1px 0 rgba(10, 25, 46, 0.2);
+  }
+
+  .top-header-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    background-repeat: repeat;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+
+  .top-header-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(190, 239, 249, 0.12) 0%, rgba(190, 239, 249, 0.03) 26%, rgba(9, 23, 42, 0.08) 100%),
+      radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.1), transparent 28%);
+    pointer-events: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .reveal-up {
+    animation: reveal-up 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .floating-card {
+    animation:
+      reveal-up 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      floating 8s ease-in-out infinite;
+  }
+
+  .section-shell {
+    @apply mx-auto w-full max-w-6xl px-6;
+  }
+
+  .hero-image-flash {
+    animation: hero-image-flash 1250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.08));
+    pointer-events: none;
+  }
+
+  .hero-copy-rise {
+    animation: hero-copy-rise 1650ms cubic-bezier(0.2, 0.95, 0.28, 1) both;
+    will-change: transform, opacity;
+  }
+
+  .hero-copy-fall {
+    animation: hero-copy-fall 1720ms cubic-bezier(0.2, 0.95, 0.28, 1) both;
+    will-change: transform, opacity;
+  }
+
+  .hero-copy-delay {
+    animation-delay: 980ms;
+  }
+
+  .title-flip-fade {
+    opacity: 0;
+    transform:
+      perspective(1200px)
+      rotateX(78deg)
+      translate3d(0, 34px, 0)
+      scale(0.82);
+    transform-origin: center top;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
+
+  .title-flip-fade.is-visible {
+    animation: title-flip-fade-in 1280ms cubic-bezier(0.16, 0.84, 0.24, 1) both;
+  }
+
+  .route-preview-enter {
+    animation: route-preview-enter 980ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: transform, opacity;
+  }
+
+  .cursor-trails {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+  }
+
+  .cursor-bubble {
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-radius: 999px;
+    opacity: 0;
+    width: var(--bubble-size, 14px);
+    height: var(--bubble-size, 14px);
+    transform: translate3d(-100px, -100px, 0) scale(0.55);
+    will-change: transform, opacity, width, height;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(circle at 34% 32%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.94) 16%, rgba(157, 239, 255, 0.84) 40%, rgba(70, 188, 240, 0.68) 62%, rgba(38, 156, 214, 0.42) 100%);
+    border: 1px solid rgba(78, 188, 226, 0.92);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.58),
+      0 0 8px rgba(93, 208, 236, 0.12);
+  }
+
+  .cursor-bubble[data-ring="1"] {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 24%, rgba(143, 226, 246, 0.3) 42%, rgba(110, 201, 227, 0.5) 60%, rgba(255, 255, 255, 0.84) 74%, rgba(255, 255, 255, 0.2) 100%);
+  }
+
+  .cursor-bubble[data-glow="1"] {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.46),
+      0 0 10px rgba(120, 220, 244, 0.16);
+  }
+
+  .cursor-bubble-pop {
+    animation: cursor-bubble-pop var(--bubble-duration, 980ms) cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
+  }
+}
+
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-image-flash {
+  0% {
+    opacity: 0;
+  }
+
+  22% {
+    opacity: 0.44;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-copy-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-copy-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes route-preview-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--route-enter-x, 0px), var(--route-enter-y, 0px), 0) scale(0.92);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes title-flip-fade-in {
+  0% {
+    opacity: 0;
+    transform:
+      perspective(1200px)
+      rotateX(78deg)
+      translate3d(0, 34px, 0)
+      scale(0.82);
+  }
+
+  100% {
+    opacity: 1;
+    transform:
+      perspective(1200px)
+      rotateX(0deg)
+      translate3d(0, 0, 0)
+      scale(1);
+  }
+}
+
+@keyframes cursor-bubble-pop {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--bubble-x), var(--bubble-y), 0) translate(-50%, -50%) scale(0.4);
+  }
+
+  16% {
+    opacity: var(--bubble-opacity, 0.3);
+    transform: translate3d(calc(var(--bubble-x) + var(--bubble-drift-x) * 0.14), calc(var(--bubble-y) + var(--bubble-drift-y) * 0.16), 0) translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(var(--bubble-x) + var(--bubble-drift-x)), calc(var(--bubble-y) + var(--bubble-drift-y)), 0) translate(-50%, -50%) scale(1.18);
+  }
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes boat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(1deg);
+  }
+}
+
+@keyframes wave-drift-left {
+  0% {
+    transform: translate3d(-86px, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-134px, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-86px, 0, 0);
+  }
+}
+
+@keyframes wave-drift-right {
+  0% {
+    transform: translate3d(-134px, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-86px, -1px, 0);
+  }
+
+  100% {
+    transform: translate3d(-134px, 0, 0);
+  }
+}
+
+.animate-boat {
+  animation: boat 4.4s ease-in-out infinite;
+}
+
+.ocean-wave {
+  background-repeat: repeat-x;
+  background-size: 520px 100%;
+  will-change: transform;
+}
+
+.ocean-wave-back {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 280' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='waveBackFill' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%232bb7bb'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 26 C44 18 88 18 130 26 S218 34 260 26 348 18 390 26 478 34 520 26 V280 H0 Z' fill='url(%23waveBackFill)'/%3E%3Cpath d='M0 25 C44 17 88 17 130 25 S218 33 260 25 348 17 390 25 478 33 520 25' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  animation: wave-drift-left 12s ease-in-out infinite;
+}
+
+.ocean-wave-front {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 280' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='waveFrontFill' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%232bb7bb'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 24 C44 32 88 32 130 24 S218 16 260 24 348 32 390 24 478 16 520 24 V280 H0 Z' fill='url(%23waveFrontFill)'/%3E%3Cpath d='M0 23 C44 31 88 31 130 23 S218 15 260 23 348 31 390 23 478 15 520 23' fill='none' stroke='rgba(255,255,255,0.94)' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  animation: wave-drift-right 12s ease-in-out infinite;
 }

@@ -1,0 +1,13 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" fill="#F4FBFF"/>
+  <rect y="690" width="900" height="410" fill="#1498D5"/>
+  <path d="M0 754C142 721 282 715 394 739C511 764 602 826 735 835C789 839 844 834 900 817V1100H0V754Z" fill="#0E6AA8"/>
+  <rect x="112" y="328" width="676" height="292" rx="26" fill="#FBFDFF"/>
+  <rect x="162" y="386" width="267" height="164" rx="16" fill="#DDF2FA"/>
+  <rect x="474" y="386" width="264" height="39" rx="12" fill="#1498D5"/>
+  <rect x="474" y="444" width="210" height="22" rx="11" fill="#EAF8FF"/>
+  <rect x="474" y="482" width="238" height="22" rx="11" fill="#EAF8FF"/>
+  <rect x="474" y="520" width="173" height="22" rx="11" fill="#EAF8FF"/>
+  <circle cx="128" cy="182" r="86" fill="#FFE27B"/>
+  <path d="M0 327C49 283 95 248 149 225C197 205 250 194 309 193C405 192 486 231 560 279C632 326 703 367 802 372C835 373 868 370 900 364V416C859 424 816 426 769 422C653 412 573 364 500 315C428 268 360 241 289 241C196 241 113 287 35 378L0 327Z" fill="#7EC92A"/>
+</svg>
