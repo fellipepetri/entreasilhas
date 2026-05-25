@@ -31,7 +31,7 @@ export function SiteFooter() {
                 da Entre as Ilhas.
               </p>
             </div>
-            <a href="tel:+5571999999999" className="text-2xl font-semibold text-white">
+            <a href="tel:+5571999999999" className="text-xl font-semibold text-white md:text-2xl">
               +55 (71) 99999-9999
             </a>
           </div>
@@ -57,7 +57,7 @@ export function SiteFooter() {
               </div>
               <div>
                 <p className="text-xl font-semibold text-white">Receber novidades</p>
-                <div className="mt-5 flex items-center overflow-hidden rounded-full border border-white/18 bg-white/10">
+                <div className="mt-5 flex flex-col overflow-hidden rounded-[1.6rem] border border-white/18 bg-white/10 sm:flex-row sm:items-center sm:rounded-full">
                   <input
                     type="email"
                     placeholder="Seu melhor e-mail"
@@ -65,7 +65,7 @@ export function SiteFooter() {
                   />
                   <button
                     type="button"
-                    className="mr-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-3 text-sm font-semibold text-white"
+                    className="mx-2 mb-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-3 text-sm font-semibold text-white sm:mb-0"
                   >
                     Enviar
                   </button>

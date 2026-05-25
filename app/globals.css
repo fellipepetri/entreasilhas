@@ -14,6 +14,7 @@ body {
   margin: 0;
   background: #ffffff;
   color: #163a70;
+  overflow-x: hidden;
 }
 
 a {
@@ -344,18 +345,30 @@ a {
 
 .ocean-wave {
   background-repeat: repeat-x;
-  background-size: 520px 100%;
+  background-size: clamp(14rem, 30vw, 32.5rem) 100%;
   will-change: transform;
+}
+
+@media (max-width: 767px) {
+  .ocean-wave {
+    background-size: clamp(12rem, 28vw, 18rem) 84%;
+  }
+}
+
+@media (max-width: 639px) {
+  .ocean-wave {
+    background-size: clamp(11rem, 26vw, 16rem) 72%;
+  }
 }
 
 .ocean-wave-back {
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 280' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='waveBackFill' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%232bb7bb'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 26 C44 18 88 18 130 26 S218 34 260 26 348 18 390 26 478 34 520 26 V280 H0 Z' fill='url(%23waveBackFill)'/%3E%3Cpath d='M0 25 C44 17 88 17 130 25 S218 33 260 25 348 17 390 25 478 33 520 25' fill='none' stroke='rgba(255,255,255,0.9)' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  animation: wave-drift-left 12s ease-in-out infinite;
+  animation: wave-drift-left 8s ease-in-out infinite;
 }
 
 .ocean-wave-front {
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 280' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='waveFrontFill' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%232bb7bb'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 24 C44 32 88 32 130 24 S218 16 260 24 348 32 390 24 478 16 520 24 V280 H0 Z' fill='url(%23waveFrontFill)'/%3E%3Cpath d='M0 23 C44 31 88 31 130 23 S218 15 260 23 348 31 390 23 478 15 520 23' fill='none' stroke='rgba(255,255,255,0.94)' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  animation: wave-drift-right 12s ease-in-out infinite;
+  animation: wave-drift-right 8s ease-in-out infinite;
 }

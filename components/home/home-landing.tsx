@@ -35,24 +35,8 @@ function HeroSlider() {
   return (
     <section
       id="inicio"
-      className="relative flex min-h-[106vh] items-end overflow-hidden bg-brand-deep pt-28 text-white md:min-h-[108vh] md:pt-32"
+      className="relative overflow-hidden bg-brand-deep pt-24 text-white sm:pt-28 lg:pt-32"
     >
-      <div className="absolute left-[4.15rem] top-[17.45rem] z-20 flex gap-3 text-[#78c85f] md:left-[4.9rem] xl:left-[6.15rem]">
-        {heroSlides.map((slide, index) => (
-          <button
-            key={slide.image}
-            type="button"
-            onClick={() => setActiveIndex(index)}
-            className={[
-              "h-3 w-3 rounded-full border transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-              index === activeIndex
-                ? "border-[#78c85f] bg-[#78c85f]"
-                : "border-[#78c85f]/40 bg-transparent hover:border-[#78c85f]/70"
-            ].join(" ")}
-            aria-label={`Ir para slide ${index + 1}`}
-          />
-        ))}
-      </div>
       <div className="absolute inset-0">
         {heroSlides.map((slide, index) => (
           <div
@@ -76,19 +60,33 @@ function HeroSlider() {
       </div>
       <div key={activeIndex} aria-hidden="true" className="hero-image-flash absolute inset-0" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,29,59,0.76),rgba(8,29,59,0.18)_54%,rgba(8,29,59,0.48))]" />
-      <div className={`relative mx-auto w-full max-w-[116rem] px-8 pb-24 md:px-10 xl:px-14 ${plusJakartaSans.className}`}>
-        <div className="grid gap-12 pt-11 grid-cols-[minmax(0,1fr)_18rem] items-end lg:grid-cols-[1fr_22rem]">
-          <div className="max-w-[54rem] pt-[0.15rem] lg:max-w-[56rem]">
-            <div className="relative left-[2.15rem] -top-[21.25rem] md:left-[2.4rem] xl:left-[2.65rem]">
-              <div key={`hero-title-${activeIndex}`} className="hero-copy-rise hero-copy-delay">
-                <h1 className="relative -left-[0.48rem] max-w-[56rem] text-6xl font-semibold leading-[0.92] tracking-[-0.04em] text-white md:text-8xl">
-                  {activeSlide.title}
-                </h1>
-              </div>
+      <div className={`relative mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-16 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
+        <div className="grid w-full gap-10 md:-translate-y-8 lg:-translate-y-16 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,21rem)] lg:items-end xl:-translate-y-20 xl:gap-14">
+          <div className="max-w-[58rem]">
+            <div className="mb-6 flex gap-3 text-[#78c85f] sm:mb-8">
+              {heroSlides.map((slide, index) => (
+                <button
+                  key={slide.image}
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  className={[
+                    "h-3 w-3 rounded-full border transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    index === activeIndex
+                      ? "border-[#78c85f] bg-[#78c85f]"
+                      : "border-[#78c85f]/40 bg-transparent hover:border-[#78c85f]/70"
+                  ].join(" ")}
+                  aria-label={`Ir para slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            <div key={`hero-title-${activeIndex}`} className="hero-copy-rise hero-copy-delay">
+              <h1 className="max-w-[56rem] text-[clamp(3.35rem,8.5vw,7.9rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
+                {activeSlide.title}
+              </h1>
             </div>
           </div>
 
-          <div className="relative justify-self-end -translate-y-28 -translate-x-10 md:-translate-x-14">
+          <div className="relative max-w-[21rem] lg:justify-self-end lg:self-end">
             <div key={`hero-side-${activeIndex}`} className="hero-copy-delay hero-copy-fall text-white">
               <div className="rounded-[1.6rem] border border-white/22 bg-white/10 p-2.5 backdrop-blur-md">
                 <div className="flex items-center gap-3 rounded-[1.2rem] border border-white/10 bg-white/8 p-2.5">
@@ -102,12 +100,12 @@ function HeroSlider() {
                     />
                   </div>
                   <div>
-                    <p className="text-4xl font-semibold !text-white">{activeSlide.stat}</p>
+                    <p className="text-3xl font-semibold !text-white sm:text-4xl">{activeSlide.stat}</p>
                     <p className="mt-1 max-w-[12rem] text-sm leading-6 !text-white">{activeSlide.statLabel}</p>
                   </div>
                 </div>
               </div>
-              <p className="mt-6 max-w-[15.5rem] text-[0.95rem] leading-6 !text-white">
+              <p className="mt-5 max-w-[18rem] text-[0.95rem] leading-6 !text-white">
                 {activeSlide.description}
               </p>
             </div>
@@ -263,7 +261,7 @@ function HoverRouteList() {
               onMouseEnter={() => handlePreviewEnter(index)}
               onFocus={() => handlePreviewEnter(index)}
               onBlur={() => setActiveIndex(null)}
-              className="flex w-full items-center justify-between gap-6 border-b border-white/14 py-8 text-left transition hover:pl-2"
+              className="flex w-full flex-col items-start justify-between gap-5 border-b border-white/14 py-7 text-left transition hover:pl-2 sm:flex-row sm:items-center sm:gap-6 sm:py-8"
             >
               <div>
                 <p
@@ -278,7 +276,7 @@ function HoverRouteList() {
               </div>
               <span
                 className={[
-                  "flex h-14 w-14 items-center justify-center rounded-full border text-2xl transition",
+                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border text-xl transition sm:h-14 sm:w-14 sm:text-2xl",
                   activeIndex === index
                     ? "border-white bg-white text-brand-tide"
                     : "border-white/28 text-white/88"
@@ -411,7 +409,7 @@ function ParallaxCard({
         <div className="relative overflow-hidden rounded-[1.55rem]">
           <div
             ref={imageRef}
-            className="relative h-[22rem] will-change-transform md:h-[28rem]"
+            className="relative h-[18rem] will-change-transform sm:h-[22rem] md:h-[28rem]"
             style={{ transform: "translate3d(0, 0, 0) scale(1.08)" }}
           >
             <Image src={image} alt={alt} fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover" />
@@ -647,12 +645,12 @@ function TestimonialSlider() {
         className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(20,152,213,0.08),_transparent_34%)]"
       />
         <div className="relative mx-auto w-full max-w-6xl px-6">
-          <div className="mb-10 flex items-end justify-between gap-6">
+          <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
                 Avaliações
               </p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-brand-deep md:text-5xl">
+              <h2 className="mt-4 text-[clamp(2.2rem,5vw,3rem)] font-semibold tracking-tight text-brand-deep">
                 Feedbacks de viajantes
               </h2>
             </div>
@@ -780,7 +778,7 @@ function Chamada() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-brand-deep py-36 text-white md:py-44">
+    <section className="relative overflow-hidden bg-brand-deep py-24 text-white sm:py-28 md:py-36 lg:py-44">
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
@@ -810,13 +808,13 @@ function Chamada() {
         </svg>
       </div>
       <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-center md:py-24">
-        <h3 className="text-[2.1rem] font-semibold tracking-[0.12em] text-white md:text-[3rem]">
+        <h3 className="text-[clamp(1.8rem,4vw,3rem)] font-semibold tracking-[0.12em] text-white">
           Venha viver
         </h3>
         <h2
           ref={titleRef}
           className={[
-            "title-flip-fade mx-auto -mt-5 max-w-none whitespace-nowrap text-[4.75rem] font-semibold tracking-[-0.04em] text-white md:-mt-6 md:text-[7.25rem]",
+            "title-flip-fade mx-auto mt-2 max-w-[12ch] text-balance text-[clamp(3rem,10vw,7.25rem)] font-semibold leading-[0.9] tracking-[-0.04em] text-white sm:mt-0",
             isVisible ? "is-visible" : ""
           ].join(" ")}
         >
@@ -832,8 +830,8 @@ export function HomeLanding() {
     <div className="overflow-hidden bg-white">
       <HeroSlider />
 
-      <section id="sobre" className="relative bg-white pb-12 pt-10">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 lg:grid-cols-[0.92fr_1.08fr]">
+      <section id="sobre" className="relative bg-white pb-14 pt-10 md:pb-16">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
           <div className="grid gap-8">
             <article className="relative overflow-hidden rounded-[2.2rem]">
               <div className="absolute inset-0 rounded-[2.2rem] border-[3px] border-brand-sea" />
@@ -848,9 +846,9 @@ export function HomeLanding() {
               </div>
             </article>
 
-            <div className="pl-4 md:pl-8">
+            <div className="pl-0 sm:pl-4 md:pl-8">
               <p className="text-lg font-semibold text-brand-sea">Quem somos</p>
-              <p className="mt-8 max-w-xl text-xl leading-10 text-slate-600">
+              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
                 Organizamos experiências náuticas e roteiros costeiros com foco em
                 conforto, clareza logística e visual tropical.
               </p>
@@ -872,10 +870,10 @@ export function HomeLanding() {
             <p className="text-lg font-semibold text-brand-sea">
               Mergulhe na magia do mar
             </p>
-            <h2 className="font-display mt-5 text-5xl font-semibold leading-[1.02] tracking-tight text-brand-deep md:text-7xl">
+            <h2 className="font-display mt-5 text-[clamp(2.5rem,7vw,4.5rem)] font-semibold leading-[1.02] tracking-tight text-brand-deep">
               Explorando a beleza entre ondas, ilhas e marés.
             </h2>
-            <p className="mt-8 max-w-3xl text-xl leading-10 text-slate-600">
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
               A proposta visual segue a mesma lógica da referência: título amplo,
               foto principal recortada, apoio fotográfico secundário e conteúdo
               bem respirado logo após a hero.
@@ -899,18 +897,21 @@ export function HomeLanding() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-white pb-20 pt-10">
+      <section className="relative overflow-hidden bg-white pb-16 pt-8 sm:pb-20 sm:pt-10">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#9ce5f1_50%,#ffffff_100%)]"
         />
-        <div className="relative mx-auto h-[24rem] w-full max-w-7xl px-4 md:h-[34rem]">
+        <div className="relative mx-auto h-[19rem] w-full max-w-7xl px-4 sm:h-[24rem] md:h-[34rem]">
           <div
             aria-hidden="true"
             className="absolute inset-x-0 top-[14%] h-[22%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.5),transparent_62%)] blur-3xl"
           />
-          <div className="absolute left-1/2 -bottom-20 top-[39%] z-10 w-screen -translate-x-1/2 overflow-hidden">
-            <div className="absolute inset-x-[-20%] -top-4 bottom-0 ocean-wave ocean-wave-back" />
+          <div
+            className="absolute z-10 overflow-hidden"
+            style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
+          >
+            <div className="absolute inset-0 -top-4 ocean-wave ocean-wave-back" />
           </div>
           {Array.from({ length: 24 }).map((_, index) => (
             <span
@@ -925,8 +926,8 @@ export function HomeLanding() {
               }}
             />
           ))}
-          <div className="absolute left-1/2 top-[37.75%] z-20 -translate-x-1/2 -translate-y-1/2">
-            <div className="relative h-40 w-80 animate-boat md:h-64 md:w-[32rem]">
+          <div className="absolute left-1/2 top-[39.5%] z-20 -translate-x-1/2 -translate-y-1/2 sm:top-[39%] md:top-[37.75%]">
+            <div className="relative h-28 w-56 animate-boat sm:h-40 sm:w-80 md:h-64 md:w-[32rem]">
               <Image
                 src="/images/barco.png"
                 alt="Barco flutuando"
@@ -936,8 +937,11 @@ export function HomeLanding() {
               />
             </div>
           </div>
-          <div className="absolute left-1/2 -bottom-20 top-[39%] z-30 w-screen -translate-x-1/2 pointer-events-none overflow-hidden">
-            <div className="absolute inset-x-[-20%] top-[-0.15rem] bottom-0 ocean-wave ocean-wave-front" />
+          <div
+            className="absolute z-30 pointer-events-none overflow-hidden"
+            style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
+          >
+            <div className="absolute inset-0 top-[-0.15rem] ocean-wave ocean-wave-front" />
           </div>
         </div>
       </section>
@@ -950,7 +954,7 @@ export function HomeLanding() {
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
               Adventure Showcase
             </p>
-            <h2 className="font-display mt-4 text-5xl font-semibold tracking-tight text-brand-deep md:text-6xl">
+            <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
               Galeria com recortes grandes e parallax dentro da moldura.
             </h2>
           </div>
@@ -960,15 +964,15 @@ export function HomeLanding() {
               <ParallaxCard
                 image={showcaseCards[0].image}
                 alt={showcaseCards[0].title}
-                className="max-w-[34rem]"
+                className="max-w-[34rem] lg:max-w-[34rem]"
               />
               <ParallaxCard
                 image={showcaseCards[2].image}
                 alt={showcaseCards[2].title}
-                className="max-w-[42rem]"
+                className="max-w-[42rem] lg:max-w-[42rem]"
               />
             </div>
-            <div className="grid gap-6 pt-10">
+            <div className="grid gap-6 pt-0 lg:pt-10">
               <ParallaxCard
                 image={showcaseCards[1].image}
                 alt={showcaseCards[1].title}
@@ -993,10 +997,10 @@ export function HomeLanding() {
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
                 Instagram
               </p>
-              <h2 className="font-display mt-4 text-5xl font-semibold tracking-tight text-brand-deep md:text-6xl">
+              <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
                 Últimos posts de @entreasilhas
               </h2>
-              <p className="mt-4 max-w-3xl text-xl leading-9 text-slate-600">
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl md:leading-9">
                 Área preparada para futura integração em tempo real com a rede
                 social. Por enquanto, a estrutura visual e responsiva já está pronta.
               </p>

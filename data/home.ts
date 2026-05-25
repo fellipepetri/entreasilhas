@@ -11,7 +11,7 @@ export const heroSlides = [
   {
     image: "/images/hero-banner.svg",
     alt: "Vista costeira com mar aberto e ilhas ao fundo",
-    title: "...", // "Explore o litoral entre as ilhas, enseadas e mar aberto.",
+    title: "Vista costeira com mar aberto e ilhas ao fundo", // "Explore o litoral entre as ilhas, enseadas e mar aberto.",
     stat: "10+",
     statLabel: "Anos de operação turística",
     description:
@@ -20,7 +20,7 @@ export const heroSlides = [
   {
     image: "/images/hero-diver.svg",
     alt: "...", //"Cenário marítimo com destaque para mergulho e mar azul",
-    title: "...",//"Travessias com ritmo leve.",  //paisagem ampla e paradas memoráveis.
+    title: "Vista costeira com mar aberto e ilhas ao fundo",//"Travessias com ritmo leve.",  //paisagem ampla e paradas memoráveis.
     stat: "12+",
     statLabel: "Roteiros costeiros sob medida",
     description:
@@ -29,7 +29,7 @@ export const heroSlides = [
   {
     image: "/images/hero-praia.svg",
     alt: "Praia tropical com faixa de areia clara e água calma",
-    title: "...", //"Experiências náuticas que conectam.", // horizonte e descanso.
+    title: "Vista costeira com mar aberto e ilhas ao fundo", //"Experiências náuticas que conectam.", // horizonte e descanso.
     stat: "100%",
     statLabel: "Planejamento alinhado ao grupo",
     description:

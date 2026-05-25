@@ -45,8 +45,8 @@ function BrandMark({ scrolled, compact = false }: { scrolled: boolean; compact?:
       <span
         className={[
           compact
-            ? "max-[1202px]:hidden whitespace-nowrap text-[1.75rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300"
-            : "max-[1421px]:hidden whitespace-nowrap text-[2.15rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300",
+            ? "hidden whitespace-nowrap text-[1.75rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300 xl:inline-block"
+            : "hidden whitespace-nowrap text-[2.15rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300 2xl:inline-block",
           scrolled ? "text-black" : "text-white"
         ].join(" ")}
       >
@@ -68,7 +68,7 @@ function DesktopTopHeader({
   return (
     <div
       className={[
-        "pointer-events-none absolute inset-x-0 top-0 hidden px-8 pt-4 transition-all duration-500 lg:block md:px-10 md:pt-5 xl:px-14",
+        "pointer-events-none absolute inset-x-0 top-0 hidden px-8 pt-4 transition-all duration-500 xl:block md:px-10 md:pt-5 xl:px-12 2xl:px-14",
         isScrolled
           ? "-translate-y-[120%] opacity-0 duration-300"
           : "translate-y-0 opacity-100 delay-150 duration-500"
@@ -76,9 +76,9 @@ function DesktopTopHeader({
       aria-hidden={isScrolled}
     >
       <div className="mx-auto flex w-full max-w-[116rem] items-center justify-between gap-4">
-        <div className={`top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-[0.98] items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl ${plusJakartaSans.className}`}>
+        <div className={`top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-1 items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl ${plusJakartaSans.className}`}>
           <BrandMark scrolled={false} compact />
-          <nav className="mr-2 flex items-center gap-7 xl:gap-10" aria-label="Principal">
+          <nav className="mr-2 flex items-center gap-6 2xl:gap-10" aria-label="Principal">
             {primaryNavigationLinks.map((link) => (
               <Link
                 key={link.href}
@@ -125,7 +125,7 @@ function DesktopScrolledHeader({
   return (
     <div
       className={[
-        "pointer-events-none absolute inset-x-0 top-0 hidden transition-all lg:block",
+        "pointer-events-none absolute inset-x-0 top-0 hidden transition-all xl:block",
         isScrolled
           ? "translate-y-0 opacity-100 delay-150 duration-500"
           : "-translate-y-[105%] opacity-0 duration-300"
@@ -133,10 +133,10 @@ function DesktopScrolledHeader({
       aria-hidden={!isScrolled}
     >
       <div className="pointer-events-auto border-b border-black/6 bg-white shadow-[0_14px_40px_rgba(10,40,79,0.10)]">
-        <div className="mx-auto flex min-h-[5.25rem] w-full max-w-[116rem] items-center justify-between gap-6 px-8 xl:px-12">
+        <div className="mx-auto flex min-h-[5.25rem] w-full max-w-[116rem] items-center justify-between gap-6 px-8 xl:px-10 2xl:px-12">
           <BrandMark scrolled />
 
-          <nav className="flex items-center gap-8 xl:gap-12" aria-label="Principal fixo">
+          <nav className="flex items-center gap-7 2xl:gap-12" aria-label="Principal fixo">
             {primaryNavigationLinks.map((link) => (
               <Link
                 key={link.href}
@@ -157,7 +157,7 @@ function DesktopScrolledHeader({
           <div className="flex items-center gap-6">
             <a
               href="tel:+5571999999999"
-              className="max-[1074px]:hidden text-[1.05rem] font-semibold text-brand-deep"
+              className="hidden text-[1.05rem] font-semibold text-brand-deep 2xl:inline-block"
             >
               +55 (71) 99999-9999
             </a>
@@ -242,7 +242,7 @@ export function SiteHeader() {
         onNavigate={handleNavigate}
       />
 
-      <div className="px-4 pt-4 lg:hidden">
+      <div className="px-4 pt-4 xl:hidden">
         <div
           className={[
             "mx-auto flex items-center justify-between gap-4 rounded-[2rem] border px-5 py-3.5 transition-all duration-500",
