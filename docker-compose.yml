@@ -1,9 +1,6 @@
 services:
   site:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: entreasilhas:latest
+    image: ghcr.io/fellipepetri/entreasilhas:latest
     container_name: entreasilhas
     restart: unless-stopped
     expose:
