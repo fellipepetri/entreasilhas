@@ -3,7 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: entreasilhas-test
+    image: entreasilhas:latest
+    container_name: entreasilhas
     restart: unless-stopped
     expose:
       - "3000"
@@ -14,7 +15,16 @@ services:
     networks:
       - cloudflared-net
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token eyJhIjoiMTk2M2E0OTcyYjRiMDQwM2UyMWIyYWQ2ZDYyMTc0NTEiLCJ0IjoiOTM2YmMyNGEtMTIwNC00NjcwLWE4NjgtMWIzYzcyZjEyMWFmIiwicyI6Ik9HUXlNRGs0TURjdFpURXdNeTAwTURVeExXSmlOelF0TURRd01qTm1NVEU0TVRrdyJ9
+    depends_on:
+      - site
+    networks:
+      - cloudflared-net
+
 networks:
   cloudflared-net:
-    external: true
-    name: core_network
+    driver: bridge
