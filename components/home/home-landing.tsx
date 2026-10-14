@@ -81,7 +81,7 @@ function HeroSlider() {
               ))}
             </div>
             <div key={`hero-title-${activeIndex}`} className="hero-copy-rise hero-copy-delay">
-              <h1 className="max-w-[56rem] text-[clamp(2.4rem,7.5vw,7.8rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
+              <h1 className="max-w-[56rem] text-[clamp(2.4rem,7.5vw,7.8rem)] font-semibold leading-[1.04] sm:leading-[0.92] tracking-[-0.04em] sm:tracking-[-0.05em] text-white">
                 {activeSlide.title}
               </h1>
             </div>
@@ -360,9 +360,14 @@ function ParallaxCard({
         }
 
         const viewportHeight = window.innerHeight;
+        if (rect.bottom < -60 || rect.top > viewportHeight + 60) {
+          return;
+        }
+
         const progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
-        const nextOffset = (progress - 0.5) * 170;
-        const clampedOffset = Math.max(-105, Math.min(105, nextOffset));
+        const maxOffset = window.innerWidth < 768 ? 40 : 170;
+        const nextOffset = (progress - 0.5) * maxOffset;
+        const clampedOffset = Math.max(-maxOffset * 0.6, Math.min(maxOffset * 0.6, nextOffset));
 
         imageElement.style.transform = `translate3d(0, ${clampedOffset}px, 0) scale(1.08)`;
       });
@@ -372,18 +377,19 @@ function ParallaxCard({
       const rect = cardRef.current?.getBoundingClientRect();
       const imageElement = imageRef.current;
 
-      if (!rect) {
-        return;
-      }
-
-      if (!imageElement) {
+      if (!rect || !imageElement) {
         return;
       }
 
       const viewportHeight = window.innerHeight;
+      if (rect.bottom < -60 || rect.top > viewportHeight + 60) {
+        return;
+      }
+
       const progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
-      const nextOffset = (progress - 0.5) * 170;
-      const clampedOffset = Math.max(-105, Math.min(105, nextOffset));
+      const maxOffset = window.innerWidth < 768 ? 40 : 170;
+      const nextOffset = (progress - 0.5) * maxOffset;
+      const clampedOffset = Math.max(-maxOffset * 0.6, Math.min(maxOffset * 0.6, nextOffset));
 
       imageElement.style.transform = `translate3d(0, ${clampedOffset}px, 0) scale(1.08)`;
     }
@@ -592,7 +598,9 @@ function TestimonialSlider() {
   }, [cardSpan]);
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    event.preventDefault();
+    if (event.pointerType === "mouse") {
+      event.preventDefault();
+    }
     const viewport = viewportRef.current;
     if (!viewport) {
       return;
@@ -607,7 +615,11 @@ function TestimonialSlider() {
     dragStartXRef.current = event.clientX;
     dragStartScrollRef.current = viewport.scrollLeft;
     setIsDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.pointerType === "mouse") {
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {}
+    }
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -836,9 +848,9 @@ export function HomeLanding() {
       <section id="sobre" className="relative bg-white pb-14 pt-10 md:pb-16">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
           <div className="grid gap-8">
-            <article className="relative overflow-hidden rounded-[2.2rem]">
-              <div className="absolute inset-0 rounded-[2.2rem] border-[3px] border-brand-sea" />
-              <div className="relative m-7 overflow-hidden rounded-[2rem]">
+            <article className="relative overflow-hidden rounded-[1.6rem] sm:rounded-[2.2rem]">
+              <div className="absolute inset-0 rounded-[1.6rem] sm:rounded-[2.2rem] border-[3px] border-brand-sea" />
+              <div className="relative m-3 sm:m-5 md:m-7 overflow-hidden rounded-[1.2rem] sm:rounded-[2rem]">
                 <Image
                   src="/images/about-main.svg"
                   alt="Imagem principal da seção sobre"
@@ -850,19 +862,19 @@ export function HomeLanding() {
             </article>
 
             <div className="pl-0 sm:pl-4 md:pl-8">
-              <p className="text-lg font-semibold text-brand-sea">Quem somos</p>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
+              <p className="text-base sm:text-lg font-semibold text-brand-sea">Quem somos</p>
+              <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
                 Organizamos experiências náuticas e roteiros costeiros com foco em
                 conforto, clareza logística e visual tropical.
               </p>
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-4">
                 {aboutStats.map((item) => (
                   <div
                     key={item.label}
-                    className="rounded-full bg-brand-foam px-5 py-3 text-brand-deep"
+                    className="rounded-2xl sm:rounded-full bg-brand-foam p-3 sm:px-5 sm:py-3 text-brand-deep text-center sm:text-left"
                   >
-                    <p className="text-2xl font-semibold">{item.value}</p>
-                    <p className="text-sm text-slate-500">{item.label}</p>
+                    <p className="text-xl sm:text-2xl font-bold">{item.value}</p>
+                    <p className="text-xs sm:text-sm text-slate-500">{item.label}</p>
                   </div>
                 ))}
               </div>

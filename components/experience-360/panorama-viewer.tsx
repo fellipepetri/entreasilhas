@@ -76,7 +76,7 @@ export function PanoramaViewer({
     currentScene.initialView.yaw
   );
   const [isAutoRotate, setIsAutoRotate] = useState(true);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(true);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isGyroActive, setIsGyroActive] = useState(false);
   const [showHint, setShowHint] = useState(true);
@@ -121,11 +121,6 @@ export function PanoramaViewer({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isAnyModalOpen]);
-
-  // Iniciar áudio ambiente automaticamente na montagem
-  useEffect(() => {
-    ambienceAudio.ensureStarted();
-  }, []);
 
   // Esconder a dica de interação inicial após 5s
   useEffect(() => {
@@ -184,8 +179,10 @@ export function PanoramaViewer({
     // 5. Carregar primeira textura
     loadTexture(currentScene.image);
 
-    // 6. Loop de Renderização e Animação
+    // 6. Loop de Renderização e Animação com throttling de re-renders para mobile/iOS
     let lastTime = performance.now();
+    let lastUiUpdateTime = 0;
+    let lastUpdatedYaw = -999;
 
     const animate = () => {
       animationFrameIdRef.current = requestAnimationFrame(animate);
@@ -203,6 +200,10 @@ export function PanoramaViewer({
 
       // Interpolação suave (damping)
       const damping = 0.085;
+      const prevLon = state.lon;
+      const prevLat = state.lat;
+      const prevFov = state.fov;
+
       state.lon += (state.targetLon - state.lon) * damping;
       state.lat += (state.targetLat - state.lat) * damping;
       state.fov += (state.targetFov - state.fov) * damping;
@@ -224,11 +225,22 @@ export function PanoramaViewer({
       camera.lookAt(targetX, targetY, targetZ);
       renderer.render(scene, camera);
 
-      // Atualiza Yaw atual para o Mini-Radar Map
-      setCurrentYawDisplay(state.lon);
+      // Limita atualizações de UI do React (Radar e Hotspots) a no máximo 25 FPS para não travar o iOS Safari
+      const hasMoved =
+        Math.abs(state.lon - prevLon) > 0.04 ||
+        Math.abs(state.lat - prevLat) > 0.04 ||
+        Math.abs(state.fov - prevFov) > 0.04;
 
-      // Projeta hotspots na tela
-      updateProjectedHotspots(container, camera);
+      if ((now - lastUiUpdateTime > 40 && hasMoved) || lastUiUpdateTime === 0) {
+        lastUiUpdateTime = now;
+
+        if (Math.abs(state.lon - lastUpdatedYaw) > 1.0) {
+          lastUpdatedYaw = state.lon;
+          setCurrentYawDisplay(state.lon);
+        }
+
+        updateProjectedHotspots(container, camera);
+      }
     };
 
     animate();
@@ -258,7 +270,7 @@ export function PanoramaViewer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Carregador de Textura com transição suave
+  // Carregador de Textura com transição suave e liberação de memória GPU
   const loadTexture = useCallback((imageUrl: string) => {
     setIsLoadingScene(true);
     const textureLoader = new THREE.TextureLoader();
@@ -267,7 +279,12 @@ export function PanoramaViewer({
       (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
         if (sphereMaterialRef.current) {
+          if (sphereMaterialRef.current.map) {
+            sphereMaterialRef.current.map.dispose();
+          }
           sphereMaterialRef.current.map = texture;
           sphereMaterialRef.current.needsUpdate = true;
         }
@@ -357,6 +374,9 @@ export function PanoramaViewer({
     }
   };
 
+  const touchDirectionDeterminedRef = useRef(false);
+  const isHorizontalDragRef = useRef(false);
+
   // Controles de Ponteiro / Drag com Mouse & Touch
   const handlePointerDown = (e: React.PointerEvent) => {
     setShowHint(false);
@@ -366,24 +386,41 @@ export function PanoramaViewer({
     state.pointerStartY = e.clientY;
     state.startLon = state.targetLon;
     state.startLat = state.targetLat;
+    touchDirectionDeterminedRef.current = false;
+    isHorizontalDragRef.current = false;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     const state = cameraStateRef.current;
     if (!state.isUserInteracting) return;
 
+    const diffX = e.clientX - state.pointerStartX;
+    const diffY = e.clientY - state.pointerStartY;
+
+    if (e.pointerType === "touch" && !touchDirectionDeterminedRef.current) {
+      if (Math.abs(diffX) > 6 || Math.abs(diffY) > 6) {
+        touchDirectionDeterminedRef.current = true;
+        isHorizontalDragRef.current = Math.abs(diffX) >= Math.abs(diffY);
+      }
+    }
+
+    // Se no celular o movimento for predominantemente vertical, não bloqueia o scroll da página
+    if (e.pointerType === "touch" && touchDirectionDeterminedRef.current && !isHorizontalDragRef.current) {
+      state.isUserInteracting = false;
+      return;
+    }
+
     // Sensibilidade de rotação
     const sensitivity = 0.16;
-    const deltaX = (e.clientX - state.pointerStartX) * sensitivity;
-    const deltaY = (e.clientY - state.pointerStartY) * sensitivity;
-
-    state.targetLon = state.startLon - deltaX;
+    state.targetLon = state.startLon - diffX * sensitivity;
     // Limita o pitch vertical entre -85 e +85 graus
-    state.targetLat = Math.max(-85, Math.min(85, state.startLat + deltaY));
+    state.targetLat = Math.max(-85, Math.min(85, state.startLat + diffY * sensitivity));
   };
 
   const handlePointerUp = () => {
     cameraStateRef.current.isUserInteracting = false;
+    touchDirectionDeterminedRef.current = false;
+    isHorizontalDragRef.current = false;
   };
 
   // Zoom via Roda do Mouse (exclusivo para a imagem 360, impedindo o scroll da página enquanto o cursor estiver na área 360)
@@ -558,8 +595,8 @@ export function PanoramaViewer({
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-none"
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-pan-y"
+        style={{ touchAction: "pan-y" }}
       />
 
       {/* 2. Camada de Hotspots Interativos (Overlays HTML) */}
@@ -708,22 +745,22 @@ export function PanoramaViewer({
             <span className={isAutoRotate ? "animate-spin" : ""}>🔄</span>
           </button>
 
-          {/* Zoom In */}
+          {/* Zoom In (Desktop) */}
           <button
             type="button"
             onClick={() => handleZoom("in")}
-            className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition"
+            className="hidden sm:flex p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition"
             title="Aproximar (Zoom In)"
             aria-label="Zoom In"
           >
             🔍+
           </button>
 
-          {/* Zoom Out */}
+          {/* Zoom Out (Desktop) */}
           <button
             type="button"
             onClick={() => handleZoom("out")}
-            className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition"
+            className="hidden sm:flex p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition"
             title="Afastar (Zoom Out)"
             aria-label="Zoom Out"
           >

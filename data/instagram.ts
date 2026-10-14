@@ -40,7 +40,7 @@ export const INSTAGRAM_PROFILE: InstagramProfile = {
 export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   {
     id: "post-1",
-    image: "/images/panoramas/ilha-dos-frades.jpg",
+    image: "/images/instagram/post-1.jpg",
     caption:
       "Águas transparentes e calmas na Ponta de Nossa Senhora de Guadalupe, Ilha dos Frades. Um paraíso preservado bem no coração da Baía de Todos-os-Santos! 🌴⛵ Quem vem navegar com a gente? #entreasilhas #ilhadosfrades #salvador #bahia #turismonautico",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -52,7 +52,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-2",
-    image: "/images/panoramas/cais-bom-jesus.jpg",
+    image: "/images/instagram/post-2.jpg",
     caption:
       "A tranquilidade histórica e as cores de Bom Jesus dos Passos. O cais acolhedor, a Igreja dos Passos e o mar que parece uma piscina. Viva essa experiência com o Entre as Ilhas! 🏛️⚓🌊 #bomjesusospassos #entreasilhas #ilhasdabahia #paraiso",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -64,7 +64,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-3",
-    image: "/images/panoramas/coroa-do-frade.jpg",
+    image: "/images/instagram/post-3.jpg",
     caption:
       "Quando a maré baixa na Coroa do Frade, o mar revela essa incrível piscina natural no meio da Baía. Água cristalina e morna na medida certa! 🐚✨ Venha viver isso a bordo de nossas lanchas. #coroadofrade #baiadetodosossantos #passeiodelancha #mar",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -76,7 +76,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-4",
-    image: "/images/panoramas/por-do-sol-enseada.jpg",
+    image: "/images/instagram/post-4.jpg",
     caption:
       "O entardecer mais bonito do Brasil acontece nas enseadas da nossa Baía. Céu dourado, brisa suave e brinde a bordo. Momentos que ficam guardados pra sempre! 🌅🚤🥂 #pordosol #sunsetbahia #lanchas #entreasilhas #verao",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -88,7 +88,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-5",
-    image: "/images/panoramas/ilha-dos-frades.jpg",
+    image: "/images/instagram/post-5.jpg",
     caption:
       "Roteiro exclusivo para recarregar as energias: paradas estratégicas para banho, mergulho livre e contemplação pelas ilhas mais bonitas da região. Já montou seu grupo pro fim de semana? 🤿🏝️ #nordeste #turismo #passeiodebarco #feriasnabahia",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -100,7 +100,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-6",
-    image: "/images/panoramas/cais-bom-jesus.jpg",
+    image: "/images/instagram/post-6.jpg",
     caption:
       "Gastronomia náutica, mariscos frescos e a hospitalidade sem igual do povo baiano. O turismo náutico com respeito às tradições e à natureza local! 🍽️🦀💛 #gastronomianautica #mariscada #culturabaiana #entreasilhas",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -112,7 +112,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-7",
-    image: "/images/panoramas/por-do-sol-enseada.jpg",
+    image: "/images/instagram/post-7.jpg",
     caption:
       "Entre o azul do mar e a calmaria que só a Bahia sabe entregar... Navegue com quem entende e cuida de cada detalhe da sua experiência náutica. 🌊🚤 #baiadetodosossantos #entreasilhas #lanchas #passeios",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -124,7 +124,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-8",
-    image: "/images/panoramas/ilha-dos-frades.jpg",
+    image: "/images/instagram/post-8.jpg",
     caption:
       "Gratidão por cada saída de barco e por cada sorriso de quem vive a Baía com a gente! 🙏🏽🌴 #baiadetodosossantos #entreasilhas #salvador #bahia #turismobahia",
     permalink: "https://www.instagram.com/entreasilhas",
@@ -136,7 +136,7 @@ export const CURATED_INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: "post-9",
-    image: "/images/panoramas/cais-bom-jesus.jpg",
+    image: "/images/instagram/post-9.jpg",
     caption:
       "Chama quem tá te devendo um passeio náutico inesquecível pela Baía! O mar tá convidando e a lancha tá pronta. Bora? ⚓🚤☀️ #bomjesusospassos #entreasilhas #passeiodebarco #ferias",
     permalink: "https://www.instagram.com/entreasilhas",
