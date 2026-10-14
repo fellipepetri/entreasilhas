@@ -12,15 +12,15 @@ export function SectionShell({
   children
 }: SectionShellProps) {
   return (
-    <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-24">
+    <section className="mx-auto w-full max-w-6xl px-4 sm:px-6 pt-28 pb-16 sm:pt-32 sm:pb-20 md:pt-36 md:pb-24">
       <div className="max-w-3xl">
-        <p className="text-sm uppercase tracking-[0.24em] text-brand-sea">{eyebrow}</p>
-        <h1 className="mt-4 text-4xl font-semibold md:text-5xl">{title}</h1>
-        <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg">
+        <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.24em] text-brand-sea">{eyebrow}</p>
+        <h1 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-brand-deep leading-tight">{title}</h1>
+        <p className="mt-3 text-base sm:text-lg leading-relaxed text-slate-600">
           {description}
         </p>
       </div>
-      <div className="mt-10">{children}</div>
+      <div className="mt-8 sm:mt-10">{children}</div>
     </section>
   );
 }

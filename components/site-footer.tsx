@@ -1,6 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  const is360Page = pathname?.startsWith("/experiencia-360");
+
+  if (is360Page) {
+    return null;
+  }
+
   return (
     <footer className="relative overflow-hidden bg-brand-deep text-white">
       <div
@@ -19,32 +29,33 @@ export function SiteFooter() {
           />
         </svg>
       </div>
-      <div className="relative mx-auto w-full max-w-6xl px-6 pb-10 pt-28">
+      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 pb-10 pt-24 sm:pt-28">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6 border-b border-white/12 pb-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-4 sm:gap-6 border-b border-white/12 pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="font-display text-5xl font-semibold tracking-tight text-white md:text-6xl">
+              <p className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
                 Vamos navegar
               </p>
-              <p className="mt-4 max-w-2xl text-white">
-                Base inspirada no layout de referência, adaptada para a identidade
-                da Entre as Ilhas.
+              <p className="mt-2 sm:mt-4 max-w-2xl text-sm sm:text-base text-slate-200">
+                Experiências náuticas, águas mornas e os melhores roteiros de lancha na Baía de Todos-os-Santos.
               </p>
             </div>
-            <a href="tel:+5571999999999" className="text-xl font-semibold text-white md:text-2xl">
-              +55 (71) 99999-9999
+            <a href="https://wa.me/5571992517102" target="_blank" rel="noopener noreferrer" className="text-lg sm:text-xl md:text-2xl font-bold text-white hover:text-cyan-300 transition flex items-center gap-2">
+              <span>+55 (71) 99251-7102</span>
+              <span>↗</span>
             </a>
           </div>
 
-          <div className="rounded-[2rem] border border-white/14 bg-white/8 p-8 backdrop-blur-sm">
+          <div className="rounded-[1.6rem] sm:rounded-[2rem] border border-white/14 bg-white/8 p-5 sm:p-8 backdrop-blur-sm">
             <div className="grid gap-8 md:grid-cols-3">
               <div>
-                <p className="text-xl font-semibold text-white">Links úteis</p>
-                <div className="mt-5 flex flex-col gap-3 text-white">
-                  <Link href="/">Início</Link>
-                  <Link href="/passeios">Passeios</Link>
-                  <Link href="/sobre">Sobre</Link>
-                  <Link href="/contato">Contato</Link>
+                <p className="text-lg sm:text-xl font-semibold text-white">Links úteis</p>
+                <div className="mt-4 sm:mt-5 flex flex-col gap-2.5 sm:gap-3 text-sm sm:text-base text-white">
+                  <Link href="/" className="hover:text-cyan-300 transition">Início</Link>
+                  <Link href="/experiencia-360" className="text-cyan-300 font-medium hover:underline">Entre as Ilhas 360º</Link>
+                  <Link href="/passeios" className="hover:text-cyan-300 transition">Passeios</Link>
+                  <Link href="/sobre" className="hover:text-cyan-300 transition">Sobre</Link>
+                  <Link href="/contato" className="hover:text-cyan-300 transition">Contato</Link>
                 </div>
               </div>
               <div>

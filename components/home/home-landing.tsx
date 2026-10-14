@@ -8,11 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import {
   aboutStats,
   heroSlides,
-  instagramCards,
   routeItems,
   showcaseCards,
   testimonials
 } from "@/data/home";
+import { Experience360Section } from "@/components/home/experience-360-section";
+import { InstagramSection } from "@/components/home/instagram-section";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -80,7 +81,7 @@ function HeroSlider() {
               ))}
             </div>
             <div key={`hero-title-${activeIndex}`} className="hero-copy-rise hero-copy-delay">
-              <h1 className="max-w-[56rem] text-[clamp(3.35rem,8.5vw,7.9rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
+              <h1 className="max-w-[56rem] text-[clamp(2.4rem,7.5vw,7.8rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
                 {activeSlide.title}
               </h1>
             </div>
@@ -174,29 +175,17 @@ function HoverRouteList() {
   return (
     <section
       id="roteiros"
-      className="relative overflow-hidden bg-brand-deep py-24 text-white"
+      className="relative z-10 overflow-hidden bg-transparent py-24 text-white"
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
+        className="route-section-mask absolute inset-0 bg-brand-deep bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
       />
       <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
           className="block h-14 w-full rotate-180 md:h-16 lg:h-20"
-        >
-          <path
-            fill="#ffffff"
-            d="M0 68C40 56 80 44 120 44C160 44 200 56 240 68C280 80 320 92 360 92C400 92 440 80 480 68C520 56 560 44 600 44C640 44 680 56 720 68C760 80 800 92 840 92C880 92 920 80 960 68C1000 56 1040 44 1080 44C1120 44 1160 56 1200 68C1240 80 1280 92 1320 92C1360 92 1400 80 1440 68V160H0Z"
-          />
-        </svg>
-      </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] overflow-hidden">
-        <svg
-          viewBox="0 0 1440 160"
-          preserveAspectRatio="none"
-          className="block h-14 w-full md:h-16 lg:h-20"
         >
           <path
             fill="#ffffff"
@@ -255,36 +244,50 @@ function HoverRouteList() {
 
         <div className="space-y-2 border-t border-white/18">
           {routeItems.map((item, index) => (
-            <button
+            <Link
               key={item.title}
-              type="button"
+              href="/passeios"
               onMouseEnter={() => handlePreviewEnter(index)}
               onFocus={() => handlePreviewEnter(index)}
               onBlur={() => setActiveIndex(null)}
-              className="flex w-full flex-col items-start justify-between gap-5 border-b border-white/14 py-7 text-left transition hover:pl-2 sm:flex-row sm:items-center sm:gap-6 sm:py-8"
+              className="group flex w-full flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 border-b border-white/14 py-6 sm:py-8 text-left transition hover:pl-2"
             >
-              <div>
-                <p
-                  className={[
-                    "text-[1.08rem] font-semibold transition md:text-[1.48rem]",
-                    activeIndex === index ? "text-brand-leaf" : "text-white"
-                  ].join(" ")}
-                >
-                  {item.title}
-                </p>
-                <p className="mt-0.5 max-w-2xl text-base text-white">{item.description}</p>
+              <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
+                {/* Miniatura visível em mobile/tablet */}
+                <div className="lg:hidden relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-white/20">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className={[
+                      "text-[1.08rem] sm:text-[1.25rem] md:text-[1.48rem] font-semibold transition",
+                      activeIndex === index ? "text-brand-leaf" : "text-white group-hover:text-brand-leaf"
+                    ].join(" ")}
+                  >
+                    {item.title}
+                  </p>
+                  <p className="mt-0.5 max-w-2xl text-xs sm:text-sm md:text-base text-slate-300 line-clamp-2 sm:line-clamp-none">
+                    {item.description}
+                  </p>
+                </div>
               </div>
               <span
                 className={[
-                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border text-xl transition sm:h-14 sm:w-14 sm:text-2xl",
+                  "flex h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 shrink-0 items-center justify-center rounded-full border text-lg sm:text-xl md:text-2xl transition self-end sm:self-center",
                   activeIndex === index
                     ? "border-white bg-white text-brand-tide"
-                    : "border-white/28 text-white/88"
+                    : "border-white/28 text-white/88 group-hover:border-white group-hover:bg-white group-hover:text-brand-tide"
                 ].join(" ")}
               >
                 ↗
               </span>
-            </button>
+            </Link>
           ))}
         </div>
 
@@ -948,6 +951,8 @@ export function HomeLanding() {
 
       <HoverRouteList />
 
+      <Experience360Section />
+
       <section id="galeria" className="bg-white py-24">
         <div className="mx-auto w-full max-w-6xl px-6">
           <div className="mb-12 max-w-3xl">
@@ -964,23 +969,24 @@ export function HomeLanding() {
               <ParallaxCard
                 image={showcaseCards[0].image}
                 alt={showcaseCards[0].title}
-                className="max-w-[34rem] lg:max-w-[34rem]"
+                className="w-full max-w-full lg:max-w-[34rem]"
               />
               <ParallaxCard
                 image={showcaseCards[2].image}
                 alt={showcaseCards[2].title}
-                className="max-w-[42rem] lg:max-w-[42rem]"
+                className="w-full max-w-full lg:max-w-[42rem]"
               />
             </div>
             <div className="grid gap-6 pt-0 lg:pt-10">
               <ParallaxCard
                 image={showcaseCards[1].image}
                 alt={showcaseCards[1].title}
+                className="w-full"
               />
               <ParallaxCard
                 image={showcaseCards[3].image}
                 alt={showcaseCards[3].title}
-                className="max-w-[34rem] justify-self-end"
+                className="w-full max-w-full lg:max-w-[34rem] lg:justify-self-end"
               />
             </div>
           </div>
@@ -990,55 +996,7 @@ export function HomeLanding() {
       <TestimonialSlider />
       <Chamada />
 
-      <section id="instagram" className="bg-white py-24">
-        <div className="mx-auto w-full max-w-6xl px-6">
-          <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
-                Instagram
-              </p>
-              <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
-                Últimos posts de @entreasilhas
-              </h2>
-              <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600 md:text-xl md:leading-9">
-                Área preparada para futura integração em tempo real com a rede
-                social. Por enquanto, a estrutura visual e responsiva já está pronta.
-              </p>
-            </div>
-            <a
-              href="https://instagram.com/entreasilhas"
-              className="rounded-full bg-brand-deep px-8 py-4 text-base font-semibold text-white"
-            >
-              Abrir perfil
-            </a>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {instagramCards.map((card) => (
-              <article
-                key={card.label}
-                className="overflow-hidden rounded-[2rem] bg-white p-4 shadow-soft transition duration-300 hover:-translate-y-1"
-              >
-                <div className="relative aspect-square overflow-hidden rounded-[1.5rem]">
-                  <Image
-                    src={card.image}
-                    alt={card.label}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <p className="text-lg font-semibold text-brand-deep">{card.label}</p>
-                  <span className="rounded-full bg-brand-foam px-3 py-1 text-sm text-brand-sea">
-                    Instagram
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <InstagramSection />
     </div>
   );
 }

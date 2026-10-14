@@ -1,5 +1,6 @@
 export const primaryNavigationLinks = [
   { href: "/", label: "Início" },
+  { href: "#experiencia-360", label: "Entre as Ilhas 360º" },
   { href: "#sobre", label: "Sobre" },
   { href: "#roteiros", label: "Roteiros" },
   { href: "#galeria", label: "Galeria" },

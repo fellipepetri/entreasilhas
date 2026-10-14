@@ -11,7 +11,8 @@ const SCROLLABLE_SELECTOR = [
   "select",
   "option",
   "[contenteditable='true']",
-  "[data-native-scroll='true']"
+  "[data-native-scroll='true']",
+  "[data-360-viewer='true']"
 ].join(", ");
 
 function isInteractiveElement(target: EventTarget | null) {
@@ -111,7 +112,13 @@ export function SmoothScroll() {
     }
 
     function handleWheel(event: WheelEvent) {
-      if (event.ctrlKey || isInteractiveElement(event.target) || hasScrollableParent(event.target)) {
+      if (
+        document.body.classList.contains("modal-open") ||
+        document.body.style.overflow === "hidden" ||
+        event.ctrlKey ||
+        isInteractiveElement(event.target) ||
+        hasScrollableParent(event.target)
+      ) {
         return;
       }
 

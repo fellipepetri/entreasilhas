@@ -16,7 +16,7 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared_tunnel
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token eyJhIjoiMTk2M2E0OTcyYjRiMDQwM2UyMWIyYWQ2ZDYyMTc0NTEiLCJ0IjoiOTM2YmMyNGEtMTIwNC00NjcwLWE4NjgtMWIzYzcyZjEyMWFmIiwicyI6Ik9HUXlNRGs0TURjdFpURXdNeTAwTURVeExXSmlOelF0TURRd01qTm1NVEU0TVRrdyJ9
+    command: tunnel --url http://site:3000
     depends_on:
       - site
     networks:

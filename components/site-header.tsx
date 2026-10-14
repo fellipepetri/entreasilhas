@@ -1,15 +1,9 @@
 "use client";
 
-import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { primaryNavigationLinks } from "@/data/home";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"]
-});
 
 const navigationSectionIds = primaryNavigationLinks.map((link) =>
   link.href === "/" ? "inicio" : link.href.replace("#", "")
@@ -23,15 +17,12 @@ function BrandMark({ scrolled, compact = false }: { scrolled: boolean; compact?:
   return (
     <Link
       href="/"
-      className={[
-        "flex min-w-0 items-center gap-3",
-        compact ? plusJakartaSans.className : ""
-      ].join(" ")}
+      className="flex min-w-0 items-center gap-2.5 sm:gap-3"
     >
       <div
         className={[
           "relative shrink-0 overflow-hidden",
-          compact ? "h-9 w-9" : "h-11 w-11"
+          compact ? "h-9 w-9" : "h-10 w-10 sm:h-11 sm:w-11"
         ].join(" ")}
       >
         <Image
@@ -45,8 +36,8 @@ function BrandMark({ scrolled, compact = false }: { scrolled: boolean; compact?:
       <span
         className={[
           compact
-            ? "hidden whitespace-nowrap text-[1.75rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300 xl:inline-block"
-            : "hidden whitespace-nowrap text-[2.15rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300 2xl:inline-block",
+            ? "hidden whitespace-nowrap text-[1.45rem] font-semibold leading-none tracking-[-0.04em] transition-colors duration-300 xl:inline-block"
+            : "inline-block whitespace-nowrap text-[1.05rem] sm:text-[1.35rem] md:text-[1.6rem] font-bold leading-none tracking-[-0.03em] transition-colors duration-300",
           scrolled ? "text-black" : "text-white"
         ].join(" ")}
       >
@@ -76,7 +67,7 @@ function DesktopTopHeader({
       aria-hidden={isScrolled}
     >
       <div className="mx-auto flex w-full max-w-[116rem] items-center justify-between gap-4">
-        <div className={`top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-1 items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl ${plusJakartaSans.className}`}>
+        <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-1 items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <BrandMark scrolled={false} compact />
           <nav className="mr-2 flex items-center gap-6 2xl:gap-10" aria-label="Principal">
             {primaryNavigationLinks.map((link) => (
@@ -97,7 +88,7 @@ function DesktopTopHeader({
           </nav>
         </div>
 
-        <div className={`top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl ${plusJakartaSans.className}`}>
+        <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <a href="http://wa.me/5571992517102" className="text-[0.89rem] font-semibold text-white">
             Fale conosco
           </a>
@@ -133,17 +124,17 @@ function DesktopScrolledHeader({
       aria-hidden={!isScrolled}
     >
       <div className="pointer-events-auto border-b border-black/6 bg-white shadow-[0_14px_40px_rgba(10,40,79,0.10)]">
-        <div className="mx-auto flex min-h-[5.25rem] w-full max-w-[116rem] items-center justify-between gap-6 px-8 xl:px-10 2xl:px-12">
-          <BrandMark scrolled />
+        <div className="mx-auto flex min-h-[3.95rem] w-full max-w-[116rem] items-center justify-between gap-4 px-6 xl:px-8 2xl:px-10">
+          <BrandMark scrolled compact />
 
-          <nav className="flex items-center gap-7 2xl:gap-12" aria-label="Principal fixo">
+          <nav className="flex items-center gap-4 xl:gap-5 2xl:gap-7" aria-label="Principal fixo">
             {primaryNavigationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => onNavigate(link.href)}
                 className={[
-                  "text-[1.02rem] font-medium transition",
+                  "text-[0.88rem] font-medium transition",
                   activeSection === getSectionIdFromHref(link.href)
                     ? "text-brand-sea"
                     : "text-brand-deep hover:text-brand-sea"
@@ -154,16 +145,16 @@ function DesktopScrolledHeader({
             ))}
           </nav>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <a
               href="tel:+5571999999999"
-              className="hidden text-[1.05rem] font-semibold text-brand-deep 2xl:inline-block"
+              className="hidden text-[0.88rem] font-semibold text-brand-deep 2xl:inline-block"
             >
               +55 (71) 99999-9999
             </a>
             <Link
               href="/contato"
-              className="rounded-full bg-[#1fc8c2] px-8 py-3 text-[1.05rem] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-surf"
+              className="rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-surf"
             >
               Planejar passeio
             </Link>
@@ -233,6 +224,17 @@ export function SiteHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <DesktopTopHeader isScrolled={isScrolled} activeSection={activeSection} onNavigate={handleNavigate} />
@@ -242,13 +244,13 @@ export function SiteHeader() {
         onNavigate={handleNavigate}
       />
 
-      <div className="px-4 pt-4 xl:hidden">
+      <div className="px-3 sm:px-4 pt-3 sm:pt-4 xl:hidden">
         <div
           className={[
-            "mx-auto flex items-center justify-between gap-4 rounded-[2rem] border px-5 py-3.5 transition-all duration-500",
+            "mx-auto flex items-center justify-between gap-3 sm:gap-4 rounded-[2rem] border px-4 sm:px-5 py-3 sm:py-3.5 transition-all duration-500",
             isScrolled
               ? "border-brand-deep/8 bg-white/96 shadow-[0_18px_45px_rgba(10,40,79,0.12)]"
-              : "border-white/30 bg-[linear-gradient(135deg,rgba(10,40,79,0.74),rgba(20,72,117,0.62))] backdrop-blur-xl"
+              : "border-white/30 bg-[linear-gradient(135deg,rgba(10,40,79,0.78),rgba(20,72,117,0.68))] backdrop-blur-xl"
           ].join(" ")}
         >
           <BrandMark scrolled={isScrolled} />
@@ -257,51 +259,75 @@ export function SiteHeader() {
             type="button"
             onClick={() => setIsOpen((value) => !value)}
             className={[
-              "inline-flex h-11 w-11 items-center justify-center rounded-full border",
+              "inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border transition",
               isScrolled
                 ? "border-brand-deep/12 bg-brand-foam text-brand-deep"
                 : "border-white/30 bg-white/10 text-white"
             ].join(" ")}
-            aria-label="Abrir menu"
+            aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={isOpen}
           >
-            <span className="space-y-1.5">
-              <span className="block h-0.5 w-5 bg-current" />
-              <span className="block h-0.5 w-5 bg-current" />
-              <span className="block h-0.5 w-5 bg-current" />
-            </span>
+            {isOpen ? (
+              <span className="text-xl font-bold leading-none">✕</span>
+            ) : (
+              <span className="space-y-1.5">
+                <span className="block h-0.5 w-5 bg-current rounded-full" />
+                <span className="block h-0.5 w-5 bg-current rounded-full" />
+                <span className="block h-0.5 w-5 bg-current rounded-full" />
+              </span>
+            )}
           </button>
         </div>
 
         {isOpen ? (
-          <div className="mx-auto mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/96 p-5 shadow-soft backdrop-blur">
-            <nav className="flex flex-col gap-4" aria-label="Mobile">
-              {primaryNavigationLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => {
-                    handleNavigate(link.href);
-                    setIsOpen(false);
-                  }}
-                  className={[
-                    "text-sm font-medium transition",
-                    activeSection === getSectionIdFromHref(link.href)
-                      ? "text-brand-sea"
-                      : "text-brand-deep"
-                  ].join(" ")}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <Link
-                href="/contato"
-                onClick={() => setIsOpen(false)}
-                className="mt-2 inline-flex w-fit rounded-full bg-[#1fc8c2] px-6 py-3 text-sm font-semibold text-white"
-              >
-                Planejar passeio
-              </Link>
-            </nav>
-          </div>
+          <>
+            <div
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs xl:hidden"
+              onClick={() => setIsOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/98 p-5 sm:p-6 shadow-2xl backdrop-blur animate-fadeIn">
+              <nav className="flex flex-col gap-3" aria-label="Mobile">
+                {primaryNavigationLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => {
+                      handleNavigate(link.href);
+                      setIsOpen(false);
+                    }}
+                    className={[
+                      "text-base font-semibold py-1.5 transition border-b border-slate-100 last:border-b-0",
+                      activeSection === getSectionIdFromHref(link.href)
+                        ? "text-brand-sea"
+                        : "text-brand-deep hover:text-brand-sea"
+                    ].join(" ")}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
+                  <Link
+                    href="/contato"
+                    onClick={() => setIsOpen(false)}
+                    className="inline-flex w-full items-center justify-center rounded-full bg-[#1fc8c2] hover:bg-[#1bb5b0] px-6 py-3 text-sm font-bold text-white shadow-sm transition"
+                  >
+                    Planejar passeio
+                  </Link>
+                  <a
+                    href="https://wa.me/5571992517102"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-emerald-500 hover:bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition"
+                  >
+                    <span>Fale no WhatsApp</span>
+                    <span>💬</span>
+                  </a>
+                </div>
+              </nav>
+            </div>
+          </>
         ) : null}
       </div>
     </header>
