@@ -12,7 +12,6 @@ import { TabGallery } from "@/components/admin/tab-gallery";
 import { TabRoutes } from "@/components/admin/tab-routes";
 import { TabTestimonials } from "@/components/admin/tab-testimonials";
 import { TabAbout } from "@/components/admin/tab-about";
-import { TabInstagram } from "@/components/admin/tab-instagram";
 import { TabSettings } from "@/components/admin/tab-settings";
 
 const TABS = [
@@ -23,7 +22,6 @@ const TABS = [
   { id: "routes", label: "Roteiros & Passeios", icon: "⛵" },
   { id: "testimonials", label: "Avaliações", icon: "⭐" },
   { id: "about", label: "Sobre a Agência", icon: "ℹ️" },
-  { id: "instagram", label: "Instagram & Redes", icon: "📸" },
   { id: "settings", label: "Configurações", icon: "⚙️" }
 ] as const;
 
@@ -304,25 +302,6 @@ export default function AdminPainelPage() {
               <TabAbout
                 data={content.about}
                 onChange={(about) => updateContent("about", about)}
-              />
-            )}
-
-            {activeTab === "instagram" && (
-              <TabInstagram
-                profile={content.instagram.profile}
-                posts={content.instagram.curatedPosts}
-                onChangeProfile={(profile) =>
-                  setContent((prev) => ({
-                    ...prev,
-                    instagram: { ...prev.instagram, profile }
-                  }))
-                }
-                onChangePosts={(posts) =>
-                  setContent((prev) => ({
-                    ...prev,
-                    instagram: { ...prev.instagram, curatedPosts: posts }
-                  }))
-                }
               />
             )}
 
