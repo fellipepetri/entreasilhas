@@ -717,7 +717,7 @@ function TestimonialSlider() {
                       alt={testimonial.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 30vw"
-                      className="object-cover scale-[1.25] transition-transform duration-300"
+                      className="object-cover scale-[1.03] transition-transform duration-300"
                       draggable={false}
                     />
                   </div>

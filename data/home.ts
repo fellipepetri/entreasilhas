@@ -115,42 +115,42 @@ export const testimonials = [
   {
     name: "João Paulo Tenório",
     quote:
-      "Maravilhoso! O passeio é extremamente agradável e cumpre o que é prometido, exclusividade e tranquilidade. O marinheiro foi super gentil e atencioso. Voltarei com certeza.",
+      "O passeio é extremamente agradável e cumpre o que é prometido, exclusividade e tranquilidade.",
     image: "/images/testimonials/joao-paulo-tenorio.jpg",
     rating: 5
   },
   {
     name: "Juliana Oliveira",
     quote:
-      "Eu já conhecia o serviço através de um passeio coletivo e me encantei com a organização e disponibilidade. Desta vez fizemos um passeio privativo e foi perfeito!",
+      "Eu já conhecia o serviço através de um passeio coletivo e me encantei com a organização e disponibilidade.",
     image: "/images/testimonials/juliana-oliveira.jpg",
     rating: 5
   },
   {
-    name: "Larauine Almeida",
+    name: "Fabiane Almeida",
     quote:
-      "Minhas experiências foram maravilhosas! Equipe sensacional! Já comemorei 2 aniversários com eles e ano que vem tem mais! São muito receptivos e os roteiros são incríveis!",
-    image: "/images/testimonials/larauine-almeida.jpg",
+      "O passeio foi divertido, a lancha completa, o atendimento muito bom e marinheiro atencioso e experiente.",
+    image: "/images/testimonials/fabiane-almeida.jpg",
     rating: 5
   },
   {
     name: "Rogério Sá",
     quote:
-      "Passeio incrível! Equipe muito profissional e gentil! Recomendo e voltarei em breve!",
+      "Passeio incrível, equipe muito profissional e gentil.",
     image: "/images/testimonials/rogerio-sa.jpg",
     rating: 5
   },
   {
     name: "Marcia Santos",
     quote:
-      "Foi uma experiência maravilhosa, tudo perfeito! O marinheiro foi educado, gentil e atencioso. Excelente indicação de restaurante para o almoço. Super indico!",
+      "Foi uma experiência maravilhosa, tudo perfeito, com marinheiro educado, gentil e atencioso.",
     image: "/images/testimonials/marcia-santos.jpg",
     rating: 5
   },
   {
     name: "Rai Mançú",
     quote:
-      "O passeio com o Entre Ilhas foi maravilhoso. Um dia diferente em família com um roteiro lindo. Jana e Felipe são receptivos, atenciosos e têm comunicação clara. Indico de olhos fechados.",
+      "O passeio com o Entre Ilhas foi maravilhoso, um dia diferente em família com um roteiro lindo.",
     image: "/images/testimonials/rai-mancu.jpg",
     rating: 5
   }
