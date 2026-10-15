@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { PwaInstallModal } from "@/components/pwa-install-modal";
 
 interface AdminHeaderProps {
@@ -95,6 +96,16 @@ export function AdminHeader({
               <span>📱</span>
               <span className="hidden sm:inline">Instalar App</span>
             </button>
+
+            {/* Atalho para Painel de Agendamentos */}
+            <Link
+              href="/agenda-painel"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 text-xs font-semibold transition hover:border-slate-400"
+              title="Ir para o painel de reservas e agendamentos"
+            >
+              <span>📅</span>
+              <span>Agendamentos</span>
+            </Link>
 
             {/* Link para o Site Público */}
             <a
