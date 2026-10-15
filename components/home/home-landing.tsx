@@ -708,7 +708,7 @@ function TestimonialSlider() {
               <article
                 key={`${testimonial.name}-${itemIndex}`}
                 data-testimonial-card
-                className="w-full shrink-0 basis-full rounded-[1.9rem] bg-brand-foam p-4 shadow-soft md:basis-[calc((100%-1.5rem)/2)] md:p-6"
+                className="w-full shrink-0 basis-full rounded-[1.9rem] bg-brand-foam p-4 border border-brand-sand/50 shadow-none md:basis-[calc((100%-1.5rem)/2)] md:p-6"
               >
                 <div className="grid gap-5 md:grid-cols-[0.38fr_0.62fr] md:items-stretch">
                   <div className="relative h-[16rem] overflow-hidden rounded-[1.35rem] md:h-[19rem]">
@@ -717,7 +717,7 @@ function TestimonialSlider() {
                       alt={testimonial.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 30vw"
-                      className="object-cover"
+                      className="object-cover scale-[1.25] transition-transform duration-300"
                       draggable={false}
                     />
                   </div>
