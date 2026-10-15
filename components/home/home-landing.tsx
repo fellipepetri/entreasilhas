@@ -655,94 +655,104 @@ function TestimonialSlider() {
 
   return (
     <section id="avaliacoes" className="relative overflow-hidden bg-white py-24">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(20,152,213,0.08),_transparent_34%)]"
-      />
-        <div className="relative mx-auto w-full max-w-6xl px-6">
-          <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
-                Avaliações
-              </p>
-              <h2 className="mt-4 text-[clamp(2.2rem,5vw,3rem)] font-semibold tracking-tight text-brand-deep">
-                Feedbacks de viajantes
-              </h2>
-            </div>
-            <div className="hidden items-center gap-2 md:flex">
-              {testimonials.map((testimonial, itemIndex) => (
-                <button
-                  key={testimonial.name}
-                  type="button"
-                  onClick={() => {
-                    const viewport = viewportRef.current;
-                    if (!viewport || !cardSpan) {
-                      return;
-                    }
-
-                    animateScrollTo(baseSetStartRef.current + itemIndex * cardSpan);
-                  }}
-                  className={[
-                    "h-3 rounded-full transition-all duration-300",
-                    activeDot === itemIndex ? "w-8 bg-brand-sea" : "w-3 bg-brand-sea/25"
-                  ].join(" ")}
-                  aria-label={`Ir para depoimento ${itemIndex + 1}`}
-                />
-              ))}
-            </div>
+      <div className="relative mx-auto w-full max-w-6xl px-6">
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
+              Avaliações
+            </p>
+            <h2 className="mt-4 text-[clamp(2.2rem,5vw,3rem)] font-semibold tracking-tight text-brand-deep">
+              Feedbacks de viajantes
+            </h2>
           </div>
+          <div className="hidden items-center gap-2 md:flex">
+            {testimonials.map((testimonial, itemIndex) => (
+              <button
+                key={testimonial.name}
+                type="button"
+                onClick={() => {
+                  const viewport = viewportRef.current;
+                  if (!viewport || !cardSpan) {
+                    return;
+                  }
 
+                  animateScrollTo(baseSetStartRef.current + itemIndex * cardSpan);
+                }}
+                className={[
+                  "h-3 rounded-full transition-all duration-300",
+                  activeDot === itemIndex ? "w-8 bg-brand-sea" : "w-3 bg-brand-sea/25"
+                ].join(" ")}
+                aria-label={`Ir para depoimento ${itemIndex + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div
+          ref={viewportRef}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={(event) => finishDrag(event.currentTarget)}
+          onPointerCancel={(event) => finishDrag(event.currentTarget)}
+          className={[
+            "overflow-hidden rounded-[2.2rem]",
+            isDragging ? "cursor-grabbing" : "cursor-grab"
+          ].join(" ")}
+          style={{ touchAction: "pan-y" }}
+        >
           <div
-            ref={viewportRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={(event) => finishDrag(event.currentTarget)}
-            onPointerCancel={(event) => finishDrag(event.currentTarget)}
-            className={[
-              "overflow-hidden rounded-[2.2rem]",
-              isDragging ? "cursor-grabbing" : "cursor-grab"
-            ].join(" ")}
-              style={{ touchAction: "pan-y" }}
-            >
-              <div
-                className="flex gap-6"
-                data-testimonial-track
+            className="flex gap-6"
+            data-testimonial-track
+          >
+            {loopedTestimonials.map((testimonial, itemIndex) => (
+              <article
+                key={`${testimonial.name}-${itemIndex}`}
+                data-testimonial-card
+                className="w-full shrink-0 basis-full rounded-[1.9rem] bg-brand-foam p-4 shadow-soft md:basis-[calc((100%-1.5rem)/2)] md:p-6"
               >
-                {loopedTestimonials.map((testimonial, itemIndex) => (
-                  <article
-                    key={`${testimonial.name}-${itemIndex}`}
-                    data-testimonial-card
-                    className="w-full shrink-0 basis-full rounded-[1.9rem] bg-brand-foam p-4 shadow-soft md:basis-[calc((100%-1.5rem)/2)] md:p-6"
-                  >
-                  <div className="grid gap-5 md:grid-cols-[0.38fr_0.62fr] md:items-stretch">
-                    <div className="relative h-[16rem] overflow-hidden rounded-[1.35rem] md:h-[19rem]">
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 30vw"
-                        className="object-cover"
-                        draggable={false}
-                      />
-                    </div>
-                    <div className="flex flex-col justify-between rounded-[1.35rem] bg-white p-5 md:p-6">
-                      <div>
-                        <p className="text-2xl font-semibold text-brand-deep md:text-[1.7rem]">
-                          {testimonial.name}
-                        </p>
-                        <p className="mt-1.5 text-xs font-medium uppercase tracking-[0.14em] text-brand-sea md:text-[0.8rem]">
-                          {testimonial.role}
-                        </p>
-                      </div>
-                      <p className="mt-5 text-base leading-7 text-slate-600 md:text-[1.12rem] md:leading-8">
-                        “{testimonial.quote}”
-                      </p>
-                    </div>
+                <div className="grid gap-5 md:grid-cols-[0.38fr_0.62fr] md:items-stretch">
+                  <div className="relative h-[16rem] overflow-hidden rounded-[1.35rem] md:h-[19rem]">
+                    <Image
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover"
+                      draggable={false}
+                    />
                   </div>
-                </article>
-              ))}
-            </div>
+                  <div className="flex flex-col justify-between rounded-[1.35rem] bg-white p-5 md:p-6">
+                    <div>
+                      <p className="text-2xl font-semibold text-brand-deep md:text-[1.7rem]">
+                        {testimonial.name}
+                      </p>
+                      <div className="mt-2 flex items-center gap-1 text-amber-400" aria-label="Avaliação 5 estrelas">
+                        {Array.from({ length: 5 }).map((_, starIndex) => (
+                          <svg
+                            key={starIndex}
+                            className="h-4 w-4 fill-amber-400 text-amber-400 sm:h-5 sm:w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="mt-5 text-base leading-7 text-slate-600 md:text-[1.12rem] md:leading-8">
+                      “{testimonial.quote}”
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
+        </div>
 
           <div className="mt-8 flex items-center justify-center gap-2 md:hidden">
             {testimonials.map((testimonial, itemIndex) => (

@@ -92,25 +92,25 @@ export const showcaseCards = [
 
 export const testimonials = [
   {
-    name: "Marina Lopes",
-    role: "Viajante • Salvador",
+    name: "Rael Batista",
     quote:
-      "A organização foi impecável e o roteiro teve exatamente o clima de mar e descanso que queríamos.",
-    image: "/images/testimonial-1.svg"
+      "Passeio muito bom, com atenção e cuidado e educação por parte da equipe.",
+    image: "/images/testimonials/rael-batista.jpg",
+    rating: 5
   },
   {
-    name: "Rafael Costa",
-    role: "Casal em viagem",
+    name: "Ellen Ribeiro",
     quote:
-      "O passeio foi bonito do começo ao fim. Atendimento claro, embarque tranquilo e visual memorável.",
-    image: "/images/testimonial-2.svg"
+      "Tivemos uma assistência excelente do guia para tirar nossas fotos.",
+    image: "/images/testimonials/ellen-ribeiro.jpg",
+    rating: 5
   },
   {
-    name: "Lívia Matos",
-    role: "Grupo de amigos",
+    name: "Edheize Silva",
     quote:
-      "A curadoria do trajeto fez diferença. Parecia uma experiência privada, muito bem conduzida.",
-    image: "/images/testimonial-3.svg"
+      "O lugar é lindo, a ilha em si é maravilhosa e vale muito a visita.",
+    image: "/images/testimonials/edheize-silva.jpg",
+    rating: 5
   }
 ];
 
