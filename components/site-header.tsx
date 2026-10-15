@@ -99,15 +99,20 @@ function DesktopTopHeader({
         </div>
 
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
-          <a href="http://wa.me/5571992517102" className="text-[0.89rem] font-semibold text-white">
-            Fale conosco
-          </a>
           <Link
             href="/contato"
-            className="rounded-full bg-[#1fc8c2] px-7 py-2.5 text-[0.89rem] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-surf"
+            className="rounded-full bg-[#1fc8c2] px-7 py-2.5 text-[0.89rem] font-bold text-[#08264e] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
           >
             Planejar passeio
           </Link>
+          <a
+            href="https://wa.me/5571992517102"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[0.89rem] font-semibold text-white transition-colors duration-200 hover:text-brand-sand"
+          >
+            Fale conosco
+          </a>
         </div>
       </div>
     </div>
@@ -156,18 +161,20 @@ function DesktopScrolledHeader({
           </nav>
 
           <div className="flex items-center gap-4">
-            <a
-              href="tel:+5571999999999"
-              className="hidden text-[0.88rem] font-semibold text-brand-deep 2xl:inline-block"
-            >
-              +55 (71) 99999-9999
-            </a>
             <Link
               href="/contato"
-              className="rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-surf"
+              className="rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-bold text-[#08264e] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
             >
               Planejar passeio
             </Link>
+            <a
+              href="https://wa.me/5571992517102"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden text-[0.88rem] font-semibold text-brand-deep transition-colors duration-200 hover:text-brand-sea 2xl:inline-block"
+            >
+              Fale conosco
+            </a>
           </div>
         </div>
       </div>
@@ -396,7 +403,7 @@ export function SiteHeader() {
                   <Link
                     href="/contato"
                     onClick={() => setIsOpen(false)}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-[#1fc8c2] hover:bg-[#1bb5b0] px-6 py-3 text-sm font-bold text-white shadow-sm transition"
+                    className="inline-flex w-full items-center justify-center rounded-full bg-[#1fc8c2] hover:bg-[#25dbd4] px-6 py-3 text-sm font-bold text-[#08264e] shadow-sm transition"
                   >
                     Planejar passeio
                   </Link>
