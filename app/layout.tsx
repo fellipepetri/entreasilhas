@@ -12,6 +12,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://entreasilhas.com.br"),
   title: "Entre as Ilhas",
   description:
     "Agência de turismo com experiências tropicais, travessias e roteiros entre mar, praias e ilhas."
