@@ -88,6 +88,13 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
             <span>Ver Site Aberto</span>
             <span>↗</span>
           </a>
+          <a
+            href="/agenda-painel"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-4 py-2.5 text-xs font-bold shadow-md transition"
+          >
+            <span>Gerenciar Reservas & Agenda</span>
+            <span>📅</span>
+          </a>
           <button
             type="button"
             onClick={() => onNavigateTab("360")}

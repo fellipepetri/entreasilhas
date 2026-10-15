@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export function SiteFooter() {
   const pathname = usePathname();
   const is360Page = pathname?.startsWith("/experiencia-360");
-  const isAdmin = pathname?.startsWith("/admin-painel");
+  const isAdmin = pathname?.startsWith("/admin-painel") || pathname?.startsWith("/agenda-painel");
 
   if (is360Page || isAdmin) {
     return null;

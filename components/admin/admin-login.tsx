@@ -6,9 +6,17 @@ import Link from "next/link";
 
 interface AdminLoginProps {
   onSuccess: (username: string) => void;
+  title?: string;
+  subtitle?: string;
+  badgeText?: string;
 }
 
-export function AdminLogin({ onSuccess }: AdminLoginProps) {
+export function AdminLogin({
+  onSuccess,
+  title = "Painel de Administração",
+  subtitle = "Entre as Ilhas — Gestão de Conteúdos",
+  badgeText = "Acesso Restrito & Protegido"
+}: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -65,14 +73,14 @@ export function AdminLogin({ onSuccess }: AdminLoginProps) {
               />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">
-              Painel de Administração
+              {title}
             </h1>
             <p className="mt-1 text-sm text-cyan-200/80">
-              Entre as Ilhas — Gestão de Conteúdos
+              {subtitle}
             </p>
             <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-[11px] font-semibold text-cyan-300">
               <span>🔒</span>
-              <span>Acesso Restrito & Protegido</span>
+              <span>{badgeText}</span>
             </div>
           </div>
 

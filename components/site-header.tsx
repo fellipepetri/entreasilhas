@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { primaryNavigationLinks } from "@/data/home";
 import { ContactModal } from "@/components/contact-modal";
+import { PlanTourModal } from "@/components/booking/plan-tour-modal";
 
 const navigationSectionIds = primaryNavigationLinks.map((link) =>
   link.href === "/" ? "inicio" : link.href.replace("#", "")
@@ -117,12 +118,14 @@ function DesktopTopHeader({
   isScrolled,
   activeSection,
   onNavigate,
-  onOpenContactModal
+  onOpenContactModal,
+  onOpenPlanTourModal
 }: {
   isScrolled: boolean;
   activeSection: string;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
   onOpenContactModal: () => void;
+  onOpenPlanTourModal: () => void;
 }) {
   return (
     <div
@@ -157,13 +160,14 @@ function DesktopTopHeader({
         </div>
 
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-3.5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
-          <Link
-            href="/contato"
-            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1]"
+          <button
+            type="button"
+            onClick={onOpenPlanTourModal}
+            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
           >
             <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
             <span>Planejar passeio</span>
-          </Link>
+          </button>
           <div className="flex items-center gap-2.5">
             <button
               type="button"
@@ -195,12 +199,14 @@ function DesktopScrolledHeader({
   isScrolled,
   activeSection,
   onNavigate,
-  onOpenContactModal
+  onOpenContactModal,
+  onOpenPlanTourModal
 }: {
   isScrolled: boolean;
   activeSection: string;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
   onOpenContactModal: () => void;
+  onOpenPlanTourModal: () => void;
 }) {
   return (
     <div
@@ -235,13 +241,14 @@ function DesktopScrolledHeader({
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <Link
-              href="/contato"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1]"
+            <button
+              type="button"
+              onClick={onOpenPlanTourModal}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
             >
               <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
               <span>Planejar passeio</span>
-            </Link>
+            </button>
             <button
               type="button"
               onClick={onOpenContactModal}
@@ -272,6 +279,7 @@ export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isPlanTourModalOpen, setIsPlanTourModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
   const pathname = usePathname();
   const router = useRouter();
@@ -411,7 +419,7 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
-  if (pathname?.startsWith("/admin-painel")) {
+  if (pathname?.startsWith("/admin-painel") || pathname?.startsWith("/agenda-painel")) {
     return null;
   }
 
@@ -423,12 +431,14 @@ export function SiteHeader() {
           activeSection={activeSection}
           onNavigate={handleNavigate}
           onOpenContactModal={() => setIsContactModalOpen(true)}
+          onOpenPlanTourModal={() => setIsPlanTourModalOpen(true)}
         />
         <DesktopScrolledHeader
           isScrolled={isScrolled}
           activeSection={activeSection}
           onNavigate={handleNavigate}
           onOpenContactModal={() => setIsContactModalOpen(true)}
+          onOpenPlanTourModal={() => setIsPlanTourModalOpen(true)}
         />
 
         <div className="px-3 sm:px-4 pt-3 sm:pt-4 xl:hidden">
@@ -494,14 +504,17 @@ export function SiteHeader() {
                     </Link>
                   ))}
                   <div className="pt-2 flex flex-col gap-2.5">
-                    <Link
-                      href="/contato"
-                      onClick={() => setIsOpen(false)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsPlanTourModalOpen(true);
+                      }}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm cursor-pointer"
                     >
                       <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
                       <span>Planejar passeio</span>
-                    </Link>
+                    </button>
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
@@ -536,6 +549,11 @@ export function SiteHeader() {
       <ContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
+      />
+
+      <PlanTourModal
+        isOpen={isPlanTourModalOpen}
+        onClose={() => setIsPlanTourModalOpen(false)}
       />
     </>
   );
