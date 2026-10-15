@@ -87,7 +87,7 @@ export function SiteFooter() {
 
           <div className="flex flex-col items-center gap-2 text-center text-sm uppercase tracking-[0.3em] text-white">
             <p>
-              Entre as Ilhas • 2026 • Todos os direitos reservados •
+              Entre as Ilhas • 2026 • Todos os direitos reservados
             </p>
             <p>
               Desenvolvido pela{" "}
@@ -95,7 +95,7 @@ export function SiteFooter() {
                 href="https://squidflare.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="no-underline hover:text-cyan-300 transition-colors"
+                className="text-cyan-300 no-underline hover:text-cyan-100 transition-colors"
               >
                 SquidFlare
               </a>
