@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { primaryNavigationLinks } from "@/data/home";
+import { ContactModal } from "@/components/contact-modal";
 
 const navigationSectionIds = primaryNavigationLinks.map((link) =>
   link.href === "/" ? "inicio" : link.href.replace("#", "")
@@ -57,14 +58,71 @@ function BrandMark({
   );
 }
 
+function CalendarPlusIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
+      <path d="M10 16h4" />
+      <path d="M12 14v4" />
+    </svg>
+  );
+}
+
+function ChatBubbleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+    </svg>
+  );
+}
+
 function DesktopTopHeader({
   isScrolled,
   activeSection,
-  onNavigate
+  onNavigate,
+  onOpenContactModal
 }: {
   isScrolled: boolean;
   activeSection: string;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
+  onOpenContactModal: () => void;
 }) {
   return (
     <div
@@ -98,21 +156,35 @@ function DesktopTopHeader({
           </nav>
         </div>
 
-        <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
+        <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-3.5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <Link
             href="/contato"
-            className="rounded-full bg-[#1fc8c2] px-7 py-2.5 text-[0.89rem] font-bold text-[#08264e] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#1fc8c2] px-6 py-2.5 text-[0.89rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
           >
-            Planejar passeio
+            <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+            <span>Planejar passeio</span>
           </Link>
-          <a
-            href="https://wa.me/5571992517102"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[0.89rem] font-semibold text-white transition-colors duration-200 hover:text-brand-sand"
-          >
-            Fale conosco
-          </a>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onOpenContactModal}
+              title="Fale conosco / Envie uma mensagem"
+              aria-label="Fale conosco - Abrir formulário"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md transition duration-300 hover:bg-white hover:text-brand-deep hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
+            >
+              <ChatBubbleIcon className="h-4.5 w-4.5" />
+            </button>
+            <a
+              href="https://wa.me/5571992517102"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Fale conosco no WhatsApp"
+              aria-label="Fale conosco no WhatsApp"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_4px_16px_rgba(16,185,129,0.35)] transition duration-300 hover:bg-emerald-400 hover:scale-105 active:scale-95"
+            >
+              <WhatsAppIcon className="h-4.5 w-4.5" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -122,11 +194,13 @@ function DesktopTopHeader({
 function DesktopScrolledHeader({
   isScrolled,
   activeSection,
-  onNavigate
+  onNavigate,
+  onOpenContactModal
 }: {
   isScrolled: boolean;
   activeSection: string;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
+  onOpenContactModal: () => void;
 }) {
   return (
     <div
@@ -160,20 +234,32 @@ function DesktopScrolledHeader({
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/contato"
-              className="rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-bold text-[#08264e] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
             >
-              Planejar passeio
+              <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+              <span>Planejar passeio</span>
             </Link>
+            <button
+              type="button"
+              onClick={onOpenContactModal}
+              title="Fale conosco / Envie uma mensagem"
+              aria-label="Fale conosco - Abrir formulário"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition duration-300 hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+            >
+              <ChatBubbleIcon className="h-4 w-4" />
+            </button>
             <a
               href="https://wa.me/5571992517102"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden text-[0.88rem] font-semibold text-brand-deep transition-colors duration-200 hover:text-brand-sea 2xl:inline-block"
+              title="Fale conosco no WhatsApp"
+              aria-label="Fale conosco no WhatsApp"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95"
             >
-              Fale conosco
+              <WhatsAppIcon className="h-4 w-4" />
             </a>
           </div>
         </div>
@@ -185,6 +271,7 @@ function DesktopScrolledHeader({
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
   const pathname = usePathname();
   const router = useRouter();
@@ -329,100 +416,127 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
-      <DesktopTopHeader isScrolled={isScrolled} activeSection={activeSection} onNavigate={handleNavigate} />
-      <DesktopScrolledHeader
-        isScrolled={isScrolled}
-        activeSection={activeSection}
-        onNavigate={handleNavigate}
-      />
+    <>
+      <header className="fixed inset-x-0 top-0 z-50">
+        <DesktopTopHeader
+          isScrolled={isScrolled}
+          activeSection={activeSection}
+          onNavigate={handleNavigate}
+          onOpenContactModal={() => setIsContactModalOpen(true)}
+        />
+        <DesktopScrolledHeader
+          isScrolled={isScrolled}
+          activeSection={activeSection}
+          onNavigate={handleNavigate}
+          onOpenContactModal={() => setIsContactModalOpen(true)}
+        />
 
-      <div className="px-3 sm:px-4 pt-3 sm:pt-4 xl:hidden">
-        <div
-          className={[
-            "mx-auto flex items-center justify-between gap-3 sm:gap-4 rounded-[2rem] border px-4 sm:px-5 py-3 sm:py-3.5 transition-all duration-500",
-            isScrolled
-              ? "border-brand-deep/8 bg-white/96 shadow-[0_18px_45px_rgba(10,40,79,0.12)]"
-              : "border-white/30 bg-[linear-gradient(135deg,rgba(10,40,79,0.78),rgba(20,72,117,0.68))] backdrop-blur-xl"
-          ].join(" ")}
-        >
-          <BrandMark scrolled={isScrolled} onNavigate={handleNavigate} />
-
-          <button
-            type="button"
-            onClick={() => setIsOpen((value) => !value)}
+        <div className="px-3 sm:px-4 pt-3 sm:pt-4 xl:hidden">
+          <div
             className={[
-              "inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border transition",
+              "mx-auto flex items-center justify-between gap-3 sm:gap-4 rounded-[2rem] border px-4 sm:px-5 py-3 sm:py-3.5 transition-all duration-500",
               isScrolled
-                ? "border-brand-deep/12 bg-brand-foam text-brand-deep"
-                : "border-white/30 bg-white/10 text-white"
+                ? "border-brand-deep/8 bg-white/96 shadow-[0_18px_45px_rgba(10,40,79,0.12)]"
+                : "border-white/30 bg-[linear-gradient(135deg,rgba(10,40,79,0.78),rgba(20,72,117,0.68))] backdrop-blur-xl"
             ].join(" ")}
-            aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={isOpen}
           >
-            {isOpen ? (
-              <span className="text-xl font-bold leading-none">✕</span>
-            ) : (
-              <span className="space-y-1.5">
-                <span className="block h-0.5 w-5 bg-current rounded-full" />
-                <span className="block h-0.5 w-5 bg-current rounded-full" />
-                <span className="block h-0.5 w-5 bg-current rounded-full" />
-              </span>
-            )}
-          </button>
-        </div>
+            <BrandMark scrolled={isScrolled} onNavigate={handleNavigate} />
 
-        {isOpen ? (
-          <>
-            <div
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs xl:hidden"
-              onClick={() => setIsOpen(false)}
-              aria-hidden="true"
-            />
-            <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/98 p-5 sm:p-6 shadow-2xl backdrop-blur animate-fadeIn">
-              <nav className="flex flex-col gap-3" aria-label="Mobile">
-                {primaryNavigationLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => {
-                      handleNavigate(link.href, e);
-                      setIsOpen(false);
-                    }}
-                    className={[
-                      "text-base font-semibold py-1.5 transition border-b border-slate-100 last:border-b-0",
-                      activeSection === getSectionIdFromHref(link.href)
-                        ? "text-brand-sea"
-                        : "text-brand-deep hover:text-brand-sea"
-                    ].join(" ")}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-                  <Link
-                    href="/contato"
-                    onClick={() => setIsOpen(false)}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-[#1fc8c2] hover:bg-[#25dbd4] px-6 py-3 text-sm font-bold text-[#08264e] shadow-sm transition"
-                  >
-                    Planejar passeio
-                  </Link>
-                  <a
-                    href="https://wa.me/5571992517102"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setIsOpen(false)}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-emerald-500 hover:bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition"
-                  >
-                    <span>Fale no WhatsApp</span>
-                    <span>💬</span>
-                  </a>
-                </div>
-              </nav>
-            </div>
-          </>
-        ) : null}
-      </div>
-    </header>
+            <button
+              type="button"
+              onClick={() => setIsOpen((value) => !value)}
+              className={[
+                "inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border transition",
+                isScrolled
+                  ? "border-brand-deep/12 bg-brand-foam text-brand-deep"
+                  : "border-white/30 bg-white/10 text-white"
+              ].join(" ")}
+              aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={isOpen}
+            >
+              {isOpen ? (
+                <span className="text-xl font-bold leading-none">✕</span>
+              ) : (
+                <span className="space-y-1.5">
+                  <span className="block h-0.5 w-5 bg-current rounded-full" />
+                  <span className="block h-0.5 w-5 bg-current rounded-full" />
+                  <span className="block h-0.5 w-5 bg-current rounded-full" />
+                </span>
+              )}
+            </button>
+          </div>
+
+          {isOpen ? (
+            <>
+              <div
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs xl:hidden"
+                onClick={() => setIsOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/98 p-5 sm:p-6 shadow-2xl backdrop-blur animate-fadeIn">
+                <nav className="flex flex-col gap-3" aria-label="Mobile">
+                  {primaryNavigationLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => {
+                        handleNavigate(link.href, e);
+                        setIsOpen(false);
+                      }}
+                      className={[
+                        "text-base font-semibold py-1.5 transition border-b border-slate-100 last:border-b-0",
+                        activeSection === getSectionIdFromHref(link.href)
+                          ? "text-brand-sea"
+                          : "text-brand-deep hover:text-brand-sea"
+                      ].join(" ")}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <div className="pt-2 flex flex-col gap-2.5">
+                    <Link
+                      href="/contato"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#1fc8c2] hover:bg-[#25dbd4] px-6 py-3 text-sm font-bold text-[#1249a1] shadow-sm transition"
+                    >
+                      <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+                      <span>Planejar passeio</span>
+                    </Link>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setIsContactModalOpen(true);
+                        }}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-50 hover:bg-slate-100 px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition cursor-pointer"
+                      >
+                        <ChatBubbleIcon className="h-4 w-4 text-brand-sea" />
+                        <span>Mensagem</span>
+                      </button>
+                      <a
+                        href="https://wa.me/5571992517102"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsOpen(false)}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition"
+                      >
+                        <WhatsAppIcon className="h-4 w-4 text-white" />
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
+                  </div>
+                </nav>
+              </div>
+            </>
+          ) : null}
+        </div>
+      </header>
+
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
+    </>
   );
 }
