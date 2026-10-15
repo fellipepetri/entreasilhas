@@ -159,9 +159,9 @@ function DesktopTopHeader({
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-3.5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <Link
             href="/contato"
-            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105"
+            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1]"
           >
-            <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+            <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
             <span>Planejar passeio</span>
           </Link>
           <div className="flex items-center gap-2.5">
@@ -237,9 +237,9 @@ function DesktopScrolledHeader({
           <div className="flex items-center gap-2.5">
             <Link
               href="/contato"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1]"
             >
-              <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+              <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
               <span>Planejar passeio</span>
             </Link>
             <button
@@ -497,9 +497,9 @@ export function SiteHeader() {
                     <Link
                       href="/contato"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-[#1249a1] shadow-sm transition"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm"
                     >
-                      <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
+                      <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
                       <span>Planejar passeio</span>
                     </Link>
                     <div className="grid grid-cols-2 gap-2">
