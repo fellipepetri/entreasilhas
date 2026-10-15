@@ -159,20 +159,20 @@ function DesktopTopHeader({
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-3.5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <Link
             href="/contato"
-            className="inline-flex items-center gap-2 rounded-full bg-[#1fc8c2] px-6 py-2.5 text-[0.89rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
+            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105"
           >
             <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
             <span>Planejar passeio</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={onOpenContactModal}
               title="Fale conosco / Envie uma mensagem"
               aria-label="Fale conosco - Abrir formulário"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md transition duration-300 hover:bg-white hover:text-brand-deep hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition duration-300 hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
             >
-              <ChatBubbleIcon className="h-4.5 w-4.5" />
+              <ChatBubbleIcon className="h-4 w-4" />
             </button>
             <a
               href="https://wa.me/5571992517102"
@@ -180,9 +180,9 @@ function DesktopTopHeader({
               rel="noopener noreferrer"
               title="Fale conosco no WhatsApp"
               aria-label="Fale conosco no WhatsApp"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_4px_16px_rgba(16,185,129,0.35)] transition duration-300 hover:bg-emerald-400 hover:scale-105 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95"
             >
-              <WhatsAppIcon className="h-4.5 w-4.5" />
+              <WhatsAppIcon className="h-4 w-4" />
             </a>
           </div>
         </div>
@@ -237,7 +237,7 @@ function DesktopScrolledHeader({
           <div className="flex items-center gap-2.5">
             <Link
               href="/contato"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#1fc8c2] px-5 py-2 text-[0.88rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:bg-[#25dbd4]"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-[#1249a1] transition duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105"
             >
               <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
               <span>Planejar passeio</span>
@@ -497,7 +497,7 @@ export function SiteHeader() {
                     <Link
                       href="/contato"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#1fc8c2] hover:bg-[#25dbd4] px-6 py-3 text-sm font-bold text-[#1249a1] shadow-sm transition"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-[#1249a1] shadow-sm transition"
                     >
                       <CalendarPlusIcon className="h-4 w-4 shrink-0 text-[#1249a1]" />
                       <span>Planejar passeio</span>
