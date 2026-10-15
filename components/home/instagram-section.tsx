@@ -125,7 +125,7 @@ export function InstagramSection() {
   }, []);
 
   return (
-    <section id="instagram" className="relative overflow-hidden bg-white py-24 sm:py-28">
+    <section id="instagram" className="scroll-mt-20 lg:scroll-mt-24 relative overflow-hidden bg-white py-24 sm:py-28">
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-6">
         {/* Cabeçalho da Seção com Card do Perfil Oficial */}
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b border-slate-100 pb-10">

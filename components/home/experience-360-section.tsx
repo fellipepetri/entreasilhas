@@ -7,7 +7,7 @@ export function Experience360Section() {
   return (
     <section
       id="experiencia-360"
-      className="relative z-0 -mt-14 md:-mt-16 lg:-mt-20 overflow-hidden bg-slate-950 pt-28 sm:pt-32 lg:pt-36 pb-20 lg:pb-32 text-white"
+      className="scroll-mt-20 lg:scroll-mt-24 relative z-0 -mt-14 md:-mt-16 lg:-mt-20 overflow-hidden bg-slate-950 pt-28 sm:pt-32 lg:pt-36 pb-20 lg:pb-32 text-white"
     >
       {/* Luzes de fundo oceânicas que formam o degradê da seção 360 */}
       <div

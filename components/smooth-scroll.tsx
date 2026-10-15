@@ -127,8 +127,17 @@ export function SmoothScroll() {
       animateTo(targetY + normalizeWheelDelta(event));
     }
 
+    function cancelAnimation() {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      currentY = window.scrollY;
+      targetY = window.scrollY;
+    }
+
     function handleAnchorClick(event: MouseEvent) {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) {
         return;
       }
 
@@ -147,7 +156,8 @@ export function SmoothScroll() {
 
       event.preventDefault();
       history.pushState(null, "", hash);
-      animateTo(window.scrollY + target.getBoundingClientRect().top);
+      const headerOffset = window.innerWidth >= 1024 ? 80 : 70;
+      animateTo(window.scrollY + target.getBoundingClientRect().top - headerOffset);
     }
 
     function handleResize() {
@@ -165,12 +175,14 @@ export function SmoothScroll() {
     }
 
     window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("cancelSmoothScroll", cancelAnimation);
     document.addEventListener("click", handleAnchorClick);
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", syncScrollPosition, { passive: true });
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("cancelSmoothScroll", cancelAnimation);
       document.removeEventListener("click", handleAnchorClick);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", syncScrollPosition);

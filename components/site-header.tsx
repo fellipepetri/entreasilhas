@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { primaryNavigationLinks } from "@/data/home";
 
@@ -13,10 +14,19 @@ function getSectionIdFromHref(href: string) {
   return href === "/" ? "inicio" : href.replace("#", "");
 }
 
-function BrandMark({ scrolled, compact = false }: { scrolled: boolean; compact?: boolean }) {
+function BrandMark({
+  scrolled,
+  compact = false,
+  onNavigate
+}: {
+  scrolled: boolean;
+  compact?: boolean;
+  onNavigate?: (href: string, event?: React.MouseEvent) => void;
+}) {
   return (
     <Link
       href="/"
+      onClick={(e) => onNavigate?.("/", e)}
       className="flex min-w-0 items-center gap-2.5 sm:gap-3"
     >
       <div
@@ -54,7 +64,7 @@ function DesktopTopHeader({
 }: {
   isScrolled: boolean;
   activeSection: string;
-  onNavigate: (href: string) => void;
+  onNavigate: (href: string, event?: React.MouseEvent) => void;
 }) {
   return (
     <div
@@ -68,13 +78,13 @@ function DesktopTopHeader({
     >
       <div className="mx-auto flex w-full max-w-[116rem] items-center justify-between gap-4">
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-1 items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
-          <BrandMark scrolled={false} compact />
+          <BrandMark scrolled={false} compact onNavigate={onNavigate} />
           <nav className="mr-2 flex items-center gap-6 2xl:gap-10" aria-label="Principal">
             {primaryNavigationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => onNavigate(link.href)}
+                onClick={(e) => onNavigate(link.href, e)}
                 className={[
                   "text-[0.89rem] font-medium transition",
                   activeSection === getSectionIdFromHref(link.href)
@@ -111,7 +121,7 @@ function DesktopScrolledHeader({
 }: {
   isScrolled: boolean;
   activeSection: string;
-  onNavigate: (href: string) => void;
+  onNavigate: (href: string, event?: React.MouseEvent) => void;
 }) {
   return (
     <div
@@ -125,14 +135,14 @@ function DesktopScrolledHeader({
     >
       <div className="pointer-events-auto border-b border-black/6 bg-white shadow-[0_14px_40px_rgba(10,40,79,0.10)]">
         <div className="mx-auto flex min-h-[3.95rem] w-full max-w-[116rem] items-center justify-between gap-4 px-6 xl:px-8 2xl:px-10">
-          <BrandMark scrolled compact />
+          <BrandMark scrolled compact onNavigate={onNavigate} />
 
           <nav className="flex items-center gap-4 xl:gap-5 2xl:gap-7" aria-label="Principal fixo">
             {primaryNavigationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => onNavigate(link.href)}
+                onClick={(e) => onNavigate(link.href, e)}
                 className={[
                   "text-[0.88rem] font-medium transition",
                   activeSection === getSectionIdFromHref(link.href)
@@ -169,10 +179,82 @@ export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
+  const pathname = usePathname();
+  const router = useRouter();
 
-  function handleNavigate(href: string) {
-    setActiveSection(getSectionIdFromHref(href));
+  function handleNavigate(href: string, event?: React.MouseEvent) {
+    const isAnchor = href.startsWith("#") || href === "/";
+    const isHome = pathname === "/";
+
+    if (isHome && isAnchor) {
+      if (event) {
+        event.preventDefault();
+      }
+
+      window.dispatchEvent(new Event("cancelSmoothScroll"));
+
+      const targetId = href === "/" ? "inicio" : href.replace(/^#/, "");
+
+      if (targetId === "inicio") {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+        try {
+          history.pushState(null, "", "/");
+        } catch {
+          // fallback
+        }
+        setActiveSection("inicio");
+      } else {
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          const headerOffset = window.innerWidth >= 1024 ? 80 : 70;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+          window.scrollTo({
+            top: Math.max(0, offsetPosition),
+            behavior: "smooth"
+          });
+
+          try {
+            history.pushState(null, "", href);
+          } catch {
+            // fallback
+          }
+          setActiveSection(targetId);
+        }
+      }
+    } else if (!isHome && href.startsWith("#")) {
+      if (event) {
+        event.preventDefault();
+      }
+      router.push(`/${href}`);
+    }
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined" || pathname !== "/") return;
+    const hash = window.location.hash;
+    if (hash && hash !== "#") {
+      const targetId = decodeURIComponent(hash.slice(1));
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        const timer = setTimeout(() => {
+          const headerOffset = window.innerWidth >= 1024 ? 80 : 70;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({
+            top: Math.max(0, offsetPosition),
+            behavior: "smooth"
+          });
+          setActiveSection(targetId);
+        }, 200);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [pathname]);
 
   useEffect(() => {
     function handleScroll() {
@@ -253,7 +335,7 @@ export function SiteHeader() {
               : "border-white/30 bg-[linear-gradient(135deg,rgba(10,40,79,0.78),rgba(20,72,117,0.68))] backdrop-blur-xl"
           ].join(" ")}
         >
-          <BrandMark scrolled={isScrolled} />
+          <BrandMark scrolled={isScrolled} onNavigate={handleNavigate} />
 
           <button
             type="button"
@@ -292,8 +374,8 @@ export function SiteHeader() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={() => {
-                      handleNavigate(link.href);
+                    onClick={(e) => {
+                      handleNavigate(link.href, e);
                       setIsOpen(false);
                     }}
                     className={[

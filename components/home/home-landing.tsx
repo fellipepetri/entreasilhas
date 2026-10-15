@@ -36,7 +36,7 @@ function HeroSlider() {
   return (
     <section
       id="inicio"
-      className="relative overflow-hidden bg-brand-deep pt-24 text-white sm:pt-28 lg:pt-32"
+      className="scroll-mt-20 lg:scroll-mt-24 relative overflow-hidden bg-brand-deep pt-24 text-white sm:pt-28 lg:pt-32"
     >
       <div className="absolute inset-0">
         {heroSlides.map((slide, index) => (
@@ -175,7 +175,7 @@ function HoverRouteList() {
   return (
     <section
       id="roteiros"
-      className="relative z-10 overflow-hidden bg-transparent py-24 text-white"
+      className="scroll-mt-20 lg:scroll-mt-24 relative z-10 overflow-hidden bg-transparent py-24 text-white"
     >
       <div
         aria-hidden="true"
@@ -654,7 +654,7 @@ function TestimonialSlider() {
   }
 
   return (
-    <section id="avaliacoes" className="relative overflow-hidden bg-white py-24">
+    <section id="avaliacoes" className="scroll-mt-20 lg:scroll-mt-24 relative overflow-hidden bg-white py-24">
       <div className="relative mx-auto w-full max-w-6xl px-6">
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
@@ -855,7 +855,7 @@ export function HomeLanding() {
     <div className="overflow-hidden bg-white">
       <HeroSlider />
 
-      <section id="sobre" className="relative bg-white pb-14 pt-10 md:pb-16">
+      <section id="sobre" className="scroll-mt-20 lg:scroll-mt-24 relative bg-white pb-14 pt-10 md:pb-16">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
           <div className="grid gap-8">
             <article className="relative overflow-hidden rounded-[1.6rem] sm:rounded-[2.2rem]">
@@ -975,7 +975,7 @@ export function HomeLanding() {
 
       <Experience360Section />
 
-      <section id="galeria" className="bg-white py-24">
+      <section id="galeria" className="scroll-mt-20 lg:scroll-mt-24 bg-white py-24">
         <div className="mx-auto w-full max-w-6xl px-6">
           <div className="mb-12 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
