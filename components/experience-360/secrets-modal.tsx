@@ -11,14 +11,19 @@ interface SecretsModalProps {
   discoveredContent: HotspotSecretContent | null;
   foundSecrets: string[];
   onClose: () => void;
+  secretsCatalog?: typeof REGIONAL_SECRETS_CATALOG;
+  totalSecretsCount?: number;
 }
 
 export function SecretsModal({
   discoveredContent,
   foundSecrets,
-  onClose
+  onClose,
+  secretsCatalog = REGIONAL_SECRETS_CATALOG,
+  totalSecretsCount = TOTAL_SECRETS_COUNT
 }: SecretsModalProps) {
-  const isAllCompleted = foundSecrets.length >= TOTAL_SECRETS_COUNT;
+  const isAllCompleted = foundSecrets.length >= totalSecretsCount;
+
   const backdropRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -190,14 +195,14 @@ export function SecretsModal({
               <div
                 className="h-full bg-gradient-to-r from-cyan-400 via-teal-400 to-yellow-400 transition-all duration-500 rounded-full"
                 style={{
-                  width: `${(foundSecrets.length / TOTAL_SECRETS_COUNT) * 100}%`
+                  width: `${(foundSecrets.length / Math.max(1, totalSecretsCount)) * 100}%`
                 }}
               />
             </div>
 
-            {/* Grid dos 4 tesouros regionais */}
+            {/* Grid dos tesouros regionais */}
             <div className="grid grid-cols-2 gap-2 text-[11px]">
-              {REGIONAL_SECRETS_CATALOG.map((item) => {
+              {secretsCatalog.map((item) => {
                 const isFound = foundSecrets.includes(item.id);
                 return (
                   <div

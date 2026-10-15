@@ -2,8 +2,21 @@
 
 import Link from "next/link";
 import { PanoramaViewer } from "@/components/experience-360/panorama-viewer";
+import type { Experience360SectionData } from "@/lib/content-types";
 
-export function Experience360Section() {
+interface Experience360SectionProps {
+  data?: Experience360SectionData;
+}
+
+export function Experience360Section({ data }: Experience360SectionProps) {
+  const badge = data?.badge || "Entre as Ilhas 360º";
+  const title = data?.title || "ENTRE AS ILHAS";
+  const highlight = data?.highlight || "360°";
+  const subtitle = data?.subtitle || "Explore. Descubra. Viva a Baía antes mesmo de embarcar.";
+  const description =
+    data?.description ||
+    "Arraste com o mouse ou gire o smartphone para olhar em todas as direções. Conecte-se com as praias da Ilha dos Frades, o cais de Bom Jesus dos Passos e os bancos de areia da Coroa do Frade.";
+
   return (
     <section
       id="experiencia-360"
@@ -25,18 +38,16 @@ export function Experience360Section() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              Entre as Ilhas 360º
+              {badge}
             </div>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.08]">
-              ENTRE AS ILHAS <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300">360°</span>
+              {title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300">{highlight}</span>
             </h2>
             <p className="mt-3 text-lg sm:text-xl font-medium text-slate-300">
-              Explore. Descubra. Viva a Baía antes mesmo de embarcar.
+              {subtitle}
             </p>
-            <p className="mt-2 text-sm sm:text-base text-slate-400 leading-relaxed">
-              Arraste com o mouse ou gire o smartphone para olhar em todas as direções.
-              Conecte-se com as praias da <strong>Ilha dos Frades</strong>, o cais de{" "}
-              <strong>Bom Jesus dos Passos</strong> e os bancos de areia da <strong>Coroa do Frade</strong>.
+            <p className="mt-2 text-sm sm:text-base text-slate-400 leading-relaxed whitespace-pre-line">
+              {description}
             </p>
           </div>
 
@@ -53,8 +64,13 @@ export function Experience360Section() {
 
         {/* Visualizador 360 Incorporado */}
         <div className="relative">
-          <PanoramaViewer />
+          <PanoramaViewer
+            scenes={data?.scenes}
+            secretsCatalog={data?.secretsCatalog}
+            totalSecretsCount={data?.totalSecretsCount}
+          />
         </div>
+
 
         {/* Grid de Funcionalidades Exclusivas */}
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">

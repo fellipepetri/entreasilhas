@@ -31,3 +31,7 @@ Thumbs.db
 
 # typescript
 *.tsbuildinfo
+
+# uploads
+/public/uploads/*
+!/public/uploads/.gitkeep

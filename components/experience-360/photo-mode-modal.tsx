@@ -14,7 +14,6 @@ export function PhotoModeModal({
   currentScene,
   onClose
 }: PhotoModeModalProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [compositeUrl, setCompositeUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
 

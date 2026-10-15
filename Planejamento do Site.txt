@@ -1,0 +1,15 @@
+Painel do site:
+	Opção para adicionar ou remover datas do calendário
+	Versão do calendário com as informações das pessoas que fecharam as datas (abrindo em um modal ao clicar na data)
+	
+
+Área do cliente:
+	Permitir login utilizando conta do google ou criar conta manualmente
+	Confirmar agendamentos (realizar pagamento e reservar a data) após realização login
+		O cliente seleciona a data/opções e, ao clicar em "Reservar", é direcionado a tela de login/criação de conta
+	
+Seção de agendamentos:
+	Ao clicar no botão "Planejar passeio", abrirá um modal com um calendário com as datas disponíveis e opções para selecionar
+	Será um calendário interativo que exibe datas disponíveis/fechadas, opções de quantidade de pessoas (adultos/crianças)
+	Valores tabelados variáveis: valor por adulto | por criança | por quantidade de pessoas (estabelecer valor mínimo)
+		

@@ -8,7 +8,8 @@ import {
   type PanoramaHotspot,
   type HotspotInfoContent,
   type HotspotTourContent,
-  type HotspotSecretContent
+  type HotspotSecretContent,
+  type RegionalSecretCatalogItem
 } from "@/data/experience-360";
 import { ambienceAudio } from "@/lib/audio-ambience";
 import { MiniRadarMap } from "./mini-radar-map";
@@ -29,17 +30,27 @@ interface PanoramaViewerProps {
   initialSceneId?: string;
   isStandalone?: boolean; // se for na página dedicada ou na seção da home
   onCloseStandalone?: () => void;
+  scenes?: PanoramaScene[];
+  secretsCatalog?: RegionalSecretCatalogItem[];
+  totalSecretsCount?: number;
 }
 
 export function PanoramaViewer({
-  initialSceneId = "ilha-dos-frades",
+  initialSceneId,
   isStandalone = false,
-  onCloseStandalone
+  onCloseStandalone,
+  scenes: propScenes,
+  secretsCatalog,
+  totalSecretsCount
 }: PanoramaViewerProps) {
+  const scenes = propScenes && propScenes.length > 0 ? propScenes : PANORAMA_SCENES;
+  const defaultSceneId = initialSceneId || scenes[0]?.id || "ilha-dos-frades";
+
   // Estado da Cena Atual
-  const [currentSceneId, setCurrentSceneId] = useState(initialSceneId);
+  const [currentSceneId, setCurrentSceneId] = useState(defaultSceneId);
   const currentScene =
-    PANORAMA_SCENES.find((s) => s.id === currentSceneId) || PANORAMA_SCENES[0];
+    scenes.find((s) => s.id === currentSceneId) || scenes[0];
+
 
   // Referências DOM
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -93,7 +104,10 @@ export function PanoramaViewer({
   // Trava de scroll da página de fundo e tecla Escape quando qualquer modal estiver aberto
   const isAnyModalOpen = Boolean(selectedInfo || selectedTour || discoveredSecret || capturedPhotoUrl);
   const isAnyModalOpenRef = useRef(isAnyModalOpen);
-  isAnyModalOpenRef.current = isAnyModalOpen;
+
+  useEffect(() => {
+    isAnyModalOpenRef.current = isAnyModalOpen;
+  }, [isAnyModalOpen]);
 
   useEffect(() => {
     if (!isAnyModalOpen) return;
@@ -127,6 +141,74 @@ export function PanoramaViewer({
     const timer = setTimeout(() => setShowHint(false), 5500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Carregador de Textura com transição suave e liberação de memória GPU
+  const loadTexture = useCallback((imageUrl: string) => {
+    setIsLoadingScene(true);
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.load(
+      imageUrl,
+      (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+        if (sphereMaterialRef.current) {
+          if (sphereMaterialRef.current.map) {
+            sphereMaterialRef.current.map.dispose();
+          }
+          sphereMaterialRef.current.map = texture;
+          sphereMaterialRef.current.needsUpdate = true;
+        }
+        setIsLoadingScene(false);
+      },
+      undefined,
+      (err) => {
+        console.error("Erro ao carregar textura equirretangular:", err);
+        setIsLoadingScene(false);
+      }
+    );
+  }, []);
+
+  // Projeção dos hotspots do espaço esférico 3D para coordenadas de tela 2D
+  const updateProjectedHotspots = useCallback(
+    (container: HTMLDivElement, camera: THREE.PerspectiveCamera) => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
+
+      const currentHotspots = currentScene.hotspots;
+      const projected: ProjectedHotspot[] = currentHotspots.map((h) => {
+        const phi = THREE.MathUtils.degToRad(90 - h.pitch);
+        const theta = THREE.MathUtils.degToRad(h.yaw);
+
+        // Ponto na superfície da esfera
+        const pos = new THREE.Vector3(
+          500 * Math.sin(phi) * Math.cos(theta),
+          500 * Math.cos(phi),
+          500 * Math.sin(phi) * Math.sin(theta)
+        );
+
+        // Projeta com a câmera
+        const screenVector = pos.clone().project(camera);
+
+        // Se z > 1, está atrás do plano da câmera
+        const isVisible = screenVector.z < 1;
+        const screenX = (screenVector.x * 0.5 + 0.5) * width;
+        const screenY = (-(screenVector.y * 0.5) + 0.5) * height;
+
+        return {
+          hotspot: h,
+          screenX,
+          screenY,
+          isVisible
+        };
+      });
+
+      setProjectedHotspots(projected);
+    },
+    [currentScene.hotspots]
+  );
 
   // Inicialização do Three.js
   useEffect(() => {
@@ -270,38 +352,10 @@ export function PanoramaViewer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Carregador de Textura com transição suave e liberação de memória GPU
-  const loadTexture = useCallback((imageUrl: string) => {
-    setIsLoadingScene(true);
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(
-      imageUrl,
-      (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.generateMipmaps = false;
-        texture.minFilter = THREE.LinearFilter;
-        if (sphereMaterialRef.current) {
-          if (sphereMaterialRef.current.map) {
-            sphereMaterialRef.current.map.dispose();
-          }
-          sphereMaterialRef.current.map = texture;
-          sphereMaterialRef.current.needsUpdate = true;
-        }
-        setIsLoadingScene(false);
-      },
-      undefined,
-      (err) => {
-        console.error("Erro ao carregar textura equirretangular:", err);
-        setIsLoadingScene(false);
-      }
-    );
-  }, []);
-
   // Troca de Cena
   const handleSelectScene = useCallback(
     (sceneId: string) => {
-      const scene = PANORAMA_SCENES.find((s) => s.id === sceneId);
+      const scene = scenes.find((s) => s.id === sceneId);
       if (!scene || scene.id === currentSceneId) return;
 
       setCurrentSceneId(scene.id);
@@ -313,48 +367,8 @@ export function PanoramaViewer({
       state.targetLon = scene.initialView.yaw;
       state.targetFov = scene.initialView.fov;
     },
-    [currentSceneId, loadTexture]
+    [currentSceneId, loadTexture, scenes]
   );
-
-  // Projeção dos hotspots do espaço esférico 3D para coordenadas de tela 2D
-  const updateProjectedHotspots = (
-    container: HTMLDivElement,
-    camera: THREE.PerspectiveCamera
-  ) => {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    if (!width || !height) return;
-
-    const currentHotspots = currentScene.hotspots;
-    const projected: ProjectedHotspot[] = currentHotspots.map((h) => {
-      const phi = THREE.MathUtils.degToRad(90 - h.pitch);
-      const theta = THREE.MathUtils.degToRad(h.yaw);
-
-      // Ponto na superfície da esfera
-      const pos = new THREE.Vector3(
-        500 * Math.sin(phi) * Math.cos(theta),
-        500 * Math.cos(phi),
-        500 * Math.sin(phi) * Math.sin(theta)
-      );
-
-      // Projeta com a câmera
-      const screenVector = pos.clone().project(camera);
-
-      // Se z > 1, está atrás do plano da câmera
-      const isVisible = screenVector.z < 1;
-      const screenX = (screenVector.x * 0.5 + 0.5) * width;
-      const screenY = (-(screenVector.y * 0.5) + 0.5) * height;
-
-      return {
-        hotspot: h,
-        screenX,
-        screenY,
-        isVisible
-      };
-    });
-
-    setProjectedHotspots(projected);
-  };
 
   // Cliques em Hotspots
   const handleHotspotClick = (hotspot: PanoramaHotspot) => {
@@ -694,8 +708,9 @@ export function PanoramaViewer({
       <div className="absolute bottom-2.5 sm:bottom-4 inset-x-2 sm:inset-x-4 flex flex-col items-center gap-2 sm:gap-3 pointer-events-none z-20">
         {/* Barra de Miniaturas das Cenas (Carrossel Rápido de Destinos) */}
         <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-white/20 shadow-2xl max-w-full overflow-x-auto scrollbar-none">
-          {PANORAMA_SCENES.map((scene) => {
+          {scenes.map((scene) => {
             const isSelected = scene.id === currentScene.id;
+
             return (
               <button
                 key={scene.id}
@@ -860,6 +875,8 @@ export function PanoramaViewer({
           discoveredContent={discoveredSecret}
           foundSecrets={foundSecrets}
           onClose={() => setDiscoveredSecret(null)}
+          secretsCatalog={secretsCatalog}
+          totalSecretsCount={totalSecretsCount}
         />
       )}
 

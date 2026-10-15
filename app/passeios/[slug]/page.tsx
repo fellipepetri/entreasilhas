@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionShell } from "@/components/section-shell";
-import { getTourBySlug } from "@/lib/get-tour-by-slug";
+import { fetchTourBySlug } from "@/lib/get-tour-by-slug";
 
 type PasseioSlugPageProps = {
   params: Promise<{
@@ -12,7 +13,8 @@ export default async function PasseioSlugPage({
   params
 }: PasseioSlugPageProps) {
   const { slug } = await params;
-  const tour = getTourBySlug(slug);
+  const tour = await fetchTourBySlug(slug);
+
 
   if (!tour) {
     notFound();
@@ -95,12 +97,12 @@ export default async function PasseioSlugPage({
               <span>💬</span>
             </a>
 
-            <a
+            <Link
               href="/passeios"
               className="w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-700 font-semibold px-6 py-3 text-sm transition border border-slate-200"
             >
               <span>← Voltar aos passeios</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

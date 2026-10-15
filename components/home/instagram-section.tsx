@@ -88,11 +88,25 @@ function renderCaptionWithHashtags(caption: string) {
   });
 }
 
-export function InstagramSection() {
-  const [profile, setProfile] = useState<InstagramProfile>(INSTAGRAM_PROFILE);
-  const [posts, setPosts] = useState<InstagramPost[]>(CURATED_INSTAGRAM_POSTS);
+interface InstagramSectionProps {
+  data?: {
+    profile?: InstagramProfile;
+    curatedPosts?: InstagramPost[];
+  };
+}
+
+export function InstagramSection({ data }: InstagramSectionProps = {}) {
+  const [profile, setProfile] = useState<InstagramProfile>(
+    data?.profile || INSTAGRAM_PROFILE
+  );
+  const [posts, setPosts] = useState<InstagramPost[]>(
+    data?.curatedPosts && data.curatedPosts.length > 0
+      ? data.curatedPosts
+      : CURATED_INSTAGRAM_POSTS
+  );
   const [isLive, setIsLive] = useState(false);
   const [selectedPostIndex, setSelectedPostIndex] = useState<number | null>(null);
+
 
   const handleCloseModal = () => setSelectedPostIndex(null);
   const handlePrevModal = () => {

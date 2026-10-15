@@ -151,13 +151,14 @@ export function InstagramModal({
   const [isSaved, setIsSaved] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState(false);
 
-  // Atualiza contagem quando muda de post
-  useEffect(() => {
+  const [prevPostId, setPrevPostId] = useState(post.id);
+  if (post.id !== prevPostId) {
+    setPrevPostId(post.id);
     setIsLiked(false);
     setLikesCount(post.likes);
     setIsSaved(false);
     setCopyFeedback(false);
-  }, [post]);
+  }
 
   // Teclas de atalho: Escape (fechar), ArrowLeft (anterior), ArrowRight (próximo)
   useEffect(() => {

@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { SectionShell } from "@/components/section-shell";
-import { tours } from "@/data/tours";
+import { getSiteContent } from "@/lib/content-store";
+import { tours as defaultTours } from "@/data/tours";
 
-export default function PasseiosPage() {
+export default async function PasseiosPage() {
+  const content = await getSiteContent().catch(() => null);
+  const tours = content?.routes?.tours || defaultTours;
+
   return (
     <SectionShell
       eyebrow="Experiências Náuticas"

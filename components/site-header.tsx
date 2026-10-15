@@ -317,6 +317,10 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
+  if (pathname?.startsWith("/admin-painel")) {
+    return null;
+  }
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <DesktopTopHeader isScrolled={isScrolled} activeSection={activeSection} onNavigate={handleNavigate} />

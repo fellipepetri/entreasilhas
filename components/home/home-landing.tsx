@@ -6,12 +6,14 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
-  aboutStats,
-  heroSlides,
-  routeItems,
-  showcaseCards,
-  testimonials
+  aboutStats as defaultAboutStats,
+  heroSlides as defaultHeroSlides,
+  routeItems as defaultRouteItems,
+  showcaseCards as defaultShowcaseCards,
+  testimonials as defaultTestimonials
 } from "@/data/home";
+import type { HeroSlide, RouteItem, Testimonial, SiteContent } from "@/lib/content-types";
+import { useSiteContent } from "@/lib/use-site-content";
 import { Experience360Section } from "@/components/home/experience-360-section";
 import { InstagramSection } from "@/components/home/instagram-section";
 
@@ -20,18 +22,19 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"]
 });
 
-function HeroSlider() {
+function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
+  const slides = propSlides && propSlides.length > 0 ? propSlides : defaultHeroSlides;
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setActiveIndex((value) => (value + 1) % heroSlides.length);
+      setActiveIndex((value) => (value + 1) % slides.length);
     }, 6800);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
-  const activeSlide = heroSlides[activeIndex];
+  const activeSlide = slides[activeIndex] || slides[0];
 
   return (
     <section
@@ -39,7 +42,7 @@ function HeroSlider() {
       className="scroll-mt-20 lg:scroll-mt-24 relative overflow-hidden bg-brand-deep pt-24 text-white sm:pt-28 lg:pt-32"
     >
       <div className="absolute inset-0">
-        {heroSlides.map((slide, index) => (
+        {slides.map((slide, index) => (
           <div
             key={slide.image}
             className={[
@@ -65,7 +68,7 @@ function HeroSlider() {
         <div className="grid w-full gap-10 md:-translate-y-8 lg:-translate-y-16 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,21rem)] lg:items-end xl:-translate-y-20 xl:gap-14">
           <div className="max-w-[58rem]">
             <div className="mb-6 flex gap-3 text-[#78c85f] sm:mb-8">
-              {heroSlides.map((slide, index) => (
+              {slides.map((slide, index) => (
                 <button
                   key={slide.image}
                   type="button"
@@ -129,7 +132,8 @@ function HeroSlider() {
   );
 }
 
-function HoverRouteList() {
+function HoverRouteList({ items: propItems }: { items?: RouteItem[] } = {}) {
+  const routeItems = propItems && propItems.length > 0 ? propItems : defaultRouteItems;
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
@@ -316,8 +320,8 @@ function HoverRouteList() {
           >
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.45rem]">
             <Image
-              src={routeItems[previewIndex].image}
-              alt={routeItems[previewIndex].title}
+              src={routeItems[previewIndex]?.image || routeItems[0]?.image || "/images/ref-route-farol.svg"}
+              alt={routeItems[previewIndex]?.title || routeItems[0]?.title || "Roteiro"}
               fill
               sizes="272px"
               className="object-cover"
@@ -428,7 +432,8 @@ function ParallaxCard({
   );
 }
 
-function TestimonialSlider() {
+function TestimonialSlider({ list }: { list?: Testimonial[] } = {}) {
+  const testimonials = list && list.length > 0 ? list : defaultTestimonials;
   const cloneSets = 12;
   const loopedTestimonials = Array.from({ length: cloneSets }, () => testimonials).flat();
   const step = 1;
@@ -479,7 +484,7 @@ function TestimonialSlider() {
     window.addEventListener("resize", measureCardSpan);
 
     return () => window.removeEventListener("resize", measureCardSpan);
-  }, []);
+  }, [testimonials.length]);
 
   useEffect(() => {
     return () => {
@@ -595,7 +600,7 @@ function TestimonialSlider() {
     handleScroll();
 
     return () => viewport.removeEventListener("scroll", handleScroll);
-  }, [cardSpan]);
+  }, [cardSpan, testimonials.length]);
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if (event.pointerType === "mouse") {
@@ -850,10 +855,24 @@ function Chamada() {
   );
 }
 
-export function HomeLanding() {
+export function HomeLanding({ initialContent }: { initialContent?: SiteContent } = {}) {
+  const { content } = useSiteContent(initialContent);
+
+  const heroSlides = content.heroSlides;
+  const about = content.about;
+  const routeItems = content.routes.homeItems;
+  const gallery = content.gallery;
+  const cards =
+    gallery?.cards && gallery.cards.length >= 4
+      ? gallery.cards
+      : defaultShowcaseCards;
+  const testimonials = content.testimonials;
+  const experience360 = content.experience360;
+  const instagram = content.instagram;
+
   return (
     <div className="overflow-hidden bg-white">
-      <HeroSlider />
+      <HeroSlider slides={heroSlides} />
 
       <section id="sobre" className="scroll-mt-20 lg:scroll-mt-24 relative bg-white pb-14 pt-10 md:pb-16">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
@@ -862,7 +881,7 @@ export function HomeLanding() {
               <div className="absolute inset-0 rounded-[1.6rem] sm:rounded-[2.2rem] border-[3px] border-brand-sea" />
               <div className="relative m-3 sm:m-5 md:m-7 overflow-hidden rounded-[1.2rem] sm:rounded-[2rem]">
                 <Image
-                  src="/images/about-main.svg"
+                  src={about?.mainImage || "/images/about-main.svg"}
                   alt="Imagem principal da seção sobre"
                   width={780}
                   height={900}
@@ -872,13 +891,15 @@ export function HomeLanding() {
             </article>
 
             <div className="pl-0 sm:pl-4 md:pl-8">
-              <p className="text-base sm:text-lg font-semibold text-brand-sea">Quem somos</p>
-              <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
-                Organizamos experiências náuticas e roteiros costeiros com foco em
-                conforto, clareza logística e visual tropical.
+              <p className="text-base sm:text-lg font-semibold text-brand-sea">
+                {about?.eyebrow || "Quem somos"}
+              </p>
+              <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
+                {about?.paragraph1 ||
+                  "Organizamos experiências náuticas e roteiros costeiros com foco em conforto, clareza logística e visual tropical."}
               </p>
               <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-4">
-                {aboutStats.map((item) => (
+                {(about?.stats || defaultAboutStats).map((item) => (
                   <div
                     key={item.label}
                     className="rounded-2xl sm:rounded-full bg-brand-foam p-3 sm:px-5 sm:py-3 text-brand-deep text-center sm:text-left"
@@ -896,12 +917,11 @@ export function HomeLanding() {
               Mergulhe na magia do mar
             </p>
             <h2 className="font-display mt-5 text-[clamp(2.5rem,7vw,4.5rem)] font-semibold leading-[1.02] tracking-tight text-brand-deep">
-              Explorando a beleza entre ondas, ilhas e marés.
+              {about?.title || "Explorando a beleza entre ondas, ilhas e marés."}
             </h2>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10">
-              A proposta visual segue a mesma lógica da referência: título amplo,
-              foto principal recortada, apoio fotográfico secundário e conteúdo
-              bem respirado logo após a hero.
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
+              {about?.paragraph2 ||
+                "A proposta visual segue a mesma lógica da referência: título amplo, foto principal recortada, apoio fotográfico secundário e conteúdo bem respirado logo após a hero."}
             </p>
             <Link
               href="/sobre"
@@ -911,7 +931,7 @@ export function HomeLanding() {
             </Link>
             <div className="mt-14 overflow-hidden rounded-[2.2rem]">
               <Image
-                src="/images/about-secondary.svg"
+                src={about?.secondaryImage || "/images/about-secondary.svg"}
                 alt="Imagem secundária da seção sobre"
                 width={980}
                 height={640}
@@ -971,43 +991,43 @@ export function HomeLanding() {
         </div>
       </section>
 
-      <HoverRouteList />
+      <HoverRouteList items={routeItems} />
 
-      <Experience360Section />
+      <Experience360Section data={experience360} />
 
       <section id="galeria" className="scroll-mt-20 lg:scroll-mt-24 bg-white py-24">
         <div className="mx-auto w-full max-w-6xl px-6">
           <div className="mb-12 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
-              Adventure Showcase
+              {gallery?.eyebrow || "Adventure Showcase"}
             </p>
             <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
-              Galeria com recortes grandes e parallax dentro da moldura.
+              {gallery?.title || "Galeria com recortes grandes e parallax dentro da moldura."}
             </h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[0.46fr_0.54fr]">
             <div className="grid gap-6">
               <ParallaxCard
-                image={showcaseCards[0].image}
-                alt={showcaseCards[0].title}
+                image={cards[0]?.image || defaultShowcaseCards[0].image}
+                alt={cards[0]?.title || defaultShowcaseCards[0].title}
                 className="w-full max-w-full lg:max-w-[34rem]"
               />
               <ParallaxCard
-                image={showcaseCards[2].image}
-                alt={showcaseCards[2].title}
+                image={cards[2]?.image || defaultShowcaseCards[2].image}
+                alt={cards[2]?.title || defaultShowcaseCards[2].title}
                 className="w-full max-w-full lg:max-w-[42rem]"
               />
             </div>
             <div className="grid gap-6 pt-0 lg:pt-10">
               <ParallaxCard
-                image={showcaseCards[1].image}
-                alt={showcaseCards[1].title}
+                image={cards[1]?.image || defaultShowcaseCards[1].image}
+                alt={cards[1]?.title || defaultShowcaseCards[1].title}
                 className="w-full"
               />
               <ParallaxCard
-                image={showcaseCards[3].image}
-                alt={showcaseCards[3].title}
+                image={cards[3]?.image || defaultShowcaseCards[3].image}
+                alt={cards[3]?.title || defaultShowcaseCards[3].title}
                 className="w-full max-w-full lg:max-w-[34rem] lg:justify-self-end"
               />
             </div>
@@ -1015,10 +1035,11 @@ export function HomeLanding() {
         </div>
       </section>
 
-      <TestimonialSlider />
+      <TestimonialSlider list={testimonials} />
       <Chamada />
 
-      <InstagramSection />
+      <InstagramSection data={instagram} />
     </div>
   );
 }
+
