@@ -84,7 +84,21 @@ export const defaultSiteContent: SiteContent = {
     whatsappDefaultMessage:
       "Olá! Gostaria de informações sobre os passeios de lancha da Entre as Ilhas.",
     instagramHandle: "@entreasilhas",
-    instagramUrl: "https://www.instagram.com/entreasilhas"
+    instagramUrl: "https://www.instagram.com/entreasilhas",
+    maintenance: {
+      enabled: false,
+      title: "Estamos Preparando Novas Experiências",
+      subtitle:
+        "Nosso novo portal está sendo finalizado com muito carinho para oferecer o melhor em passeios de lancha privativos, roteiros pelas ilhas e agendamento online na Baía de Todos-os-Santos.",
+      estimatedReturn: "Previsão de retorno: em breve!",
+      contactWhatsApp: "5571992517102",
+      whatsappMessage:
+        "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.",
+      instagramHandle: "@entreasilhas",
+      instagramUrl: "https://www.instagram.com/entreasilhas",
+      allowAdminBypass: true,
+      showAdminLink: true
+    }
   },
   lastUpdated: new Date().toISOString()
 };

@@ -5,6 +5,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { PwaRegister } from "@/components/pwa-register";
+import { MaintenanceGuard } from "@/components/maintenance-guard";
+import { getSiteContent } from "@/lib/content-store";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -45,22 +47,26 @@ type RootLayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const content = await getSiteContent().catch(() => null);
+
   return (
     <html lang="pt-BR">
       <body className={`${plusJakartaSans.className} min-h-screen bg-brand-foam text-slate-900 antialiased`}>
         <PwaRegister />
         <SmoothScroll />
         <CursorTrails />
-        <div className="relative isolate flex min-h-screen flex-col">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(circle_at_top,_rgba(20,152,213,0.20),_transparent_58%)]"
-          />
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+        <MaintenanceGuard maintenance={content?.settings?.maintenance}>
+          <div className="relative isolate flex min-h-screen flex-col">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(circle_at_top,_rgba(20,152,213,0.20),_transparent_58%)]"
+            />
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </div>
+        </MaintenanceGuard>
       </body>
     </html>
   );

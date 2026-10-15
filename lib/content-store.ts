@@ -58,7 +58,11 @@ function deepMergeDefaults(stored: Partial<SiteContent>): SiteContent {
     },
     settings: {
       ...defaultSiteContent.settings,
-      ...(stored.settings || {})
+      ...(stored.settings || {}),
+      maintenance: {
+        ...defaultSiteContent.settings.maintenance!,
+        ...(stored.settings?.maintenance || {})
+      }
     }
   };
 }
@@ -136,7 +140,16 @@ export async function saveSiteContent(
         }
       : current.instagram,
     settings: next.settings
-      ? { ...current.settings, ...next.settings }
+      ? {
+          ...current.settings,
+          ...next.settings,
+          maintenance: next.settings.maintenance
+            ? {
+                ...(current.settings.maintenance || defaultSiteContent.settings.maintenance!),
+                ...next.settings.maintenance
+              }
+            : current.settings.maintenance
+        }
       : current.settings,
     lastUpdated: new Date().toISOString()
   };

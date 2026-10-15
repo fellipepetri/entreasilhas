@@ -88,6 +88,19 @@ export interface GallerySectionData {
   cards: ShowcaseCard[];
 }
 
+export interface MaintenanceSettings {
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  estimatedReturn: string;
+  contactWhatsApp: string;
+  whatsappMessage: string;
+  instagramHandle: string;
+  instagramUrl: string;
+  allowAdminBypass: boolean;
+  showAdminLink: boolean;
+}
+
 export interface GeneralSettings {
   siteName: string;
   whatsappNumber: string;
@@ -95,6 +108,7 @@ export interface GeneralSettings {
   whatsappDefaultMessage: string;
   instagramHandle: string;
   instagramUrl: string;
+  maintenance?: MaintenanceSettings;
 }
 
 export interface SiteContent {

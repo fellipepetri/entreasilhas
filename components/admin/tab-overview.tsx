@@ -106,6 +106,64 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
         </div>
       </div>
 
+      {/* Banner de Status do Site: Online ou Em Construção */}
+      <div
+        className={`rounded-3xl border-2 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+          content.settings.maintenance?.enabled
+            ? "border-amber-400 bg-amber-50"
+            : "border-emerald-300 bg-emerald-50/60"
+        }`}
+      >
+        <div className="flex items-center gap-3.5">
+          <div
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm shrink-0 ${
+              content.settings.maintenance?.enabled
+                ? "bg-amber-500 text-white"
+                : "bg-emerald-500 text-white"
+            }`}
+          >
+            {content.settings.maintenance?.enabled ? "🚧" : "🌐"}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                  content.settings.maintenance?.enabled
+                    ? "bg-amber-200 text-amber-900"
+                    : "bg-emerald-200 text-emerald-900"
+                }`}
+              >
+                {content.settings.maintenance?.enabled
+                  ? "Modo Em Construção: ATIVADO"
+                  : "Site Público: NO AR"}
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-700 mt-1">
+              {content.settings.maintenance?.enabled
+                ? "Visitantes comuns que acessam entreasilhas.com.br veem a página de 'Em Construção'."
+                : "Seu site está visível para todo o público na internet com todos os recursos funcionando."}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onNavigateTab("settings")}
+          className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition shadow-sm shrink-0 cursor-pointer ${
+            content.settings.maintenance?.enabled
+              ? "bg-amber-600 hover:bg-amber-700 text-white"
+              : "bg-slate-900 hover:bg-slate-800 text-white"
+          }`}
+        >
+          <span>
+            {content.settings.maintenance?.enabled
+              ? "Desativar ou Configurar"
+              : "Gerenciar Modo Construção"}
+          </span>
+          <span>⚙️</span>
+        </button>
+      </div>
+
       {/* Grid de Métricas do Conteúdo */}
       <div>
         <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">

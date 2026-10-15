@@ -12,6 +12,8 @@ interface AdminHeaderProps {
   onSave: () => void;
   onLogout: () => void;
   lastSavedAt?: string | null;
+  isMaintenanceEnabled?: boolean;
+  onNavigateTab?: (tabId: string) => void;
 }
 
 export function AdminHeader({
@@ -20,7 +22,9 @@ export function AdminHeader({
   hasUnsavedChanges,
   onSave,
   onLogout,
-  lastSavedAt
+  lastSavedAt,
+  isMaintenanceEnabled,
+  onNavigateTab
 }: AdminHeaderProps) {
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
 
@@ -50,6 +54,21 @@ export function AdminHeader({
 
           {/* Status de Salvamento e Botões de Ação */}
           <div className="flex items-center gap-2.5 sm:gap-4">
+            {isMaintenanceEnabled && (
+              <button
+                type="button"
+                onClick={() => onNavigateTab?.("settings")}
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 px-3 py-1.5 text-xs font-bold transition shadow-xs cursor-pointer"
+                title="O Modo Em Construção está ativo no site. Clique para gerenciar."
+              >
+                <span>🚧</span>
+                <span className="hidden sm:inline">Em Construção</span>
+                <span className="uppercase text-[9px] bg-amber-500 text-white px-1.5 py-0.5 rounded-md font-extrabold">
+                  Ativo
+                </span>
+              </button>
+            )}
+
             {lastSavedAt && (
               <span className="hidden md:inline-block text-[11px] text-slate-400">
                 Salvo às {lastSavedAt}

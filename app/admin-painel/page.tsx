@@ -204,6 +204,8 @@ export default function AdminPainelPage() {
         onSave={handleSave}
         onLogout={handleLogout}
         lastSavedAt={lastSavedAt}
+        isMaintenanceEnabled={content.settings.maintenance?.enabled}
+        onNavigateTab={(t) => setActiveTab(t as TabId)}
       />
 
       {/* Barra de Navegação por Abas */}
