@@ -8,6 +8,25 @@ interface UnderConstructionProps {
   maintenance?: MaintenanceSettings;
 }
 
+function InstagramIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
 export function UnderConstruction({ maintenance }: UnderConstructionProps) {
   const title = maintenance?.title || "Estamos Preparando Novas Experiências";
   const subtitle =
@@ -123,7 +142,7 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
             <span className="text-2xl mb-2 block">⚓</span>
             <h3 className="font-bold text-xs sm:text-sm text-white">Lanchas Privativas</h3>
             <p className="text-[11px] text-slate-400 mt-1 leading-snug">
-              Marinheiro habilitado, combustível e churrasqueira a bordo.
+              Marinheiro habilitado, cooler, som e churrasqueira a bordo.
             </p>
           </div>
 
@@ -131,7 +150,7 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
             <span className="text-2xl mb-2 block">🏝️</span>
             <h3 className="font-bold text-xs sm:text-sm text-white">Ilhas Paradisíacas</h3>
             <p className="text-[11px] text-slate-400 mt-1 leading-snug">
-              Ilha dos Frades, Bom Jesus dos Passos e Coroa do Frade.
+              Conheça a ilha dos Frades, Bom Jesus dos Passos e muito mais!
             </p>
           </div>
 
@@ -178,25 +197,40 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
             rel="noopener noreferrer"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 px-6 py-3.5 text-sm sm:text-base font-bold text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95"
           >
-            <span>📸</span>
+            <InstagramIcon className="w-5 h-5 text-white shrink-0" />
             <span>Seguir {instagramHandle}</span>
           </a>
         </div>
       </main>
 
       {/* Rodapé: Informações Legais & Acesso Administrativo Discreto */}
-      <footer className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 py-6 sm:py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-        <p>© {new Date().getFullYear()} Entre as Ilhas — Turismo Náutico. Salvador - BA.</p>
+      <footer className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 sm:py-10 border-t border-white/10 flex flex-col items-center justify-center gap-2.5 text-center text-xs sm:text-sm uppercase tracking-[0.3em] text-white">
+        <p className="text-white">
+          Entre as Ilhas • 2026 • Todos os direitos reservados
+        </p>
+        <p className="text-white">
+          <span className="text-white">Desenvolvido pela </span>
+          <a
+            href="https://squidflare.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-300 no-underline hover:text-cyan-100 transition-colors"
+          >
+            SquidFlare
+          </a>
+        </p>
 
         {showAdminLink && (
-          <Link
-            href="/admin-painel"
-            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-cyan-300 transition text-[11px] font-medium"
-            title="Acesso Administrativo ao Painel"
-          >
-            <span>Acesso Administrativo</span>
-            <span>🔐</span>
-          </Link>
+          <div className="pt-2">
+            <Link
+              href="/admin-painel"
+              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-cyan-300 transition text-[11px] font-medium tracking-normal normal-case"
+              title="Acesso Administrativo ao Painel"
+            >
+              <span>Acesso Administrativo</span>
+              <span>🔐</span>
+            </Link>
+          </div>
         )}
       </footer>
     </div>
