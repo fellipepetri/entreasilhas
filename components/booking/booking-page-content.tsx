@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useId } from "react";
+import { useState, useId, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,10 +9,15 @@ import {
   LUNCH_PREFERENCES,
   PAYMENT_METHODS,
   INCLUDED_AMENITIES,
-  type BookingRouteOption,
-  type LunchPreferenceOption,
-  type PaymentMethodOption
+  type BookingRouteOption
 } from "@/data/booking";
+import { useSiteContent } from "@/lib/use-site-content";
+import {
+  evaluateRouteTideCompatibility,
+  getDayTideEvaluation
+} from "@/lib/tide-engine";
+import { PlanTourWeather } from "./plan-tour-weather";
+import { TideWarningDialog } from "./tide-warning-dialog";
 
 const MONTH_NAMES = [
   "Janeiro",
@@ -33,13 +38,33 @@ const WEEKDAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 export function BookingPageContent() {
   const searchParams = useSearchParams();
+  const { content } = useSiteContent();
+
+  const routesList: BookingRouteOption[] = useMemo(() => {
+    if (content?.routes?.bookingRoutes && content.routes.bookingRoutes.length > 0) {
+      return content.routes.bookingRoutes;
+    }
+    return BOOKING_ROUTES;
+  }, [content]);
 
   // Parse dos parâmetros vindos do modal ou link
   const paramDate = searchParams?.get("data");
   const paramAdults = Number(searchParams?.get("adultos")) || 2;
   const paramChildren = Number(searchParams?.get("criancas")) || 0;
   const paramSunset = searchParams?.get("porDoSol") === "true";
-  const paramRoute = searchParams?.get("roteiro") || "ilha-dos-frades-guadalupe";
+  const paramRoute = searchParams?.get("roteiro") || "roteiro-1";
+
+  const normalizeRouteId = (id: string, list: BookingRouteOption[]): string => {
+    if (list.some((r) => r.id === id || r.slug === id)) {
+      const match = list.find((r) => r.id === id || r.slug === id);
+      return match ? match.id : id;
+    }
+    if (id === "ilha-dos-frades-guadalupe") return "roteiro-1";
+    if (id === "bom-jesus-dos-passos") return "roteiro-2";
+    if (id === "coroa-do-frade-bancos-de-areia") return "roteiro-3";
+    if (id === "volta-completa-nas-ilhas") return "roteiro-4";
+    return list[0]?.id || "roteiro-1";
+  };
 
   // Data inicial segura
   const today = new Date();
@@ -71,7 +96,12 @@ export function BookingPageContent() {
   const [adults, setAdults] = useState<number>(Math.max(1, paramAdults));
   const [children, setChildren] = useState<number>(Math.max(0, paramChildren));
   const [includeSunset, setIncludeSunset] = useState<boolean>(paramSunset);
-  const [selectedRouteId, setSelectedRouteId] = useState<string>(paramRoute);
+  const [selectedRouteId, setSelectedRouteId] = useState<string>(() =>
+    normalizeRouteId(paramRoute, routesList)
+  );
+
+  // Estado para alert/modal de maré não favorável
+  const [warningRoute, setWarningRoute] = useState<BookingRouteOption | null>(null);
 
   // Estados Completos
   const [lunchPreference, setLunchPreference] = useState<"restaurante" | "churrasqueira" | "proprio">("restaurante");
@@ -96,7 +126,109 @@ export function BookingPageContent() {
 
   // Roteiro ativo
   const currentRoute: BookingRouteOption =
-    BOOKING_ROUTES.find((r) => r.id === selectedRouteId) || BOOKING_ROUTES[0];
+    routesList.find((r) => r.id === selectedRouteId) || routesList[0] || BOOKING_ROUTES[0];
+
+  // Avaliação da maré da data
+  const dayTideEval = getDayTideEvaluation(selectedDate);
+  const currentRouteTideStatus = evaluateRouteTideCompatibility(
+    currentRoute.bestTides,
+    selectedDate,
+    currentRoute.name,
+    currentRoute.id
+  );
+
+  // Ações de seleção de rota e confirmação no alert de maré
+  const handleRouteClick = (route: BookingRouteOption) => {
+    const tideStatus = evaluateRouteTideCompatibility(
+      route.bestTides,
+      selectedDate,
+      route.name,
+      route.id
+    );
+    if (!tideStatus.isFavorable) {
+      setWarningRoute(route);
+    } else {
+      setSelectedRouteId(route.id);
+    }
+  };
+
+  const handleConfirmWarning = () => {
+    if (warningRoute) {
+      setSelectedRouteId(warningRoute.id);
+      setWarningRoute(null);
+    }
+  };
+
+  const handleCancelWarning = () => {
+    if (warningRoute && selectedRouteId === warningRoute.id) {
+      const firstFavorable = routesList.find(
+        (r) => evaluateRouteTideCompatibility(r.bestTides, selectedDate, r.name, r.id).isFavorable
+      );
+      if (firstFavorable) {
+        setSelectedRouteId(firstFavorable.id);
+      }
+    }
+    setWarningRoute(null);
+  };
+
+  // 1. Sincronização em tempo real quando o usuário altera opções no modal "Planejar passeio"
+  useEffect(() => {
+    const handleSyncTourPlan = (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        date?: Date;
+        dateISO?: string;
+        adults?: number;
+        children?: number;
+        includeSunset?: boolean;
+        routeId?: string;
+      }>;
+      if (!customEvent.detail) return;
+      const {
+        date,
+        adults: nextAdults,
+        children: nextChildren,
+        includeSunset: nextSunset,
+        routeId
+      } = customEvent.detail;
+
+      if (date && date instanceof Date && !isNaN(date.getTime())) {
+        setSelectedDate(date);
+        setCalendarMonth(date.getMonth());
+        setCalendarYear(date.getFullYear());
+      }
+      if (typeof nextAdults === "number") {
+        setAdults(Math.max(1, nextAdults));
+      }
+      if (typeof nextChildren === "number") {
+        setChildren(Math.max(0, nextChildren));
+      }
+      if (typeof nextSunset === "boolean") {
+        setIncludeSunset(nextSunset);
+      }
+      if (routeId) {
+        setSelectedRouteId(normalizeRouteId(routeId, routesList));
+      }
+    };
+
+    window.addEventListener("entreasilhas:sync-tour-plan", handleSyncTourPlan);
+    return () => {
+      window.removeEventListener("entreasilhas:sync-tour-plan", handleSyncTourPlan);
+    };
+  }, [routesList]);
+
+  // 2. Mantém a URL sincronizada para que, se o modal abrir a qualquer momento, ele já comece com os valores atuais da página
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const dateISO = selectedDate.toISOString().split("T")[0];
+    const params = new URLSearchParams(window.location.search);
+    params.set("data", dateISO);
+    params.set("adultos", adults.toString());
+    params.set("criancas", children.toString());
+    params.set("porDoSol", includeSunset ? "true" : "false");
+    params.set("roteiro", selectedRouteId);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, "", newUrl);
+  }, [selectedDate, adults, children, includeSunset, selectedRouteId]);
 
   // Formatação de Máscaras
   const handleCpfChange = (raw: string) => {
@@ -251,7 +383,7 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
 
   return (
     <div className="min-h-screen bg-slate-50 pt-28 pb-20 sm:pt-32 sm:pb-28">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto w-full max-w-7xl xl:max-w-[1420px] 2xl:max-w-[1520px] px-4 sm:px-6 lg:px-8">
         {/* Banner de Título */}
         <div className="mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-100/80 border border-cyan-300 text-cyan-900 text-xs font-bold uppercase tracking-wider mb-3">
@@ -266,6 +398,21 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
           <p className="mt-2.5 max-w-2xl text-base sm:text-lg text-slate-600 leading-relaxed">
             Personalize seu roteiro, selecione a preferência de almoço e garanta o afretamento exclusivo da sua lancha na Baía de Todos-os-Santos.
           </p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("entreasilhas:open-plan-tour-modal"));
+                }
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition cursor-pointer active:scale-95"
+            >
+              <span>🧭</span>
+              <span>Planejar passeio (Assistente com Tábua de Marés)</span>
+            </button>
+          </div>
         </div>
 
         {/* Estado de Sucesso / Confirmação */}
@@ -350,8 +497,8 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
             </div>
           </div>
         ) : (
-          /* Formulário Principal em 2 Colunas */
-          <form onSubmit={handleSubmitBooking} className="grid gap-8 lg:grid-cols-[1.35fr_0.85fr]">
+          /* Formulário Principal em 2 Colunas Arejadas */
+          <form onSubmit={handleSubmitBooking} className="grid gap-8 lg:grid-cols-[1fr_390px] xl:grid-cols-[1fr_420px]">
             {/* Coluna da Esquerda: Etapas do Formulário */}
             <div className="space-y-8">
               {/* ETAPA 1: Configurações Básicas do Passeio */}
@@ -389,13 +536,27 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                         </p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                      className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 shadow-xs transition cursor-pointer"
-                    >
-                      {isCalendarOpen ? "Ocultar Calendário" : "Alterar Data"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (typeof window !== "undefined") {
+                            window.dispatchEvent(new CustomEvent("entreasilhas:open-plan-tour-modal"));
+                          }
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-800 font-bold text-xs border border-cyan-200 shadow-2xs transition cursor-pointer"
+                        title="Abrir modal Planejar passeio"
+                      >
+                        🧭 Planejar passeio
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                        className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 shadow-xs transition cursor-pointer"
+                      >
+                        {isCalendarOpen ? "Ocultar Calendário" : "Alterar Data"}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Calendário Expansível */}
@@ -513,56 +674,62 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                   </p>
                 </div>
 
-                {/* Quantidade de Passageiros */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-slate-900">Adultos</p>
-                      <p className="text-[10px] text-slate-500">12 anos ou mais</p>
+                {/* Quantidade de Passageiros (Sem vazamento de botões) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Adultos */}
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs flex items-center justify-between">
+                    <div className="min-w-0 pr-2">
+                      <p className="text-xs sm:text-sm font-bold text-slate-900">Adultos</p>
+                      <p className="text-[11px] text-slate-500">12 anos ou mais</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center bg-white border border-slate-200/90 rounded-xl p-1 shadow-2xs shrink-0">
                       <button
                         type="button"
                         onClick={() => setAdults((prev) => Math.max(1, prev - 1))}
                         disabled={adults <= 1}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-40 cursor-pointer shadow-xs"
+                        className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-base transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                        aria-label="Diminuir adultos"
                       >
-                        -
+                        −
                       </button>
-                      <span className="font-bold text-sm text-slate-900 w-5 text-center">
+                      <span className="w-8 text-center font-extrabold text-sm text-slate-900 select-none">
                         {adults}
                       </span>
                       <button
                         type="button"
                         onClick={() => setAdults((prev) => Math.min(16, prev + 1))}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 cursor-pointer shadow-xs"
+                        className="w-8 h-8 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white flex items-center justify-center font-bold text-base transition cursor-pointer active:scale-95 shadow-2xs"
+                        aria-label="Aumentar adultos"
                       >
                         +
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-slate-900">Crianças</p>
-                      <p className="text-[10px] text-slate-500">Até 11 anos</p>
+                  {/* Crianças */}
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs flex items-center justify-between">
+                    <div className="min-w-0 pr-2">
+                      <p className="text-xs sm:text-sm font-bold text-slate-900">Crianças</p>
+                      <p className="text-[11px] text-slate-500">Até 11 anos</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center bg-white border border-slate-200/90 rounded-xl p-1 shadow-2xs shrink-0">
                       <button
                         type="button"
                         onClick={() => setChildren((prev) => Math.max(0, prev - 1))}
                         disabled={children <= 0}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 disabled:opacity-40 cursor-pointer shadow-xs"
+                        className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-base transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                        aria-label="Diminuir crianças"
                       >
-                        -
+                        −
                       </button>
-                      <span className="font-bold text-sm text-slate-900 w-5 text-center">
+                      <span className="w-8 text-center font-extrabold text-sm text-slate-900 select-none">
                         {children}
                       </span>
                       <button
                         type="button"
                         onClick={() => setChildren((prev) => Math.min(10, prev + 1))}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 cursor-pointer shadow-xs"
+                        className="w-8 h-8 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white flex items-center justify-center font-bold text-base transition cursor-pointer active:scale-95 shadow-2xs"
+                        aria-label="Aumentar crianças"
                       >
                         +
                       </button>
@@ -582,38 +749,168 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                       Roteiro Escolhido & Detalhamento
                     </h2>
                     <p className="text-xs text-slate-500">
-                      Selecione o roteiro de sua preferência para visualizar paradas e atrativos.
+                      Roteiros sincronizados com a tábua de marés local de Madre de Deus.
                     </p>
                   </div>
                 </div>
 
-                {/* Seletores de Roteiro */}
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {BOOKING_ROUTES.map((route) => {
+                {/* Banner Informativo da Maré da Data */}
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 via-cyan-50 to-blue-50 border border-cyan-200/80 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl shrink-0">🌊</span>
+                    <p className="leading-snug">
+                      Maré prevista para <strong>{formattedDateShort}</strong> ao meio-dia:{" "}
+                      <strong className="text-brand-deep">{dayTideEval.middayPhase.name}</strong>. Os roteiros com condições favoráveis estão habilitados e destacados.
+                    </p>
+                  </div>
+                  <span className="shrink-0 self-start sm:self-auto px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-900 border border-cyan-300">
+                    Madre de Deus • BTS
+                  </span>
+                </div>
+
+                {/* Seletores de Roteiro (Design Arejado, Amplo e Sem Amontoados) */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {routesList.map((route) => {
                     const isSelected = route.id === selectedRouteId;
+                    const tideStatus = evaluateRouteTideCompatibility(
+                      route.bestTides,
+                      selectedDate,
+                      route.name,
+                      route.id
+                    );
+                    const isFavorable = tideStatus.isFavorable;
+
                     return (
                       <button
                         key={route.id}
                         type="button"
-                        onClick={() => setSelectedRouteId(route.id)}
+                        onClick={() => handleRouteClick(route)}
                         className={[
-                          "p-4 rounded-2xl border text-left transition-all cursor-pointer relative",
-                          isSelected
-                            ? "bg-cyan-50/70 border-cyan-500 ring-2 ring-cyan-400/20 shadow-sm"
-                            : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                          "p-4 sm:p-5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-3.5",
+                          isSelected && isFavorable
+                            ? "bg-cyan-50/80 border-cyan-500 ring-2 ring-cyan-400/30 shadow-md"
+                            : isSelected && !isFavorable
+                            ? "bg-slate-800/10 border-amber-400 ring-2 ring-amber-400/30 shadow-md"
+                            : !isFavorable
+                            ? "bg-slate-100/90 border-slate-300 text-slate-600 hover:bg-slate-200/80"
+                            : "bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs"
                         ].join(" ")}
                       >
-                        {route.badge && (
-                          <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-cyan-100 text-cyan-800">
-                            {route.badge}
-                          </span>
+                        {/* Camada escura que cobre toda a área do retângulo quando desfavorável */}
+                        {!isFavorable && (
+                          <div
+                            className="absolute inset-0 bg-slate-950/20 backdrop-saturate-50 pointer-events-none rounded-2xl z-10"
+                            aria-hidden="true"
+                          />
                         )}
-                        <h3 className="font-bold text-sm text-slate-900 pr-12">
-                          {route.name}
-                        </h3>
-                        <p className="text-xs text-slate-500 line-clamp-2 mt-1">
-                          {route.shortDescription}
-                        </p>
+
+                        <div className="relative z-10 space-y-3 w-full">
+                          {/* 1. Barra Superior do Card: Badge do Roteiro à Esquerda + Status da Maré à Direita */}
+                          <div className="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2.5">
+                            <div className="flex items-center gap-2">
+                              {route.badge ? (
+                                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-cyan-100 text-cyan-800 border border-cyan-200">
+                                  {route.badge}
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
+                                  Roteiro Exclusivo
+                                </span>
+                              )}
+                              <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">⏱️ 7h de passeio</span>
+                            </div>
+
+                            {/* Badge de Maré */}
+                            {isFavorable ? (
+                              <span
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs shrink-0"
+                                title={`Maré favorável: ${route.bestTidesLabel}`}
+                              >
+                                <span>✓</span>
+                                <span>Maré Favorável</span>
+                              </span>
+                            ) : (
+                              <span
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs shrink-0"
+                                title={`Maré não favorável (${tideStatus.currentTide.name}). Melhor com: ${route.bestTidesLabel}`}
+                              >
+                                <span>⚠️</span>
+                                <span>Maré Desfavorável</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 2. Linha Principal: Miniatura + Título e Descrição com 100% da largura horizontal disponível */}
+                          <div className="flex items-start gap-3.5 sm:gap-4">
+                            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 bg-slate-100 border border-slate-200 shadow-2xs mt-0.5">
+                              <Image
+                                src={route.image}
+                                alt={route.name}
+                                fill
+                                sizes="80px"
+                                className={[
+                                  "object-cover transition duration-300 group-hover:scale-105",
+                                  !isFavorable ? "opacity-75 contrast-90" : ""
+                                ].join(" ")}
+                              />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <h3
+                                className={[
+                                  "font-extrabold text-base sm:text-lg leading-tight tracking-tight",
+                                  isSelected
+                                    ? "text-brand-deep font-black"
+                                    : !isFavorable
+                                    ? "text-slate-800"
+                                    : "text-slate-900 group-hover:text-cyan-700"
+                                ].join(" ")}
+                              >
+                                {route.name}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mt-1 line-clamp-2">
+                                {route.shortDescription}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Aviso específico de maré ou parada para o roteiro */}
+                          {tideStatus.specificNotice && (
+                            <div className="p-2.5 rounded-xl bg-sky-50/90 border border-sky-200/80 text-[11px] text-sky-950 font-medium leading-relaxed">
+                              {tideStatus.specificNotice}
+                            </div>
+                          )}
+
+                          {/* 3. Paradas em lista organizada sem amontoados */}
+                          {route.stops && route.stops.length > 0 && (
+                            <div className="pt-2 border-t border-slate-200/70">
+                              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1.5">
+                                Paradas Programadas:
+                              </span>
+                              <div className="space-y-1.5">
+                                {route.stops.map((stop, sIdx) => (
+                                  <div
+                                    key={sIdx}
+                                    className="flex items-start gap-2 text-xs text-slate-700 bg-slate-50/90 px-2.5 py-1.5 rounded-lg border border-slate-200/60 leading-snug"
+                                  >
+                                    <span className="text-cyan-600 font-bold shrink-0 mt-0.5">•</span>
+                                    <span>{stop}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 4. Rodapé do Card */}
+                          <div className="pt-2.5 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <span className="text-slate-500 text-[11px]">
+                              Melhor maré: <strong className="text-slate-700">{route.bestTidesLabel}</strong>
+                            </span>
+                            <span className={isSelected ? "text-cyan-600 font-bold" : "text-slate-400 font-semibold"}>
+                              {isSelected ? "● Selecionado" : "○ Escolher"}
+                            </span>
+                          </div>
+                        </div>
                       </button>
                     );
                   })}
@@ -630,15 +927,66 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-4 right-4 text-white">
-                      <span className="text-[10px] uppercase font-bold tracking-widest text-cyan-300">
-                        Roteiro Exclusivo
+                    <div className="absolute bottom-3 left-4 right-4 text-white flex items-end justify-between gap-3">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-cyan-300">
+                          Roteiro Ativo
+                        </span>
+                        <h4 className="text-base sm:text-lg font-bold leading-tight">
+                          {currentRoute.name}
+                        </h4>
+                      </div>
+                      <span
+                        className={[
+                          "px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shrink-0",
+                          currentRouteTideStatus.isFavorable
+                            ? "bg-emerald-500/80 text-white"
+                            : "bg-amber-500/80 text-white"
+                        ].join(" ")}
+                      >
+                        {currentRouteTideStatus.isFavorable ? "✓ Maré Favorável" : "⚠️ Maré Desfavorável"}
                       </span>
-                      <h4 className="text-base sm:text-lg font-bold leading-tight">
-                        {currentRoute.name}
-                      </h4>
                     </div>
                   </div>
+
+                  {/* Callout de Condição da Maré para o Roteiro Ativo */}
+                  <div
+                    className={[
+                      "p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs",
+                      currentRouteTideStatus.isFavorable
+                        ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                        : "bg-amber-50/80 border-amber-200 text-amber-950"
+                    ].join(" ")}
+                  >
+                    <div>
+                      <p className="font-bold flex items-center gap-1.5">
+                        <span>{currentRouteTideStatus.isFavorable ? "✓" : "⚠️"}</span>
+                        <span>Condição de Maré para este Roteiro na Data:</span>
+                        <strong className="underline decoration-current">
+                          {currentRouteTideStatus.currentTide.name}
+                        </strong>
+                      </p>
+                      <p className="text-[11px] opacity-85 mt-0.5">
+                        {currentRouteTideStatus.explanation}
+                      </p>
+                    </div>
+
+                    <div className="shrink-0 text-right">
+                      <span className="text-[10px] uppercase font-bold tracking-wider opacity-70 block">
+                        Melhores Condições:
+                      </span>
+                      <span className="text-[11px] font-extrabold">
+                        {currentRoute.bestTidesLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Observação náutica específica adicional no detalhamento do roteiro ativo */}
+                  {currentRouteTideStatus.specificNotice && (
+                    <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-200/80 text-cyan-950 text-xs font-medium leading-relaxed">
+                      {currentRouteTideStatus.specificNotice}
+                    </div>
+                  )}
 
                   <div>
                     <h5 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-1">
@@ -649,10 +997,27 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                     </p>
                   </div>
 
+                  {/* Paradas Programadas Estruturadas */}
+                  {currentRoute.stops && currentRoute.stops.length > 0 && (
+                    <div>
+                      <h5 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2.5">
+                        Paradas Principais:
+                      </h5>
+                      <div className="grid sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-700">
+                        {currentRoute.stops.map((stop, idx) => (
+                          <div key={idx} className="flex items-start gap-2 p-2 rounded-xl bg-white border border-slate-200/70">
+                            <span className="text-cyan-600 font-bold shrink-0 mt-0.5">•</span>
+                            <span>{stop}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Itinerário de Paradas */}
                   <div>
                     <h5 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2.5">
-                      Itinerário e Paradas Programadas:
+                      Itinerário e Ordem de Navegação:
                     </h5>
                     <ul className="space-y-2">
                       {currentRoute.itinerary.map((step, idx) => (
@@ -682,6 +1047,13 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                   </div>
                 </div>
               </section>
+
+              {/* Seção Weather: Informações Meteorológicas, Vento e Tábua de Marés */}
+              <PlanTourWeather
+                selectedDate={selectedDate}
+                includeSunset={includeSunset}
+                className="shadow-soft"
+              />
 
               {/* ETAPA 3: Preferência de Almoço */}
               <section className="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-7 shadow-soft space-y-6">
@@ -1082,6 +1454,15 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
           </form>
         )}
       </div>
+
+      {/* Alert / Modal de Confirmação no Centro da Tela para Maré Não Favorável */}
+      <TideWarningDialog
+        isOpen={Boolean(warningRoute)}
+        route={warningRoute}
+        selectedDate={selectedDate}
+        onConfirm={handleConfirmWarning}
+        onCancel={handleCancelWarning}
+      />
     </div>
   );
 }

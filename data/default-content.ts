@@ -12,6 +12,7 @@ import {
   TOTAL_SECRETS_COUNT
 } from "./experience-360";
 import { tours } from "./tours";
+import { BOOKING_ROUTES } from "./booking";
 import { CURATED_INSTAGRAM_POSTS, INSTAGRAM_PROFILE } from "./instagram";
 
 export const defaultSiteContent: SiteContent = {
@@ -43,7 +44,8 @@ export const defaultSiteContent: SiteContent = {
       image: item.image,
       link: "/passeios"
     })),
-    tours: tours.map((t) => ({ ...t }))
+    tours: tours.map((t) => ({ ...t })),
+    bookingRoutes: JSON.parse(JSON.stringify(BOOKING_ROUTES))
   },
   gallery: {
     eyebrow: "Adventure Showcase",

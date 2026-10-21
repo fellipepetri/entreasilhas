@@ -274,6 +274,7 @@ export default function AdminPainelPage() {
               <TabRoutes
                 homeItems={content.routes.homeItems}
                 tours={content.routes.tours}
+                bookingRoutes={content.routes.bookingRoutes}
                 onChangeHomeItems={(items) =>
                   setContent((prev) => ({
                     ...prev,
@@ -284,6 +285,12 @@ export default function AdminPainelPage() {
                   setContent((prev) => ({
                     ...prev,
                     routes: { ...prev.routes, tours }
+                  }))
+                }
+                onChangeBookingRoutes={(bookingRoutes) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    routes: { ...prev.routes, bookingRoutes }
                   }))
                 }
               />

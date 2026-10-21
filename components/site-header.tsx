@@ -284,6 +284,13 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Escuta evento global para abrir o modal de planejamento a partir de qualquer página/botão
+  useEffect(() => {
+    const handleOpen = () => setIsPlanTourModalOpen(true);
+    window.addEventListener("entreasilhas:open-plan-tour-modal", handleOpen);
+    return () => window.removeEventListener("entreasilhas:open-plan-tour-modal", handleOpen);
+  }, []);
+
   function handleNavigate(href: string, event?: React.MouseEvent) {
     const isAnchor = href.startsWith("#") || href === "/";
     const isHome = pathname === "/";

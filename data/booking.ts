@@ -1,3 +1,5 @@
+import type { TideLevelKey } from "@/lib/tide-engine";
+
 export interface BookingRouteOption {
   id: string;
   slug: string;
@@ -5,12 +7,15 @@ export interface BookingRouteOption {
   tagline: string;
   shortDescription: string;
   detailedDescription: string;
+  stops: string[];
   itinerary: string[];
   highlights: string[];
   duration: string;
   recommendedFor: string;
   image: string;
   badge?: string;
+  bestTides: TideLevelKey[];
+  bestTidesLabel: string;
 }
 
 export interface LunchPreferenceOption {
@@ -34,120 +39,152 @@ export interface PaymentMethodOption {
 
 export const BOOKING_ROUTES: BookingRouteOption[] = [
   {
-    id: "ilha-dos-frades-guadalupe",
-    slug: "ilha-dos-frades-guadalupe",
-    name: "Ilha dos Frades & Guadalupe",
-    tagline: "Águas cristalinas, praias paradisíacas e culinária costeira",
+    id: "roteiro-1",
+    slug: "roteiro-1",
+    name: "Roteiro 1 - Ilha dos Frades & Bom Jesus dos Passos",
+    tagline: "Loreto (09h-11:30h), Paramana, Praia do Marinheiro e Bom Jesus dos Passos",
     shortDescription:
-      "A praia com selo internacional Bandeira Azul, águas calmas e mornas, e a charmosa Igreja de Nossa Senhora de Guadalupe.",
+      "Ilha dos Frades (Praia do Loreto e Paramana das 09h às 11:30h, Praia do Marinheiro) e Ilha de Bom Jesus dos Passos.",
     detailedDescription:
-      "Navegue pelo cartão-postal mais cobiçado da Baía de Todos-os-Santos. O roteiro inclui parada no ancoradouro de Ponta de Guadalupe, visita à histórica igrejinha no topo da colina com vista panorâmica de 360°, banho de mar em águas transparentes e parada para almoço à beira-mar.",
+      "Navegue pelas enseadas mais abrigadas e charmosas da Baía de Todos-os-Santos. O roteiro inclui parada e banho de mar calmo na Praia do Loreto e Praia de Paramana (paradas exclusivas das 09h às 11:30h, com saída às 11:30h, sincronizadas com maré favorável), águas cristalinas na Praia do Marinheiro e desembarque contemplativo no vilarejo histórico de Bom Jesus dos Passos.",
+    stops: [
+      "Ilha dos Frades: Praia do Loreto (parada exclusiva das 09h às 11:30h)",
+      "Ilha dos Frades: Praia de Paramana (parada exclusiva das 09h às 11:30h)",
+      "Ilha dos Frades: Praia do Marinheiro",
+      "Ilha de Bom Jesus dos Passos"
+    ],
     itinerary: [
-      "Embarque com brinde de boas-vindas",
-      "Navegação cênica pela Baía de Todos-os-Santos",
-      "Parada na Ponta de Nossa Senhora de Guadalupe (Ilha dos Frades)",
-      "Tempo livre para banho de mar e caminhada até a igrejinha",
-      "Parada para almoço (restaurante local ou churrasco a bordo)",
-      "Banho relaxante em enseada abrigada",
-      "Retorno suave apreciando a brisa da Baía"
+      "Embarque em Madre de Deus com brinde de boas-vindas",
+      "Ilha dos Frades: Parada na Praia do Loreto (janela das 09h com saída às 11:30h)",
+      "Ilha dos Frades: Parada na Praia de Paramana (janela das 09h com saída às 11:30h)",
+      "Ilha dos Frades: Parada relaxante na Praia do Marinheiro",
+      "Atracação em Bom Jesus dos Passos para almoço e visita histórica",
+      "Navegação panorâmica de retorno pelas enseadas protegidas"
     ],
     highlights: [
-      "Praia com Certificação Internacional Bandeira Azul",
-      "Mar calmo, ideal para todas as idades",
-      "Mirante histórico de Guadalupe",
-      "Restaurantes de culinária baiana de frutos do mar"
+      "Águas calmas e límpidas ideais para famílias e crianças",
+      "Paradas matinais estratégicas no Loreto e Paramana (09h às 11:30h)",
+      "Cais acolhedor e gastronomia típica em Bom Jesus dos Passos",
+      "Excelente calado com maré intermediária ou cheia na janela matinal"
     ],
     duration: "09:00h às 16:00h (7 horas)",
-    recommendedFor: "Famílias, casais e grupos buscando tranquilidade e cenários paradisíacos",
+    recommendedFor: "Famílias, casais e grupos buscando praias calmas, conforto e gastronomia",
     image: "/images/panoramas/ilha-dos-frades.jpg",
-    badge: "Mais Procurado"
+    badge: "Mais Procurado",
+    bestTides: ["intermediaria_enchente", "cheia", "cheia_vazante"],
+    bestTidesLabel: "Intermediária/enchente • Cheia • Cheia/vazante (janela 09h–11:30h)"
   },
   {
-    id: "bom-jesus-dos-passos",
-    slug: "bom-jesus-dos-passos",
-    name: "Bom Jesus dos Passos & Histórico",
-    tagline: "O aconchego das ilhas tradicionais e enseadas como piscina",
+    id: "roteiro-2",
+    slug: "roteiro-2",
+    name: "Roteiro 2 - Ilha das Vacas & Ilha de Maria Guarda",
+    tagline: "Praia Grande (maré cheia) ou Manguinho, Ponta do Navio, Sossego e Maria Guarda",
     shortDescription:
-      "Charme de vila de pescadores, casarios coloridos, águas calmas sem ondas e hospitalidade acolhedora.",
+      "Ilha das Vacas (Praia Grande ou Manguinho, Praia da Ponta do Navio, Praia do Sossego) e Ilha de Maria Guarda.",
     detailedDescription:
-      "Um dos refúgios mais autênticos e preservados da Bahia. Navegue pelas águas abrigadas ao redor de Bom Jesus dos Passos, ancore próximo ao cais histórico e aprecie a tranquilidade de um mar que parece uma imensa piscina natural, perfeito para boiar e relaxar.",
+      "Um dos refúgios mais exclusivos e preservados da Baía. Navegue contornando a Ilha das Vacas com paradas para banho na Praia Grande (região muito rasa que exige maré o mais cheia possível) ou na parada alternativa em Manguinho (mais acessível e segura na mesma ilha), visual cênico da Ponta do Navio e tranquilidade total na Praia do Sossego, além do encanto cultural da Ilha de Maria Guarda.",
+    stops: [
+      "Ilha das Vacas: Praia Grande (maré cheia por ser rasa) ou Manguinho (parada acessível)",
+      "Ilha das Vacas: Praia da Ponta do Navio",
+      "Ilha das Vacas: Praia do Sossego",
+      "Ilha de Maria Guarda"
+    ],
     itinerary: [
-      "Embarque e saída da marina",
-      "Navegação pelas enseadas calmas entre as ilhas",
-      "Aproximação do cais acolhedor de Bom Jesus dos Passos",
-      "Banho de mar prolongado em águas mornas e sem correnteza",
-      "Almoço com mariscada fresca típica ou serviço a bordo",
-      "Visita contemplativa ao vilarejo histórico",
-      "Navegação de retorno relaxante"
+      "Saída de Madre de Deus em direção à Ilha das Vacas",
+      "Primeira parada: Banho na Praia Grande (com maré cheia) ou Manguinho (com maré intermediária)",
+      "Passagem cênica fotográfica pela Ponta do Navio",
+      "Parada relaxante e mergulho na acolhedora Praia do Sossego",
+      "Parada na tradicional Ilha de Maria Guarda para almoço ou petiscos",
+      "Navegação suave de retorno sob a brisa da Baía"
     ],
     highlights: [
-      "Mar com água morna e sem ondas (sensação de piscina)",
-      "Autenticidade cultural e gastronômica",
-      "Cais fotográfico e acolhedor",
-      "Excelente para crianças e idosos"
+      "Natureza intocada e praias com baixa movimentação de barcos",
+      "Sensação de ilha privativa com águas mornas",
+      "Alternativa inteligente em Manguinho para conforto náutico em marés intermediárias",
+      "Cultura pesqueira autêntica em Maria Guarda"
     ],
     duration: "09:00h às 16:00h (7 horas)",
-    recommendedFor: "Quem busca paz, gastronomia de raiz e banho de mar sem pressa",
+    recommendedFor: "Quem quer fugir do óbvio, relaxar sem pressa e curtir enseadas reservadas",
     image: "/images/panoramas/cais-bom-jesus.jpg",
-    badge: "Autêntico & Calmo"
+    badge: "Refúgio Exclusivo",
+    bestTides: ["intermediaria_enchente", "cheia", "cheia_vazante"],
+    bestTidesLabel: "Intermediária/enchente • Cheia • Cheia/vazante"
   },
   {
-    id: "coroa-do-frade-bancos-de-areia",
-    slug: "coroa-do-frade-bancos-de-areia",
-    name: "Coroa do Frade & Bancos de Areia",
-    tagline: "Piscina natural no meio do mar na maré baixa",
+    id: "roteiro-3",
+    slug: "roteiro-3",
+    name: "Roteiro 3 - Ilha dos Frades & Piscinas Naturais",
+    tagline: "Piscinas Naturais (09h-11:30h) ou Loreto, Guadalupe, Viração e Sugestão Náutica",
     shortDescription:
-      "Bancos de areia clara que emergem no meio da Baía, criando piscinas naturais mornas e rasas.",
+      "Ilha dos Frades: Piscinas Naturais de Paramana (09h às 11:30h) ou Praia do Loreto, Ponta de N. Sra. de Guadalupe, Praia da Viração e sugestão do marinheiro no retorno.",
     detailedDescription:
-      "Uma das experiências mais exclusivas e mágicas da navegação náutica. Na maré baixa, a Coroa do Frade revela um banco de areia dourada cercado por mar límpido. Você desce da lancha com a água nos joelhos no meio da Baía de Todos-os-Santos para um brinde inesquecível.",
+      "A experiência definitiva na maré baixa. Desça da lancha com a água nos joelhos nas piscinas naturais cristalinas de Paramana (parada exclusiva das 09h às 11:30h, exigindo maré o mais baixa possível; caso a maré matinal esteja cheia, a parada é adaptada para a Praia do Loreto), visite a célebre Ponta de Nossa Senhora de Guadalupe com selo Bandeira Azul, banhe-se na selvagem Praia da Viração e termine com uma parada surpresa sugerida pelo marinheiro no retorno.",
+    stops: [
+      "Ilha dos Frades: Piscinas Naturais de Paramana (09h às 11:30h, maré baixa) ou Praia do Loreto (caso maré alta)",
+      "Ilha dos Frades: Ponta de Nossa Senhora de Guadalupe (Bandeira Azul)",
+      "Ilha dos Frades: Praia da Viração",
+      "Sugestão do marinheiro no retorno"
+    ],
     itinerary: [
-      "Embarque programado sincronizado com a tábua de marés",
-      "Travessia em direção ao centro da Baía",
-      "Chegada à Coroa do Frade no pico da maré baixa",
-      "Descida no banco de areia para fotos, drinques e banho",
-      "Almoço a bordo com churrasqueira ou restaurante vizinho",
-      "Navegação pelas ilhotas adjacentes",
-      "Encerramento com luz dourada da tarde"
+      "Embarque programado às 09h sincronizado com a maré matinal",
+      "Piscinas Naturais de Paramana (09h às 11:30h com maré baixa) ou Praia do Loreto (se maré alta)",
+      "Ponta de Nossa Senhora de Guadalupe: banho e mirante da igrejinha histórica",
+      "Praia da Viração: enseada com mata atlântica preservada e mar translúcido",
+      "Parada bônus selecionada pelo marinheiro no retorno ao pôr do sol"
     ],
     highlights: [
-      "Banco de areia no meio do oceano",
-      "Piscina natural cristalina e rasa",
-      "Fotos aéreas e enquadramentos espetaculares",
-      "Experiência náutica de alto impacto visual"
+      "Piscinas naturais rasas perfeitas para fotos cinematográficas das 09h às 11:30h",
+      "Praia com Certificação Internacional Bandeira Azul (Guadalupe)",
+      "Mirante panorâmico de 360° da igrejinha de Guadalupe",
+      "Flexibilidade e segurança com adaptação para o Loreto se a maré encher"
     ],
     duration: "09:00h às 16:00h (7 horas)",
-    recommendedFor: "Grupos de amigos, celebrações e amantes de fotos e cenários cinematográficos",
+    recommendedFor: "Amantes de fotos, snorkeling, piscinas naturais e praias paradisíacas",
     image: "/images/panoramas/coroa-do-frade.jpg",
-    badge: "Exclusivo"
+    badge: "Piscinas Naturais",
+    bestTides: ["baixa", "baixa_enchente", "intermediaria_vazante"],
+    bestTidesLabel: "Baixa • Baixa/enchente • Intermediária/vazante (janela 09h–11:30h)"
   },
   {
-    id: "volta-completa-nas-ilhas",
-    slug: "volta-completa-nas-ilhas",
-    name: "Volta Completa nas Ilhas (Day Use)",
-    tagline: "A grande expedição pelos melhores pontos da Baía em um só dia",
+    id: "roteiro-4",
+    slug: "roteiro-4",
+    name: "Roteiro 4 - Sugestão do Marinheiro",
+    tagline: "As melhores paradas do dia selecionadas conforme as condições da maré",
     shortDescription:
-      "Circuito amplo unindo Ilha dos Frades, Bom Jesus dos Passos, bancos de areia e enseadas secretas.",
+      "Sugestão do marinheiro - Serão sugeridas as melhores paradas de acordo com as condições da maré no dia do passeio.",
     detailedDescription:
-      "O roteiro definitivo para quem quer vivenciar o melhor da Baía de Todos-os-Santos de ponta a ponta. Com flexibilidade de paradas para o seu grupo, alternando entre banhos de mar, mirantes históricos e almoço especial, aproveitando cada minuto a bordo com conforto total.",
+      "Roteiro 100% dinâmico e flexível. O marinheiro, conhecedor de cada segredo da Baía de Todos-os-Santos, avalia a altura exata da maré, vento e correntes para escolher as praias mais abrigadas, cristalinas e confortáveis para o seu grupo em tempo real.",
+    stops: [
+      "Sugestão personalizada do marinheiro",
+      "Paradas dinâmicas selecionadas de acordo com as condições da maré",
+      "Flexibilidade total alinhada diretamente no embarque"
+    ],
     itinerary: [
-      "Saída matutina com roteiro panorâmico completo",
-      "Primeira parada: Banho matinal em enseada deserta",
-      "Segunda parada: Ponta de Guadalupe (Ilha dos Frades)",
-      "Terceira parada: Cais e gastronomia de Bom Jesus dos Passos",
-      "Quarta parada: Banco de areia ou Coroa do Frade",
-      "Tempo estendido para churrasco ou degustação a bordo",
-      "Retorno com navegação panorâmica ao final da tarde"
+      "Briefing rápido com o marinheiro na saída para alinhar preferências do grupo",
+      "Navegação para os pontos com melhor condição hidrológica e água mais límpida do dia",
+      "Paradas estratégicas de banho sem vento e sem ondulação",
+      "Parada para almoço de acordo com o gosto dos passageiros (restaurante ou churrasco)",
+      "Retorno com paradas contemplativas nos recantos mais bonitos da Baía"
     ],
     highlights: [
-      "Visita aos principais destinos náuticos da região",
-      "Roteiro flexível ajustado com o marinheiro",
-      "Combinação de cultura, natureza e sofisticação",
-      "Tempo máximo de aproveitamento da embarcação"
+      "100% adaptável para garantir a melhor experiência em qualquer dia",
+      "Paradas definidas pelo marinheiro conforme maré, correnteza e ventos",
+      "Mais tranquilidade e menos tempo em praias com mar agitado",
+      "Atendimento exclusivo e consultoria náutica em tempo real"
     ],
     duration: "09:00h às 16:00h (7 horas)",
-    recommendedFor: "Celebrações especiais, aniversários e quem quer conhecer tudo em um dia épico",
-    image: "/images/panoramas/por-do-sol-enseada.jpg",
-    badge: "Experiência Completa"
+    recommendedFor: "Quem deseja uma experiência fluida sem se preocupar com tábuas e horários de maré",
+    image: "/images/panoramas/enseada-dos-frades.jpg",
+    badge: "Personalizado",
+    bestTides: [
+      "cheia",
+      "cheia_vazante",
+      "intermediaria_vazante",
+      "baixa",
+      "baixa_enchente",
+      "intermediaria_enchente"
+    ],
+    bestTidesLabel: "Todas as marés (adaptado pelo marinheiro em tempo real)"
   }
 ];
 

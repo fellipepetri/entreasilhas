@@ -102,6 +102,160 @@
         "name": "Volta Completa nas Ilhas (Day Use)",
         "summary": "Experiência náutica exclusiva de dia inteiro sob medida para o seu grupo com conforto total."
       }
+    ],
+    "bookingRoutes": [
+      {
+        "id": "roteiro-1",
+        "slug": "roteiro-1",
+        "name": "Roteiro 1 - Ilha dos Frades & Bom Jesus dos Passos",
+        "tagline": "Loreto (09h-11:30h), Paramana, Praia do Marinheiro e Bom Jesus dos Passos",
+        "shortDescription": "Ilha dos Frades (Praia do Loreto e Paramana das 09h às 11:30h, Praia do Marinheiro) e Ilha de Bom Jesus dos Passos.",
+        "detailedDescription": "Navegue pelas enseadas mais abrigadas e charmosas da Baía de Todos-os-Santos. O roteiro inclui parada e banho de mar calmo na Praia do Loreto e Praia de Paramana (paradas exclusivas das 09h às 11:30h, com saída às 11:30h, sincronizadas com maré favorável), águas cristalinas na Praia do Marinheiro e desembarque contemplativo no vilarejo histórico de Bom Jesus dos Passos.",
+        "stops": [
+          "Ilha dos Frades: Praia do Loreto (parada exclusiva das 09h às 11:30h)",
+          "Ilha dos Frades: Praia de Paramana (parada exclusiva das 09h às 11:30h)",
+          "Ilha dos Frades: Praia do Marinheiro",
+          "Ilha de Bom Jesus dos Passos"
+        ],
+        "itinerary": [
+          "Embarque em Madre de Deus com brinde de boas-vindas",
+          "Ilha dos Frades: Parada na Praia do Loreto (janela das 09h com saída às 11:30h)",
+          "Ilha dos Frades: Parada na Praia de Paramana (janela das 09h com saída às 11:30h)",
+          "Ilha dos Frades: Parada relaxante na Praia do Marinheiro",
+          "Atracação em Bom Jesus dos Passos para almoço e visita histórica",
+          "Navegação panorâmica de retorno pelas enseadas protegidas"
+        ],
+        "highlights": [
+          "Águas calmas e límpidas ideais para famílias e crianças",
+          "Paradas matinais estratégicas no Loreto e Paramana (09h às 11:30h)",
+          "Cais acolhedor e gastronomia típica em Bom Jesus dos Passos",
+          "Excelente calado com maré intermediária ou cheia na janela matinal"
+        ],
+        "duration": "09:00h às 16:00h (7 horas)",
+        "recommendedFor": "Famílias, casais e grupos buscando praias calmas, conforto e gastronomia",
+        "image": "/images/panoramas/ilha-dos-frades.jpg",
+        "badge": "Mais Procurado",
+        "bestTides": [
+          "intermediaria_enchente",
+          "cheia",
+          "cheia_vazante"
+        ],
+        "bestTidesLabel": "Intermediária/enchente • Cheia • Cheia/vazante (janela 09h–11:30h)"
+      },
+      {
+        "id": "roteiro-2",
+        "slug": "roteiro-2",
+        "name": "Roteiro 2 - Ilha das Vacas & Ilha de Maria Guarda",
+        "tagline": "Praia Grande (maré cheia) ou Manguinho, Ponta do Navio, Sossego e Maria Guarda",
+        "shortDescription": "Ilha das Vacas (Praia Grande ou Manguinho, Praia da Ponta do Navio, Praia do Sossego) e Ilha de Maria Guarda.",
+        "detailedDescription": "Um dos refúgios mais exclusivos e preservados da Baía. Navegue contornando a Ilha das Vacas com paradas para banho na Praia Grande (região muito rasa que exige maré o mais cheia possível) ou na parada alternativa em Manguinho (mais acessível e segura na mesma ilha), visual cênico da Ponta do Navio e tranquilidade total na Praia do Sossego, além do encanto cultural da Ilha de Maria Guarda.",
+        "stops": [
+          "Ilha das Vacas: Praia Grande (maré cheia por ser rasa) ou Manguinho (parada acessível)",
+          "Ilha das Vacas: Praia da Ponta do Navio",
+          "Ilha das Vacas: Praia do Sossego",
+          "Ilha de Maria Guarda"
+        ],
+        "itinerary": [
+          "Saída de Madre de Deus em direção à Ilha das Vacas",
+          "Primeira parada: Banho na Praia Grande (com maré cheia) ou Manguinho (com maré intermediária)",
+          "Passagem cênica fotográfica pela Ponta do Navio",
+          "Parada relaxante e mergulho na acolhedora Praia do Sossego",
+          "Parada na tradicional Ilha de Maria Guarda para almoço ou petiscos",
+          "Navegação suave de retorno sob a brisa da Baía"
+        ],
+        "highlights": [
+          "Natureza intocada e praias com baixa movimentação de barcos",
+          "Sensação de ilha privativa com águas mornas",
+          "Alternativa inteligente em Manguinho para conforto náutico em marés intermediárias",
+          "Cultura pesqueira autêntica em Maria Guarda"
+        ],
+        "duration": "09:00h às 16:00h (7 horas)",
+        "recommendedFor": "Quem quer fugir do óbvio, relaxar sem pressa e curtir enseadas reservadas",
+        "image": "/images/panoramas/cais-bom-jesus.jpg",
+        "badge": "Refúgio Exclusivo",
+        "bestTides": [
+          "intermediaria_enchente",
+          "cheia",
+          "cheia_vazante"
+        ],
+        "bestTidesLabel": "Intermediária/enchente • Cheia • Cheia/vazante"
+      },
+      {
+        "id": "roteiro-3",
+        "slug": "roteiro-3",
+        "name": "Roteiro 3 - Ilha dos Frades & Piscinas Naturais",
+        "tagline": "Piscinas Naturais (09h-11:30h) ou Loreto, Guadalupe, Viração e Sugestão Náutica",
+        "shortDescription": "Ilha dos Frades: Piscinas Naturais de Paramana (09h às 11:30h) ou Praia do Loreto, Ponta de N. Sra. de Guadalupe, Praia da Viração e sugestão do marinheiro no retorno.",
+        "detailedDescription": "A experiência definitiva na maré baixa. Desça da lancha com a água nos joelhos nas piscinas naturais cristalinas de Paramana (parada exclusiva das 09h às 11:30h, exigindo maré o mais baixa possível; caso a maré matinal esteja cheia, a parada é adaptada para a Praia do Loreto), visite a célebre Ponta de Nossa Senhora de Guadalupe com selo Bandeira Azul, banhe-se na selvagem Praia da Viração e termine com uma parada surpresa sugerida pelo marinheiro no retorno.",
+        "stops": [
+          "Ilha dos Frades: Piscinas Naturais de Paramana (09h às 11:30h, maré baixa) ou Praia do Loreto (caso maré alta)",
+          "Ilha dos Frades: Ponta de Nossa Senhora de Guadalupe (Bandeira Azul)",
+          "Ilha dos Frades: Praia da Viração",
+          "Sugestão do marinheiro no retorno"
+        ],
+        "itinerary": [
+          "Embarque programado às 09h sincronizado com a maré matinal",
+          "Piscinas Naturais de Paramana (09h às 11:30h com maré baixa) ou Praia do Loreto (se maré alta)",
+          "Ponta de Nossa Senhora de Guadalupe: banho e mirante da igrejinha histórica",
+          "Praia da Viração: enseada com mata atlântica preservada e mar translúcido",
+          "Parada bônus selecionada pelo marinheiro no retorno ao pôr do sol"
+        ],
+        "highlights": [
+          "Piscinas naturais rasas perfeitas para fotos cinematográficas das 09h às 11:30h",
+          "Praia com Certificação Internacional Bandeira Azul (Guadalupe)",
+          "Mirante panorâmico de 360° da igrejinha de Guadalupe",
+          "Flexibilidade e segurança com adaptação para o Loreto se a maré encher"
+        ],
+        "duration": "09:00h às 16:00h (7 horas)",
+        "recommendedFor": "Amantes de fotos, snorkeling, piscinas naturais e praias paradisíacas",
+        "image": "/images/panoramas/coroa-do-frade.jpg",
+        "badge": "Piscinas Naturais",
+        "bestTides": [
+          "baixa",
+          "baixa_enchente",
+          "intermediaria_vazante"
+        ],
+        "bestTidesLabel": "Baixa • Baixa/enchente • Intermediária/vazante (janela 09h–11:30h)"
+      },
+      {
+        "id": "roteiro-4",
+        "slug": "roteiro-4",
+        "name": "Roteiro 4 - Sugestão do Marinheiro",
+        "tagline": "As melhores paradas do dia selecionadas conforme as condições da maré",
+        "shortDescription": "Sugestão do marinheiro - Serão sugeridas as melhores paradas de acordo com as condições da maré no dia do passeio.",
+        "detailedDescription": "Roteiro 100% dinâmico e flexível. O marinheiro, conhecedor de cada segredo da Baía de Todos-os-Santos, avalia a altura exata da maré, vento e correntes para escolher as praias mais abrigadas, cristalinas e confortáveis para o seu grupo em tempo real.",
+        "stops": [
+          "Sugestão personalizada do marinheiro",
+          "Paradas dinâmicas selecionadas de acordo com as condições da maré",
+          "Flexibilidade total alinhada diretamente no embarque"
+        ],
+        "itinerary": [
+          "Briefing rápido com o marinheiro na saída para alinhar preferências do grupo",
+          "Navegação para os pontos com melhor condição hidrológica e água mais límpida do dia",
+          "Paradas estratégicas de banho sem vento e sem ondulação",
+          "Parada para almoço de acordo com o gosto dos passageiros (restaurante ou churrasco)",
+          "Retorno com paradas contemplativas nos recantos mais bonitos da Baía"
+        ],
+        "highlights": [
+          "100% adaptável para garantir a melhor experiência em qualquer dia",
+          "Paradas definidas pelo marinheiro conforme maré, correnteza e ventos",
+          "Mais tranquilidade e menos tempo em praias com mar agitado",
+          "Atendimento exclusivo e consultoria náutica em tempo real"
+        ],
+        "duration": "09:00h às 16:00h (7 horas)",
+        "recommendedFor": "Quem deseja uma experiência fluida sem se preocupar com tábuas e horários de maré",
+        "image": "/images/panoramas/enseada-dos-frades.jpg",
+        "badge": "Personalizado",
+        "bestTides": [
+          "cheia",
+          "cheia_vazante",
+          "intermediaria_vazante",
+          "baixa",
+          "baixa_enchente",
+          "intermediaria_enchente"
+        ],
+        "bestTidesLabel": "Todas as marés (adaptado pelo marinheiro em tempo real)"
+      }
     ]
   },
   "gallery": {

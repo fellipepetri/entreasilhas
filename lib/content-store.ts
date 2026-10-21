@@ -25,7 +25,10 @@ function deepMergeDefaults(stored: Partial<SiteContent>): SiteContent {
         : defaultSiteContent.routes.homeItems,
       tours: stored.routes?.tours?.length
         ? stored.routes.tours
-        : defaultSiteContent.routes.tours
+        : defaultSiteContent.routes.tours,
+      bookingRoutes: stored.routes?.bookingRoutes?.length
+        ? stored.routes.bookingRoutes
+        : defaultSiteContent.routes.bookingRoutes
     },
     gallery: {
       ...defaultSiteContent.gallery,

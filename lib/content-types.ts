@@ -9,6 +9,7 @@ import type {
 } from "@/data/experience-360";
 import type { InstagramPost, InstagramProfile } from "@/data/instagram";
 import type { Tour } from "@/data/tours";
+import type { BookingRouteOption } from "@/data/booking";
 
 export type {
   PanoramaScene,
@@ -20,7 +21,8 @@ export type {
   HotspotSecretContent,
   InstagramPost,
   InstagramProfile,
-  Tour
+  Tour,
+  BookingRouteOption
 };
 
 export interface HeroSlide {
@@ -117,6 +119,7 @@ export interface SiteContent {
   routes: {
     homeItems: RouteItem[];
     tours: Tour[];
+    bookingRoutes?: BookingRouteOption[];
   };
   gallery: GallerySectionData;
   experience360: Experience360SectionData;
