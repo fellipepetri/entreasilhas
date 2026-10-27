@@ -1,50 +1,9 @@
-Painel do site:
-	Opção para adicionar ou remover datas do calendário.
-	Versão do calendário com as informações das pessoas que fecharam as datas (abrindo em um modal ao clicar na data).
-	
+Entre as ilhas
 
-Área do cliente:
-	Permitir login utilizando conta do google ou criar conta manualmente.
-	Confirmar agendamentos (realizar pagamento e reservar a data) após realização login.
-		O cliente seleciona a data/opções e, ao clicar em "Reservar", é direcionado a tela de login/criação de conta.
-	
-Seção de agendamentos:
-	Ao clicar no botão "Planejar passeio", abrirá um modal com um calendário com as datas disponíveis e opções para selecionar.
-	Será um calendário interativo que exibe datas disponíveis/fechadas, opções de quantidade de pessoas (adultos/crianças).
-	Valores tabelados variáveis: valor por adulto | por criança | por quantidade de pessoas (estabelecer valor mínimo).
+Site: 
 
-Roteiros (com base na condição da maré):
-	A seção de agendamento terá os roteiros/calendários sincronizados com a tábua de maré local (Madre de Deus).
-	Ao selecionar uma data no calendário, as opções de roteiro serão ajustadas, desabilitando algumas opções e habilitando outras, de 	acordo com o estado da maré naquela data. Isso ocorre devido a variação da maré (ex.: Algumas paradas só são possíveis com a maré cheia. 	Outras, apenas com a maré vazia).
-	Níveis de maré (para melhor ser entendido):
-		Maré cheia (preamar),
-		Maré cheia/vazante (quando está toda cheia, mas começando a vazar),
-		Maré intermediária/vazante (quando está entre a maré cheia e a baixa, mas está vazando),
-		Maré baixa (baixa-mar),
-		Maré baixa/enchente (quando está toda baixa, mas começando a encher),
-		Maré intermediária/enchente (quando está entre a maré baixa e a cheia, mas está enchendo).
-	Segue a lista abaixo dos roteiros possíveis em relação às marés (essa lista será personalizável no painel de admin):
-		Roteiro 1 (melhor maré: intermediária/enchente - cheia - cheia/vazante):
-			Ilha dos Frades
- 				Praia do Loreto
- 				Praia de Paramana
- 				Praia do Marinheiro
-			Ilha de Bom Jesus dos Passos
-		Roteiro 2 (melhor maré: intermediária/enchente - cheia - cheia/vazante):
-			Ilha das Vacas
- 				Praia Grande
- 				Praia da Ponta do Navio
- 				Praia do Sossego
-			Ilha de Maria Guarda
-		Roteiro 3 (melhor maré: baixa - baixa/enchente - intermediária/vazante):
-			Ilha dos Frades
- 				Piscinas Naturais de Paramana ou Praia do Loreto (se condições da maré iguais a do roteiro 1) 
- 				Ponta de Nossa Senhora de Guadalupe
- 				Praia da Viração
-			Sugestão do marinheiro no retorno
-		Roteiro 4:
-			Sugestão do marinheiro - Serão sugeridas as melhores paradas de acordo com as condições da maré
+ Tour Virtual (vídeos e fotos interativas)
 
-Informações da tábua de maré exibido no site
+ Criar uma section "Nossos parceiros" logo abaixo da section Instagram
 	 
-		
+ Trocar icons por flat icon

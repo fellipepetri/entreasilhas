@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PwaInstallModal } from "@/components/pwa-install-modal";
+import { PwaTopBanner } from "@/components/pwa-top-banner";
 
 interface AgendaHeaderProps {
   onLogout: () => void;
@@ -16,10 +15,11 @@ export function AgendaHeader({
   onOpenNewBookingModal,
   currentUserName
 }: AgendaHeaderProps) {
-  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
-
   return (
     <>
+      {/* Banner / Card flutuante que desce do topo */}
+      <PwaTopBanner />
+
       <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl transition-all">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
           {/* Identificação */}
@@ -70,18 +70,6 @@ export function AgendaHeader({
               <span className="sm:hidden">Reserva</span>
             </button>
 
-            {/* Botão Instalar App no Celular */}
-            <button
-              type="button"
-              onClick={() => setIsInstallModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-2.5 sm:px-3 py-2 text-xs font-semibold text-cyan-300 transition hover:bg-cyan-500/20 hover:text-white cursor-pointer active:scale-95"
-              title="Instalar no celular (Android e iPhone)"
-            >
-              <span>📱</span>
-              <span className="hidden sm:inline">Instalar no Celular</span>
-              <span className="sm:hidden">App</span>
-            </button>
-
             {/* Atalho para Painel de Conteúdo */}
             <Link
               href="/admin-painel"
@@ -121,12 +109,6 @@ export function AgendaHeader({
           </div>
         </div>
       </header>
-
-      {/* Modal de Instalação Mobile */}
-      <PwaInstallModal
-        isOpen={isInstallModalOpen}
-        onClose={() => setIsInstallModalOpen(false)}
-      />
     </>
   );
 }

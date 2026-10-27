@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PwaInstallModal } from "@/components/pwa-install-modal";
+import { PwaTopBanner } from "@/components/pwa-top-banner";
 
 interface AdminHeaderProps {
   username: string;
@@ -26,10 +25,11 @@ export function AdminHeader({
   isMaintenanceEnabled,
   onNavigateTab
 }: AdminHeaderProps) {
-  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
-
   return (
     <>
+      {/* Banner / Card flutuante que desce do topo */}
+      <PwaTopBanner />
+
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           {/* Identificação da Marca */}
@@ -105,17 +105,6 @@ export function AdminHeader({
               )}
             </button>
 
-            {/* Botão Instalar App no Celular */}
-            <button
-              type="button"
-              onClick={() => setIsInstallModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-200 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 px-3 py-2 text-xs font-semibold transition"
-              title="Instalar no celular (Android e iPhone)"
-            >
-              <span>📱</span>
-              <span className="hidden sm:inline">Instalar App</span>
-            </button>
-
             {/* Atalho para Painel de Agendamentos */}
             <Link
               href="/agenda-painel"
@@ -156,12 +145,6 @@ export function AdminHeader({
           </div>
         </div>
       </header>
-
-      {/* Modal de Instalação Mobile */}
-      <PwaInstallModal
-        isOpen={isInstallModalOpen}
-        onClose={() => setIsInstallModalOpen(false)}
-      />
     </>
   );
 }
