@@ -13,7 +13,7 @@ export function PwaTopBanner() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // 1. Não exibir se o usuário já estiver dentro do PWA instalado (Standalone)
+    // 1. Não exibir apenas se o usuário já estiver dentro do PWA instalado (Standalone)
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
@@ -22,20 +22,14 @@ export function PwaTopBanner() {
       return;
     }
 
-    // 2. Não exibir se o usuário fechou o banner nesta sessão
-    const isDismissed = sessionStorage.getItem("eai_pwa_banner_dismissed");
-    if (isDismissed === "true") {
-      return;
-    }
-
-    // 3. Capturar evento de instalação nativo no Android/Chrome
+    // 2. Capturar evento de instalação nativo no Android/Chrome
     const handleBeforeInstall = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
-    // 4. Efeito de descer do topo após breve delay para chamar atenção sutilmente
+    // 3. Efeito de descer do topo sempre ao acessar a página
     setIsRendered(true);
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -49,7 +43,6 @@ export function PwaTopBanner() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    sessionStorage.setItem("eai_pwa_banner_dismissed", "true");
     setTimeout(() => {
       setIsRendered(false);
     }, 400);
