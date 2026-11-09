@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { GeneralSettings, MaintenanceSettings, SiteContent } from "@/lib/content-types";
+import type { GeneralSettings, MaintenanceSettings, SiteContent, SiteFeatures } from "@/lib/content-types";
+import { defaultSiteFeatures } from "@/data/default-content";
 
 interface TabSettingsProps {
   settings: GeneralSettings;
@@ -21,6 +22,21 @@ export function TabSettings({
   const [isResetting, setIsResetting] = useState(false);
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const fileImportRef = useRef<HTMLInputElement>(null);
+
+  const features: SiteFeatures = {
+    ...defaultSiteFeatures,
+    ...(settings.features || {})
+  };
+
+  const handleUpdateFeature = (key: keyof SiteFeatures, value: boolean) => {
+    onChangeSettings({
+      ...settings,
+      features: {
+        ...features,
+        [key]: value
+      }
+    });
+  };
 
   const handleUpdate = (field: keyof GeneralSettings, value: string) => {
     onChangeSettings({
@@ -136,6 +152,306 @@ export function TabSettings({
           {resetMessage}
         </div>
       )}
+
+      {/* CARD: MÓDULOS E FUNCIONALIDADES DO SITE */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+        <div className="border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl">🎛️</span>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">
+                Módulos e Funcionalidades do Site
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Ative ou desative seções na página inicial e seus respectivos links de navegação no menu.
+                As opções principais como <em>Início</em> e <em>Contato</em> permanecem sempre ativas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3.5 sm:grid-cols-1">
+          {/* 1. Experiência 360 */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.experience360 ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-brand-sea font-bold text-lg">
+                🌐
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Experiência 360° Interativa</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.experience360 ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.experience360 ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe o tour virtual 360° na página inicial, o link &ldquo;Entre as Ilhas 360º&rdquo; no menu de navegação e a rota pública /experiencia-360.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.experience360}
+              onClick={() => handleUpdateFeature("experience360", !features.experience360)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.experience360 ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.experience360 ? "Clique para desativar a Experiência 360°" : "Clique para ativar a Experiência 360°"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.experience360 ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 2. Roteiros & Passeios */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.routes ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 font-bold text-lg">
+                ⛵
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Roteiros & Passeios</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.routes ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.routes ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe a seção de roteiros com marés na página inicial, o link &ldquo;Roteiros&rdquo; no menu e a página /passeios.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.routes}
+              onClick={() => handleUpdateFeature("routes", !features.routes)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.routes ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.routes ? "Clique para desativar Roteiros" : "Clique para ativar Roteiros"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.routes ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 3. Galeria de Fotos */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.gallery ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-700 font-bold text-lg">
+                🖼️
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Galeria de Fotos</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.gallery ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.gallery ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe a galeria com fotos e parallax na página inicial e o link &ldquo;Galeria&rdquo; no menu.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.gallery}
+              onClick={() => handleUpdateFeature("gallery", !features.gallery)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.gallery ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.gallery ? "Clique para desativar Galeria" : "Clique para ativar Galeria"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.gallery ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 4. Avaliações dos Clientes */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.testimonials ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 font-bold text-lg">
+                ⭐
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Avaliações dos Clientes</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.testimonials ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.testimonials ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe o slide de depoimentos e notas dos clientes na página inicial e o link &ldquo;Avaliações&rdquo; no menu.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.testimonials}
+              onClick={() => handleUpdateFeature("testimonials", !features.testimonials)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.testimonials ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.testimonials ? "Clique para desativar Avaliações" : "Clique para ativar Avaliações"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.testimonials ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 5. Feed do Instagram */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.instagram ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-700 font-bold text-lg">
+                📸
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Feed do Instagram</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.instagram ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.instagram ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe as publicações e reels do Instagram na página inicial e o link &ldquo;Instagram&rdquo; no menu.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.instagram}
+              onClick={() => handleUpdateFeature("instagram", !features.instagram)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.instagram ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.instagram ? "Clique para desativar Instagram" : "Clique para ativar Instagram"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.instagram ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 6. Sobre a Agência */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.about ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700 font-bold text-lg">
+                ℹ️
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Sobre a Agência</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.about ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.about ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe a história, fotos e números da agência na página inicial, o link &ldquo;Sobre&rdquo; no menu e a rota /sobre.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.about}
+              onClick={() => handleUpdateFeature("about", !features.about)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.about ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.about ? "Clique para desativar Sobre" : "Clique para ativar Sobre"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.about ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 7. Botão Planejar Passeio / Agendamento */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.booking ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold text-lg">
+                📅
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Botão Planejar Passeio / Agendamento</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.booking ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.booking ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe o botão azul de destaque &ldquo;Planejar passeio&rdquo; no cabeçalho e menu móvel que abre o modal de cálculo e reserva.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.booking}
+              onClick={() => handleUpdateFeature("booking", !features.booking)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.booking ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.booking ? "Clique para desativar Botão de Planejar Passeio" : "Clique para ativar Botão de Planejar Passeio"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.booking ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* CARD: MODO EM CONSTRUÇÃO / MANUTENÇÃO */}
       <div

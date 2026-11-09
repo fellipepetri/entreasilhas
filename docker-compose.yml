@@ -9,6 +9,9 @@ services:
       NODE_ENV: production
       PORT: "3000"
       HOSTNAME: 0.0.0.0
+    volumes:
+      - entreasilhas-data:/app/data
+      - entreasilhas-uploads:/app/public/uploads
     networks:
       - cloudflared-net
 
@@ -21,6 +24,10 @@ services:
       - site
     networks:
       - cloudflared-net
+
+volumes:
+  entreasilhas-data:
+  entreasilhas-uploads:
 
 networks:
   cloudflared-net:

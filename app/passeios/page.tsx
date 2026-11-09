@@ -1,10 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { SectionShell } from "@/components/section-shell";
 import { getSiteContent } from "@/lib/content-store";
 import { tours as defaultTours } from "@/data/tours";
 
+export const dynamic = "force-dynamic";
+
 export default async function PasseiosPage() {
   const content = await getSiteContent().catch(() => null);
+
+  if (content?.settings?.features?.routes === false) {
+    redirect("/");
+  }
+
   const tours = content?.routes?.tours || defaultTours;
 
   return (

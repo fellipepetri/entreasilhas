@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { SectionShell } from "@/components/section-shell";
 import { fetchTourBySlug } from "@/lib/get-tour-by-slug";
+import { getSiteContent } from "@/lib/content-store";
+
+export const dynamic = "force-dynamic";
 
 type PasseioSlugPageProps = {
   params: Promise<{
@@ -12,6 +15,11 @@ type PasseioSlugPageProps = {
 export default async function PasseioSlugPage({
   params
 }: PasseioSlugPageProps) {
+  const content = await getSiteContent().catch(() => null);
+  if (content?.settings?.features?.routes === false) {
+    redirect("/");
+  }
+
   const { slug } = await params;
   const tour = await fetchTourBySlug(slug);
 

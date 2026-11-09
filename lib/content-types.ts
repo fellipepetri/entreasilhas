@@ -103,6 +103,16 @@ export interface MaintenanceSettings {
   showAdminLink: boolean;
 }
 
+export interface SiteFeatures {
+  experience360: boolean;
+  routes: boolean;
+  gallery: boolean;
+  testimonials: boolean;
+  instagram: boolean;
+  about: boolean;
+  booking: boolean;
+}
+
 export interface GeneralSettings {
   siteName: string;
   whatsappNumber: string;
@@ -111,6 +121,7 @@ export interface GeneralSettings {
   instagramHandle: string;
   instagramUrl: string;
   maintenance?: MaintenanceSettings;
+  features?: SiteFeatures;
 }
 
 export interface SiteContent {

@@ -1,10 +1,11 @@
 import fs from "fs/promises";
 import path from "path";
 import type { SiteContent } from "./content-types";
-import { defaultSiteContent } from "@/data/default-content";
+import { defaultSiteContent, defaultSiteFeatures } from "@/data/default-content";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const CONTENT_FILE_PATH = path.join(DATA_DIR, "site-content.json");
+const SYSTEM_SETTINGS_FILE_PATH = path.join(DATA_DIR, "system-settings.json");
 
 let memoryCache: SiteContent | null = null;
 let lastReadTime = 0;
@@ -62,6 +63,10 @@ function deepMergeDefaults(stored: Partial<SiteContent>): SiteContent {
     settings: {
       ...defaultSiteContent.settings,
       ...(stored.settings || {}),
+      features: {
+        ...defaultSiteFeatures,
+        ...(stored.settings?.features || {})
+      },
       maintenance: {
         ...defaultSiteContent.settings.maintenance!,
         ...(stored.settings?.maintenance || {})
@@ -80,24 +85,77 @@ export async function getSiteContent(): Promise<SiteContent> {
     const raw = await fs.readFile(CONTENT_FILE_PATH, "utf-8");
     const parsed = JSON.parse(raw);
     const merged = deepMergeDefaults(parsed);
+
+    // Persistência adicional: lê system-settings.json para garantir que Modo de Manutenção e Features nunca se percam
+    try {
+      const rawSettings = await fs.readFile(SYSTEM_SETTINGS_FILE_PATH, "utf-8");
+      const parsedSettings = JSON.parse(rawSettings);
+      if (parsedSettings && typeof parsedSettings === "object") {
+        if (parsedSettings.maintenance) {
+          merged.settings.maintenance = {
+            ...merged.settings.maintenance,
+            ...parsedSettings.maintenance
+          };
+        }
+        if (parsedSettings.features) {
+          merged.settings.features = {
+            ...merged.settings.features,
+            ...parsedSettings.features
+          };
+        }
+      }
+    } catch {
+      // system-settings.json opcional
+    }
+
     memoryCache = merged;
     lastReadTime = now;
     return merged;
   } catch {
     // Arquivo ainda não existe ou inválido: inicializa com default
+    let fresh = { ...defaultSiteContent };
+
+    // Tenta resgatar configurações salvas do sistema se existirem
+    try {
+      const rawSettings = await fs.readFile(SYSTEM_SETTINGS_FILE_PATH, "utf-8");
+      const parsedSettings = JSON.parse(rawSettings);
+      if (parsedSettings && typeof parsedSettings === "object") {
+        if (parsedSettings.maintenance) {
+          fresh.settings = {
+            ...fresh.settings,
+            maintenance: {
+              ...fresh.settings.maintenance!,
+              ...parsedSettings.maintenance
+            }
+          };
+        }
+        if (parsedSettings.features) {
+          fresh.settings = {
+            ...fresh.settings,
+            features: {
+              ...defaultSiteFeatures,
+              ...parsedSettings.features
+            }
+          };
+        }
+      }
+    } catch {
+      // Ignora
+    }
+
     try {
       await fs.mkdir(DATA_DIR, { recursive: true });
       await fs.writeFile(
         CONTENT_FILE_PATH,
-        JSON.stringify(defaultSiteContent, null, 2),
+        JSON.stringify(fresh, null, 2),
         "utf-8"
       );
     } catch {
       // Ignora falhas de escrita se ambiente for somente-leitura e retorna defaults
     }
-    memoryCache = defaultSiteContent;
+    memoryCache = fresh;
     lastReadTime = now;
-    return defaultSiteContent;
+    return fresh;
   }
 }
 
@@ -146,6 +204,12 @@ export async function saveSiteContent(
       ? {
           ...current.settings,
           ...next.settings,
+          features: next.settings.features
+            ? {
+                ...(current.settings.features || defaultSiteFeatures),
+                ...next.settings.features
+              }
+            : current.settings.features,
           maintenance: next.settings.maintenance
             ? {
                 ...(current.settings.maintenance || defaultSiteContent.settings.maintenance!),
@@ -163,6 +227,22 @@ export async function saveSiteContent(
     JSON.stringify(updated, null, 2),
     "utf-8"
   );
+
+  // Salva adicionalmente no system-settings.json para garantir sobrevivência a deploys e reinicializações
+  try {
+    const systemSettings = {
+      maintenance: updated.settings.maintenance,
+      features: updated.settings.features,
+      savedAt: new Date().toISOString()
+    };
+    await fs.writeFile(
+      SYSTEM_SETTINGS_FILE_PATH,
+      JSON.stringify(systemSettings, null, 2),
+      "utf-8"
+    );
+  } catch (err) {
+    console.warn("Falha ao salvar system-settings.json:", err);
+  }
 
   memoryCache = updated;
   lastReadTime = Date.now();

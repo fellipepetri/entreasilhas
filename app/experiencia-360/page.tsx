@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { PanoramaViewer } from "@/components/experience-360/panorama-viewer";
 import { getSiteContent } from "@/lib/content-store";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Experiência 360° Interativa | Entre as Ilhas — Turismo Náutico",
@@ -10,6 +13,10 @@ export const metadata: Metadata = {
 
 export default async function Experiencia360Page() {
   const content = await getSiteContent().catch(() => null);
+
+  if (content?.settings?.features?.experience360 === false) {
+    redirect("/");
+  }
 
   return (
     <div className="relative w-full h-screen h-[100dvh] overflow-hidden bg-slate-950 text-white">

@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSiteContent } from "@/lib/use-site-content";
 
 export function SiteFooter() {
   const pathname = usePathname();
+  const { content } = useSiteContent();
+  const features = content?.settings?.features;
   const is360Page = pathname?.startsWith("/experiencia-360");
   const isAdmin = pathname?.startsWith("/admin-painel") || pathname?.startsWith("/agenda-painel");
 
@@ -53,9 +56,15 @@ export function SiteFooter() {
                 <p className="text-lg sm:text-xl font-semibold text-white">Links úteis</p>
                 <div className="mt-4 sm:mt-5 flex flex-col gap-2.5 sm:gap-3 text-sm sm:text-base text-white">
                   <Link href="/" className="hover:text-cyan-300 transition">Início</Link>
-                  <Link href="/experiencia-360" className="text-cyan-300 font-medium hover:underline">Entre as Ilhas 360º</Link>
-                  <Link href="/passeios" className="hover:text-cyan-300 transition">Passeios</Link>
-                  <Link href="/sobre" className="hover:text-cyan-300 transition">Sobre</Link>
+                  {features?.experience360 !== false && (
+                    <Link href="/experiencia-360" className="text-cyan-300 font-medium hover:underline">Entre as Ilhas 360º</Link>
+                  )}
+                  {features?.routes !== false && (
+                    <Link href="/passeios" className="hover:text-cyan-300 transition">Passeios</Link>
+                  )}
+                  {features?.about !== false && (
+                    <Link href="/sobre" className="hover:text-cyan-300 transition">Sobre</Link>
+                  )}
                   <Link href="/contato" className="hover:text-cyan-300 transition">Contato</Link>
                 </div>
               </div>

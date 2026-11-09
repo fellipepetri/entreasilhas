@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import type { SiteContent } from "@/lib/content-types";
-import { defaultSiteContent } from "@/data/default-content";
+import type { SiteContent, SiteFeatures } from "@/lib/content-types";
+import { defaultSiteContent, defaultSiteFeatures } from "@/data/default-content";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { TabOverview } from "@/components/admin/tab-overview";
@@ -26,6 +26,14 @@ const TABS = [
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
+
+const TAB_FEATURE_MAP: Partial<Record<TabId, keyof SiteFeatures>> = {
+  "360": "experience360",
+  gallery: "gallery",
+  routes: "routes",
+  testimonials: "testimonials",
+  about: "about"
+};
 
 export default function AdminPainelPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -156,6 +164,25 @@ export default function AdminPainelPage() {
     setHasUnsavedChanges(true);
   };
 
+  const features = content.settings.features || defaultSiteFeatures;
+
+  const handleToggleFeature = (
+    featureKey: keyof SiteFeatures,
+    enabled: boolean
+  ) => {
+    setContent((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        features: {
+          ...(prev.settings.features || defaultSiteFeatures),
+          [featureKey]: enabled
+        }
+      }
+    }));
+    setHasUnsavedChanges(true);
+  };
+
   // Estado 1: Verificando autenticação inicial
   if (isCheckingAuth) {
     return (
@@ -212,6 +239,10 @@ export default function AdminPainelPage() {
           <nav className="flex items-center gap-1 overflow-x-auto py-2.5 scrollbar-none">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
+              const mappedFeature = TAB_FEATURE_MAP[tab.id];
+              const isFeatureDisabled =
+                mappedFeature && features[mappedFeature] === false;
+
               return (
                 <button
                   key={tab.id}
@@ -221,11 +252,23 @@ export default function AdminPainelPage() {
                     "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition",
                     isActive
                       ? "bg-brand-deep text-white shadow-sm"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+                    isFeatureDisabled && !isActive ? "opacity-60" : ""
                   ].join(" ")}
                 >
                   <span>{tab.icon}</span>
                   <span>{tab.label}</span>
+                  {isFeatureDisabled && (
+                    <span
+                      className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-extrabold ${
+                        isActive
+                          ? "bg-amber-400 text-slate-950"
+                          : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
+                      Oculto
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -260,6 +303,10 @@ export default function AdminPainelPage() {
               <TabExperience360
                 data={content.experience360}
                 onChange={(data) => updateContent("experience360", data)}
+                isEnabled={features.experience360 !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("experience360", enabled)
+                }
               />
             )}
 
@@ -267,6 +314,10 @@ export default function AdminPainelPage() {
               <TabGallery
                 data={content.gallery}
                 onChange={(gallery) => updateContent("gallery", gallery)}
+                isEnabled={features.gallery !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("gallery", enabled)
+                }
               />
             )}
 
@@ -275,6 +326,10 @@ export default function AdminPainelPage() {
                 homeItems={content.routes.homeItems}
                 tours={content.routes.tours}
                 bookingRoutes={content.routes.bookingRoutes}
+                isEnabled={features.routes !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("routes", enabled)
+                }
                 onChangeHomeItems={(items) =>
                   setContent((prev) => ({
                     ...prev,
@@ -302,6 +357,10 @@ export default function AdminPainelPage() {
                 onChange={(testimonials) =>
                   updateContent("testimonials", testimonials)
                 }
+                isEnabled={features.testimonials !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("testimonials", enabled)
+                }
               />
             )}
 
@@ -309,6 +368,10 @@ export default function AdminPainelPage() {
               <TabAbout
                 data={content.about}
                 onChange={(about) => updateContent("about", about)}
+                isEnabled={features.about !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("about", enabled)
+                }
               />
             )}
 

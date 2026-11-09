@@ -7,10 +7,21 @@ import { useEffect, useState } from "react";
 import { primaryNavigationLinks } from "@/data/home";
 import { ContactModal } from "@/components/contact-modal";
 import { PlanTourModal } from "@/components/booking/plan-tour-modal";
+import { useSiteContent } from "@/lib/use-site-content";
+import type { SiteFeatures } from "@/lib/content-types";
 
-const navigationSectionIds = primaryNavigationLinks.map((link) =>
-  link.href === "/" ? "inicio" : link.href.replace("#", "")
-);
+function getFilteredNavLinks(features?: SiteFeatures) {
+  return primaryNavigationLinks.filter((link) => {
+    if (link.href === "/") return true;
+    if (link.href === "#experiencia-360") return features?.experience360 !== false;
+    if (link.href === "#sobre") return features?.about !== false;
+    if (link.href === "#roteiros") return features?.routes !== false;
+    if (link.href === "#galeria") return features?.gallery !== false;
+    if (link.href === "#avaliacoes") return features?.testimonials !== false;
+    if (link.href === "#instagram") return features?.instagram !== false;
+    return true;
+  });
+}
 
 function getSectionIdFromHref(href: string) {
   return href === "/" ? "inicio" : href.replace("#", "");
@@ -117,12 +128,16 @@ function WhatsAppIcon({ className }: { className?: string }) {
 function DesktopTopHeader({
   isScrolled,
   activeSection,
+  navLinks,
+  showBookingButton = true,
   onNavigate,
   onOpenContactModal,
   onOpenPlanTourModal
 }: {
   isScrolled: boolean;
   activeSection: string;
+  navLinks: { href: string; label: string }[];
+  showBookingButton?: boolean;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
   onOpenContactModal: () => void;
   onOpenPlanTourModal: () => void;
@@ -141,7 +156,7 @@ function DesktopTopHeader({
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] flex-1 items-center justify-between gap-6 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
           <BrandMark scrolled={false} compact onNavigate={onNavigate} />
           <nav className="mr-2 flex items-center gap-6 2xl:gap-10" aria-label="Principal">
-            {primaryNavigationLinks.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -160,14 +175,16 @@ function DesktopTopHeader({
         </div>
 
         <div className="top-header-shell pointer-events-auto flex min-h-[4.05rem] items-center gap-3.5 rounded-[2.4rem] border border-transparent px-5 shadow-[0_24px_80px_rgba(6,28,57,0.32)] backdrop-blur-xl">
-          <button
-            type="button"
-            onClick={onOpenPlanTourModal}
-            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
-          >
-            <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-            <span>Planejar passeio</span>
-          </button>
+          {showBookingButton && (
+            <button
+              type="button"
+              onClick={onOpenPlanTourModal}
+              className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
+            >
+              <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
+              <span>Planejar passeio</span>
+            </button>
+          )}
           <div className="flex items-center gap-2.5">
             <button
               type="button"
@@ -198,12 +215,16 @@ function DesktopTopHeader({
 function DesktopScrolledHeader({
   isScrolled,
   activeSection,
+  navLinks,
+  showBookingButton = true,
   onNavigate,
   onOpenContactModal,
   onOpenPlanTourModal
 }: {
   isScrolled: boolean;
   activeSection: string;
+  navLinks: { href: string; label: string }[];
+  showBookingButton?: boolean;
   onNavigate: (href: string, event?: React.MouseEvent) => void;
   onOpenContactModal: () => void;
   onOpenPlanTourModal: () => void;
@@ -223,7 +244,7 @@ function DesktopScrolledHeader({
           <BrandMark scrolled compact onNavigate={onNavigate} />
 
           <nav className="flex items-center gap-4 xl:gap-5 2xl:gap-7" aria-label="Principal fixo">
-            {primaryNavigationLinks.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -241,14 +262,16 @@ function DesktopScrolledHeader({
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={onOpenPlanTourModal}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
-            >
-              <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-              <span>Planejar passeio</span>
-            </button>
+            {showBookingButton && (
+              <button
+                type="button"
+                onClick={onOpenPlanTourModal}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
+              >
+                <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
+                <span>Planejar passeio</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={onOpenContactModal}
@@ -276,6 +299,11 @@ function DesktopScrolledHeader({
 }
 
 export function SiteHeader() {
+  const { content } = useSiteContent();
+  const features = content?.settings?.features;
+  const navLinks = getFilteredNavLinks(features);
+  const showBookingButton = features?.booking !== false;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -377,7 +405,11 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    const sections = navigationSectionIds
+    const activeSectionIds = navLinks.map((link) =>
+      link.href === "/" ? "inicio" : link.href.replace("#", "")
+    );
+
+    const sections = activeSectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => section !== null);
 
@@ -413,7 +445,7 @@ export function SiteHeader() {
       window.removeEventListener("scroll", syncActiveSection);
       window.removeEventListener("resize", syncActiveSection);
     };
-  }, []);
+  }, [navLinks]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -436,6 +468,8 @@ export function SiteHeader() {
         <DesktopTopHeader
           isScrolled={isScrolled}
           activeSection={activeSection}
+          navLinks={navLinks}
+          showBookingButton={showBookingButton}
           onNavigate={handleNavigate}
           onOpenContactModal={() => setIsContactModalOpen(true)}
           onOpenPlanTourModal={() => setIsPlanTourModalOpen(true)}
@@ -443,6 +477,8 @@ export function SiteHeader() {
         <DesktopScrolledHeader
           isScrolled={isScrolled}
           activeSection={activeSection}
+          navLinks={navLinks}
+          showBookingButton={showBookingButton}
           onNavigate={handleNavigate}
           onOpenContactModal={() => setIsContactModalOpen(true)}
           onOpenPlanTourModal={() => setIsPlanTourModalOpen(true)}
@@ -492,7 +528,7 @@ export function SiteHeader() {
               />
               <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/98 p-5 sm:p-6 shadow-2xl backdrop-blur animate-fadeIn">
                 <nav className="flex flex-col gap-3" aria-label="Mobile">
-                  {primaryNavigationLinks.map((link) => (
+                  {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -511,17 +547,19 @@ export function SiteHeader() {
                     </Link>
                   ))}
                   <div className="pt-2 flex flex-col gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsOpen(false);
-                        setIsPlanTourModalOpen(true);
-                      }}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm cursor-pointer"
-                    >
-                      <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-                      <span>Planejar passeio</span>
-                    </button>
+                    {showBookingButton && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setIsPlanTourModalOpen(true);
+                        }}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm cursor-pointer"
+                      >
+                        <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
+                        <span>Planejar passeio</span>
+                      </button>
+                    )}
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"

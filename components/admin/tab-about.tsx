@@ -6,9 +6,16 @@ import { ImageUploader } from "./image-uploader";
 interface TabAboutProps {
   data: AboutSectionData;
   onChange: (data: AboutSectionData) => void;
+  isEnabled?: boolean;
+  onToggleEnabled?: (enabled: boolean) => void;
 }
 
-export function TabAbout({ data, onChange }: TabAboutProps) {
+export function TabAbout({
+  data,
+  onChange,
+  isEnabled,
+  onToggleEnabled
+}: TabAboutProps) {
   const handleUpdate = (field: keyof AboutSectionData, value: unknown) => {
     onChange({
       ...data,
@@ -38,6 +45,46 @@ export function TabAbout({ data, onChange }: TabAboutProps) {
 
   return (
     <div className="space-y-8 max-w-4xl">
+      {/* Banner de Ativação / Desativação da Funcionalidade */}
+      {onToggleEnabled && (
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+          isEnabled !== false ? "border-emerald-200 bg-emerald-50/70" : "border-slate-200 bg-slate-100"
+        }`}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">ℹ️</span>
+            <div>
+              <p className="text-xs sm:text-sm font-bold text-slate-900">
+                Status da Seção Sobre no Site:{" "}
+                <strong className={isEnabled !== false ? "text-emerald-700" : "text-slate-600"}>
+                  {isEnabled !== false ? "ATIVADO (Visível na página e no menu)" : "DESATIVADO (Oculto no site)"}
+                </strong>
+              </p>
+              <p className="text-[11px] text-slate-500">
+                {isEnabled !== false
+                  ? "A história, fotos e números da agência estão sendo exibidos na Home, no menu e na página /sobre."
+                  : "A seção sobre está oculta para o público e o item foi removido do menu de navegação."}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isEnabled !== false}
+            onClick={() => onToggleEnabled(isEnabled === false)}
+            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+              isEnabled !== false ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+            }`}
+            title={isEnabled !== false ? "Desativar Seção Sobre" : "Ativar Seção Sobre"}
+          >
+            <span
+              className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                isEnabled !== false ? "translate-x-7" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+      )}
+
       <div className="border-b border-slate-200 pb-4">
         <h2 className="text-xl font-bold text-slate-900">
           Seção Sobre a Agência

@@ -14,6 +14,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"]
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const viewport: Viewport = {
   themeColor: "#0b1a2e",
   width: "device-width",

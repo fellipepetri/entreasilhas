@@ -1,4 +1,14 @@
-import type { SiteContent } from "@/lib/content-types";
+import type { SiteContent, SiteFeatures } from "@/lib/content-types";
+
+export const defaultSiteFeatures: SiteFeatures = {
+  experience360: true,
+  routes: true,
+  gallery: true,
+  testimonials: true,
+  instagram: true,
+  about: true,
+  booking: true
+};
 import {
   aboutStats,
   heroSlides,
@@ -87,6 +97,7 @@ export const defaultSiteContent: SiteContent = {
       "Olá! Gostaria de informações sobre os passeios de lancha da Entre as Ilhas.",
     instagramHandle: "@entreasilhas",
     instagramUrl: "https://www.instagram.com/entreasilhas",
+    features: { ...defaultSiteFeatures },
     maintenance: {
       enabled: false,
       title: "Estamos Preparando Novas Experiências",

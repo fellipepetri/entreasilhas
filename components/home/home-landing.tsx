@@ -869,78 +869,81 @@ export function HomeLanding({ initialContent }: { initialContent?: SiteContent }
   const testimonials = content.testimonials;
   const experience360 = content.experience360;
   const instagram = content.instagram;
+  const features = content.settings.features;
 
   return (
     <div className="overflow-hidden bg-white">
       <HeroSlider slides={heroSlides} />
 
-      <section id="sobre" className="scroll-mt-20 lg:scroll-mt-24 relative bg-white pb-14 pt-10 md:pb-16">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
-          <div className="grid gap-8">
-            <article className="relative overflow-hidden rounded-[1.6rem] sm:rounded-[2.2rem]">
-              <div className="absolute inset-0 rounded-[1.6rem] sm:rounded-[2.2rem] border-[3px] border-brand-sea" />
-              <div className="relative m-3 sm:m-5 md:m-7 overflow-hidden rounded-[1.2rem] sm:rounded-[2rem]">
+      {features?.about !== false && (
+        <section id="sobre" className="scroll-mt-20 lg:scroll-mt-24 relative bg-white pb-14 pt-10 md:pb-16">
+          <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
+            <div className="grid gap-8">
+              <article className="relative overflow-hidden rounded-[1.6rem] sm:rounded-[2.2rem]">
+                <div className="absolute inset-0 rounded-[1.6rem] sm:rounded-[2.2rem] border-[3px] border-brand-sea" />
+                <div className="relative m-3 sm:m-5 md:m-7 overflow-hidden rounded-[1.2rem] sm:rounded-[2rem]">
+                  <Image
+                    src={about?.mainImage || "/images/about-main.svg"}
+                    alt="Imagem principal da seção sobre"
+                    width={780}
+                    height={900}
+                    className="h-auto w-full"
+                  />
+                </div>
+              </article>
+
+              <div className="pl-0 sm:pl-4 md:pl-8">
+                <p className="text-base sm:text-lg font-semibold text-brand-sea">
+                  {about?.eyebrow || "Quem somos"}
+                </p>
+                <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
+                  {about?.paragraph1 ||
+                    "Organizamos experiências náuticas e roteiros costeiros com foco em conforto, clareza logística e visual tropical."}
+                </p>
+                <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-4">
+                  {(about?.stats || defaultAboutStats).map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-2xl sm:rounded-full bg-brand-foam p-3 sm:px-5 sm:py-3 text-brand-deep text-center sm:text-left"
+                    >
+                      <p className="text-xl sm:text-2xl font-bold">{item.value}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <p className="text-lg font-semibold text-brand-sea">
+                Mergulhe na magia do mar
+              </p>
+              <h2 className="font-display mt-5 text-[clamp(2.5rem,7vw,4.5rem)] font-semibold leading-[1.02] tracking-tight text-brand-deep">
+                {about?.title || "Explorando a beleza entre ondas, ilhas e marés."}
+              </h2>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
+                {about?.paragraph2 ||
+                  "A proposta visual segue a mesma lógica da referência: título amplo, foto principal recortada, apoio fotográfico secundário e conteúdo bem respirado logo após a hero."}
+              </p>
+              <Link
+                href="/sobre"
+                className="mt-10 inline-flex rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-base font-semibold text-white"
+              >
+                Conhecer a agência
+              </Link>
+              <div className="mt-14 overflow-hidden rounded-[2.2rem]">
                 <Image
-                  src={about?.mainImage || "/images/about-main.svg"}
-                  alt="Imagem principal da seção sobre"
-                  width={780}
-                  height={900}
+                  src={about?.secondaryImage || "/images/about-secondary.svg"}
+                  alt="Imagem secundária da seção sobre"
+                  width={980}
+                  height={640}
                   className="h-auto w-full"
                 />
               </div>
-            </article>
-
-            <div className="pl-0 sm:pl-4 md:pl-8">
-              <p className="text-base sm:text-lg font-semibold text-brand-sea">
-                {about?.eyebrow || "Quem somos"}
-              </p>
-              <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
-                {about?.paragraph1 ||
-                  "Organizamos experiências náuticas e roteiros costeiros com foco em conforto, clareza logística e visual tropical."}
-              </p>
-              <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 sm:gap-4">
-                {(about?.stats || defaultAboutStats).map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-2xl sm:rounded-full bg-brand-foam p-3 sm:px-5 sm:py-3 text-brand-deep text-center sm:text-left"
-                  >
-                    <p className="text-xl sm:text-2xl font-bold">{item.value}</p>
-                    <p className="text-xs sm:text-sm text-slate-500">{item.label}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
-
-          <div className="pt-4">
-            <p className="text-lg font-semibold text-brand-sea">
-              Mergulhe na magia do mar
-            </p>
-            <h2 className="font-display mt-5 text-[clamp(2.5rem,7vw,4.5rem)] font-semibold leading-[1.02] tracking-tight text-brand-deep">
-              {about?.title || "Explorando a beleza entre ondas, ilhas e marés."}
-            </h2>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600 md:mt-8 md:text-xl md:leading-10 whitespace-pre-line">
-              {about?.paragraph2 ||
-                "A proposta visual segue a mesma lógica da referência: título amplo, foto principal recortada, apoio fotográfico secundário e conteúdo bem respirado logo após a hero."}
-            </p>
-            <Link
-              href="/sobre"
-              className="mt-10 inline-flex rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-base font-semibold text-white"
-            >
-              Conhecer a agência
-            </Link>
-            <div className="mt-14 overflow-hidden rounded-[2.2rem]">
-              <Image
-                src={about?.secondaryImage || "/images/about-secondary.svg"}
-                alt="Imagem secundária da seção sobre"
-                width={980}
-                height={640}
-                className="h-auto w-full"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="relative overflow-hidden bg-white pb-16 pt-8 sm:pb-20 sm:pt-10">
         <div
@@ -991,54 +994,65 @@ export function HomeLanding({ initialContent }: { initialContent?: SiteContent }
         </div>
       </section>
 
-      <HoverRouteList items={routeItems} />
+      {features?.routes !== false && (
+        <HoverRouteList items={routeItems} />
+      )}
 
-      <Experience360Section data={experience360} />
+      {features?.experience360 !== false && (
+        <Experience360Section data={experience360} />
+      )}
 
-      <section id="galeria" className="scroll-mt-20 lg:scroll-mt-24 bg-white py-24">
-        <div className="mx-auto w-full max-w-6xl px-6">
-          <div className="mb-12 max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
-              {gallery?.eyebrow || "Adventure Showcase"}
-            </p>
-            <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
-              {gallery?.title || "Galeria com recortes grandes e parallax dentro da moldura."}
-            </h2>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-[0.46fr_0.54fr]">
-            <div className="grid gap-6">
-              <ParallaxCard
-                image={cards[0]?.image || defaultShowcaseCards[0].image}
-                alt={cards[0]?.title || defaultShowcaseCards[0].title}
-                className="w-full max-w-full lg:max-w-[34rem]"
-              />
-              <ParallaxCard
-                image={cards[2]?.image || defaultShowcaseCards[2].image}
-                alt={cards[2]?.title || defaultShowcaseCards[2].title}
-                className="w-full max-w-full lg:max-w-[42rem]"
-              />
+      {features?.gallery !== false && (
+        <section id="galeria" className="scroll-mt-20 lg:scroll-mt-24 bg-white py-24">
+          <div className="mx-auto w-full max-w-6xl px-6">
+            <div className="mb-12 max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-sea">
+                {gallery?.eyebrow || "Adventure Showcase"}
+              </p>
+              <h2 className="font-display mt-4 text-[clamp(2.3rem,6vw,3.75rem)] font-semibold tracking-tight text-brand-deep">
+                {gallery?.title || "Galeria com recortes grandes e parallax dentro da moldura."}
+              </h2>
             </div>
-            <div className="grid gap-6 pt-0 lg:pt-10">
-              <ParallaxCard
-                image={cards[1]?.image || defaultShowcaseCards[1].image}
-                alt={cards[1]?.title || defaultShowcaseCards[1].title}
-                className="w-full"
-              />
-              <ParallaxCard
-                image={cards[3]?.image || defaultShowcaseCards[3].image}
-                alt={cards[3]?.title || defaultShowcaseCards[3].title}
-                className="w-full max-w-full lg:max-w-[34rem] lg:justify-self-end"
-              />
+
+            <div className="grid gap-6 lg:grid-cols-[0.46fr_0.54fr]">
+              <div className="grid gap-6">
+                <ParallaxCard
+                  image={cards[0]?.image || defaultShowcaseCards[0].image}
+                  alt={cards[0]?.title || defaultShowcaseCards[0].title}
+                  className="w-full max-w-full lg:max-w-[34rem]"
+                />
+                <ParallaxCard
+                  image={cards[2]?.image || defaultShowcaseCards[2].image}
+                  alt={cards[2]?.title || defaultShowcaseCards[2].title}
+                  className="w-full max-w-full lg:max-w-[42rem]"
+                />
+              </div>
+              <div className="grid gap-6 pt-0 lg:pt-10">
+                <ParallaxCard
+                  image={cards[1]?.image || defaultShowcaseCards[1].image}
+                  alt={cards[1]?.title || defaultShowcaseCards[1].title}
+                  className="w-full"
+                />
+                <ParallaxCard
+                  image={cards[3]?.image || defaultShowcaseCards[3].image}
+                  alt={cards[3]?.title || defaultShowcaseCards[3].title}
+                  className="w-full max-w-full lg:max-w-[34rem] lg:justify-self-end"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <TestimonialSlider list={testimonials} />
+      {features?.testimonials !== false && (
+        <TestimonialSlider list={testimonials} />
+      )}
+
       <Chamada />
 
-      <InstagramSection data={instagram} />
+      {features?.instagram !== false && (
+        <InstagramSection data={instagram} />
+      )}
     </div>
   );
 }

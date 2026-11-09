@@ -7,11 +7,15 @@ import { ImageUploader } from "./image-uploader";
 interface TabTestimonialsProps {
   testimonials: Testimonial[];
   onChange: (testimonials: Testimonial[]) => void;
+  isEnabled?: boolean;
+  onToggleEnabled?: (enabled: boolean) => void;
 }
 
 export function TabTestimonials({
   testimonials,
-  onChange
+  onChange,
+  isEnabled,
+  onToggleEnabled
 }: TabTestimonialsProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -54,6 +58,46 @@ export function TabTestimonials({
 
   return (
     <div className="space-y-6">
+      {/* Banner de Ativação / Desativação da Funcionalidade */}
+      {onToggleEnabled && (
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+          isEnabled !== false ? "border-emerald-200 bg-emerald-50/70" : "border-slate-200 bg-slate-100"
+        }`}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">⭐</span>
+            <div>
+              <p className="text-xs sm:text-sm font-bold text-slate-900">
+                Status das Avaliações no Site:{" "}
+                <strong className={isEnabled !== false ? "text-emerald-700" : "text-slate-600"}>
+                  {isEnabled !== false ? "ATIVADO (Visível na página e no menu)" : "DESATIVADO (Oculto no site)"}
+                </strong>
+              </p>
+              <p className="text-[11px] text-slate-500">
+                {isEnabled !== false
+                  ? "O slide de depoimentos e notas dos clientes está sendo exibido na Home e no menu."
+                  : "A seção de avaliações está oculta para o público e o item foi removido do menu de navegação."}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isEnabled !== false}
+            onClick={() => onToggleEnabled(isEnabled === false)}
+            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+              isEnabled !== false ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+            }`}
+            title={isEnabled !== false ? "Desativar Avaliações" : "Ativar Avaliações"}
+          >
+            <span
+              className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                isEnabled !== false ? "translate-x-7" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+      )}
+
       {/* Topo da Aba */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>

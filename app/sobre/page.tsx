@@ -1,6 +1,15 @@
+import { redirect } from "next/navigation";
 import { SectionShell } from "@/components/section-shell";
+import { getSiteContent } from "@/lib/content-store";
 
-export default function SobrePage() {
+export const dynamic = "force-dynamic";
+
+export default async function SobrePage() {
+  const content = await getSiteContent().catch(() => null);
+  if (content?.settings?.features?.about === false) {
+    redirect("/");
+  }
+
   return (
     <SectionShell
       eyebrow="Sobre a Entre as Ilhas"

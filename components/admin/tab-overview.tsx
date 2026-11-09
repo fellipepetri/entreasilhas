@@ -1,6 +1,7 @@
 "use client";
 
 import type { SiteContent } from "@/lib/content-types";
+import { defaultSiteFeatures } from "@/data/default-content";
 
 interface TabOverviewProps {
   content: SiteContent;
@@ -8,6 +9,7 @@ interface TabOverviewProps {
 }
 
 export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
+  const features = content.settings.features || defaultSiteFeatures;
   const totalHotspots = content.experience360.scenes.reduce(
     (acc, scene) => acc + (scene.hotspots?.length || 0),
     0
@@ -162,6 +164,67 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
           </span>
           <span>⚙️</span>
         </button>
+      </div>
+
+      {/* Visibilidade das Funcionalidades do Site */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>🎛️ Visibilidade das Funcionalidades do Site</span>
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Ative ou desative seções inteiras do site e do menu a qualquer momento.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigateTab("settings")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition self-start sm:self-auto cursor-pointer"
+          >
+            <span>Configurar Módulos</span>
+            <span>⚙️</span>
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+          {[
+            { key: "experience360", label: "Experiência 360°", icon: "🌐", active: features.experience360 !== false, tab: "360" },
+            { key: "routes", label: "Roteiros & Passeios", icon: "⛵", active: features.routes !== false, tab: "routes" },
+            { key: "gallery", label: "Galeria de Fotos", icon: "🖼️", active: features.gallery !== false, tab: "gallery" },
+            { key: "testimonials", label: "Avaliações", icon: "⭐", active: features.testimonials !== false, tab: "testimonials" },
+            { key: "about", label: "Sobre a Agência", icon: "ℹ️", active: features.about !== false, tab: "about" },
+            { key: "instagram", label: "Feed do Instagram", icon: "📸", active: features.instagram !== false, tab: "settings" },
+            { key: "booking", label: "Botão Agendamento", icon: "📅", active: features.booking !== false, tab: "settings" },
+          ].map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onNavigateTab(item.tab)}
+              className={`flex items-center justify-between p-3 rounded-xl border text-left transition ${
+                item.active
+                  ? "bg-emerald-50/50 border-emerald-200 hover:border-emerald-300"
+                  : "bg-slate-50 border-slate-200 opacity-60 hover:opacity-100"
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base shrink-0">{item.icon}</span>
+                <span className="text-xs font-semibold text-slate-800 truncate">
+                  {item.label}
+                </span>
+              </div>
+              <span
+                className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md shrink-0 ml-1.5 ${
+                  item.active
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-slate-200 text-slate-600"
+                }`}
+              >
+                {item.active ? "Ativo" : "Oculto"}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grid de Métricas do Conteúdo */}
