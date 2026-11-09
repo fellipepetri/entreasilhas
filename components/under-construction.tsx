@@ -78,7 +78,7 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
       {/* Topo: Logo & Badge */}
       <header className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 pt-8 sm:pt-10 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative h-11 w-11 sm:h-12 sm:w-12 shrink-0 overflow-hidden rounded-2xl bg-white/10 p-1.5 backdrop-blur-md border border-white/20 shadow-lg">
+          <div className="relative h-12 w-12 sm:h-14 sm:w-14 shrink-0">
             <Image
               src="/images/logoeai.png"
               alt="Entre as Ilhas"
@@ -111,9 +111,15 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
 
       {/* Conteúdo Central */}
       <main className="relative z-10 mx-auto w-full max-w-4xl px-4 sm:px-6 py-12 sm:py-16 text-center space-y-8 my-auto">
-        {/* Ícone de Destaque / Ilhas */}
-        <div className="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-cyan-500/20 via-sky-500/20 to-teal-400/20 border border-cyan-400/30 text-4xl sm:text-5xl shadow-2xl backdrop-blur-md animate-pulse">
-          🚤
+        {/* Logo de Destaque com efeito Fade In / Fade Out */}
+        <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 animate-pulse">
+          <Image
+            src="/images/logoeai.png"
+            alt="Entre as Ilhas"
+            fill
+            className="object-contain drop-shadow-[0_0_35px_rgba(20,152,213,0.35)]"
+            priority
+          />
         </div>
 
         {/* Textos Principais */}
