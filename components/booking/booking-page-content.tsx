@@ -379,7 +379,7 @@ ${observacoes ? `• *Observações:* ${observacoes}` : ""}
 
 Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria de formalizar a reserva e o contrato de afretamento.`;
 
-  const whatsappUrl = `https://wa.me/5571992517102?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappUrl = `https://wa.me/5571992517302?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <div className="min-h-screen bg-slate-50 pt-28 pb-20 sm:pt-32 sm:pb-28">

@@ -196,7 +196,7 @@ function DesktopTopHeader({
               <ChatBubbleIcon className="h-4 w-4" />
             </button>
             <a
-              href="https://wa.me/5571992517102"
+              href="https://wa.me/5571992517302"
               target="_blank"
               rel="noopener noreferrer"
               title="Fale conosco no WhatsApp"
@@ -282,7 +282,7 @@ function DesktopScrolledHeader({
               <ChatBubbleIcon className="h-4 w-4" />
             </button>
             <a
-              href="https://wa.me/5571992517102"
+              href="https://wa.me/5571992517302"
               target="_blank"
               rel="noopener noreferrer"
               title="Fale conosco no WhatsApp"
@@ -573,7 +573,7 @@ export function SiteHeader() {
                         <span>Mensagem</span>
                       </button>
                       <a
-                        href="https://wa.me/5571992517102"
+                        href="https://wa.me/5571992517302"
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => setIsOpen(false)}

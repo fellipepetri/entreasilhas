@@ -91,8 +91,8 @@ export const defaultSiteContent: SiteContent = {
   },
   settings: {
     siteName: "Entre as Ilhas",
-    whatsappNumber: "5571992517102",
-    whatsappFormatted: "+55 (71) 99251-7102",
+    whatsappNumber: "5571992517302",
+    whatsappFormatted: "+55 (71) 99251-7302",
     whatsappDefaultMessage:
       "Olá! Gostaria de informações sobre os passeios de lancha da Entre as Ilhas.",
     instagramHandle: "@entreasilhas",
@@ -104,7 +104,7 @@ export const defaultSiteContent: SiteContent = {
       subtitle:
         "Nosso novo portal está sendo finalizado com muito carinho para oferecer o melhor em passeios de lancha privativos, roteiros pelas ilhas e agendamento online na Baía de Todos-os-Santos.",
       estimatedReturn: "Previsão de retorno: em breve!",
-      contactWhatsApp: "5571992517102",
+      contactWhatsApp: "5571992517302",
       whatsappMessage:
         "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.",
       instagramHandle: "@entreasilhas",

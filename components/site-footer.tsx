@@ -44,8 +44,8 @@ export function SiteFooter() {
                 Experiências náuticas, águas mornas e os melhores roteiros de lancha na Baía de Todos-os-Santos.
               </p>
             </div>
-            <a href="https://wa.me/5571992517102" target="_blank" rel="noopener noreferrer" className="text-lg sm:text-xl md:text-2xl font-bold text-white hover:text-cyan-300 transition flex items-center gap-2">
-              <span>+55 (71) 99251-7102</span>
+            <a href="https://wa.me/5571992517302" target="_blank" rel="noopener noreferrer" className="text-lg sm:text-xl md:text-2xl font-bold text-white hover:text-cyan-300 transition flex items-center gap-2">
+              <span>+55 (71) 99251-7302</span>
               <span>↗</span>
             </a>
           </div>
@@ -95,7 +95,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2 text-center text-sm uppercase tracking-[0.3em] text-white">
+          <div className="flex flex-col items-center gap-1.5 text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-white/90">
             <p className="text-white">
               Entre as Ilhas • 2026 • Todos os direitos reservados
             </p>

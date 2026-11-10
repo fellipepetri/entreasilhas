@@ -33,7 +33,7 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
     maintenance?.subtitle ||
     "Nosso novo portal está sendo finalizado com muito carinho para oferecer o melhor em passeios de lancha privativos, roteiros pelas ilhas e agendamento online na Baía de Todos-os-Santos.";
   const estimatedReturn = maintenance?.estimatedReturn || "Previsão de retorno: em breve!";
-  const whatsappNumber = maintenance?.contactWhatsApp?.replace(/\D/g, "") || "5571992517102";
+  const whatsappNumber = maintenance?.contactWhatsApp?.replace(/\D/g, "") || "5571992517302";
   const whatsappMessage =
     maintenance?.whatsappMessage ||
     "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.";
@@ -210,7 +210,7 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
       </main>
 
       {/* Rodapé: Informações Legais & Acesso Administrativo Discreto */}
-      <footer className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 sm:py-10 border-t border-white/10 flex flex-col items-center justify-center gap-2.5 text-center text-xs sm:text-sm uppercase tracking-[0.3em] text-white">
+      <footer className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 py-6 sm:py-8 border-t border-white/10 flex flex-col items-center justify-center gap-1.5 text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-white/90">
         <p className="text-white">
           Entre as Ilhas • 2026 • Todos os direitos reservados
         </p>

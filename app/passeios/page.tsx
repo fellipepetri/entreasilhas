@@ -60,7 +60,7 @@ export default async function PasseiosPage() {
           </p>
         </div>
         <a
-          href="https://wa.me/5571992517102?text=Ol%C3%A1!%20Gostaria%20de%20um%20or%C3%A7amento%20personalizado%20para%20passeio%20de%20lancha."
+          href="https://wa.me/5571992517302?text=Ol%C3%A1!%20Gostaria%20de%20um%20or%C3%A7amento%20personalizado%20para%20passeio%20de%20lancha."
           target="_blank"
           rel="noopener noreferrer"
           className="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-bold px-7 py-3.5 text-sm transition shadow-lg hover:scale-105"

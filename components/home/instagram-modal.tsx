@@ -241,7 +241,7 @@ export function InstagramModal({
   };
 
   // Link WhatsApp com contexto da publicação
-  const whatsappUrl = `https://wa.me/5571992517102?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/5571992517302?text=${encodeURIComponent(
     `Olá! Vi a publicação de vocês no Instagram (${post.location}) e gostaria de mais informações sobre os passeios de lancha!`
   )}`;
 

@@ -206,7 +206,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href={`https://wa.me/5571992517102?text=${encodeURIComponent(
+                href={`https://wa.me/5571992517302?text=${encodeURIComponent(
                   `Olá! Meu nome é ${nome} e enviei uma mensagem de ${tipo.toLowerCase()} pelo site: "${mensagem}"`
                 )}`}
                 target="_blank"

@@ -29,7 +29,7 @@ export default async function PasseioSlugPage({
   }
 
   const whatsappMsg = `Olá! Tenho interesse no roteiro "${tour.name}" da Entre as Ilhas. Poderiam me passar datas disponíveis e valores?`;
-  const whatsappUrl = `https://wa.me/5571992517102?text=${encodeURIComponent(whatsappMsg)}`;
+  const whatsappUrl = `https://wa.me/5571992517302?text=${encodeURIComponent(whatsappMsg)}`;
 
   return (
     <SectionShell

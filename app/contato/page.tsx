@@ -10,7 +10,7 @@ export default function ContatoPage() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {/* WhatsApp */}
         <a
-          href="https://wa.me/5571992517102?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20os%20passeios%20de%20lancha%20da%20Entre%20as%20Ilhas."
+          href="https://wa.me/5571992517302?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20os%20passeios%20de%20lancha%20da%20Entre%20as%20Ilhas."
           target="_blank"
           rel="noopener noreferrer"
           className="group rounded-3xl border border-emerald-500/30 bg-emerald-50/50 p-6 sm:p-7 shadow-soft transition hover:-translate-y-1 hover:shadow-xl"
@@ -26,7 +26,7 @@ export default function ContatoPage() {
             Converse diretamente com nossos consultores para orçamentos e reservas.
           </p>
           <p className="mt-4 font-bold text-emerald-600 text-sm flex items-center gap-1 group-hover:underline">
-            <span>+55 (71) 99251-7102</span>
+            <span>+55 (71) 99251-7302</span>
             <span>↗</span>
           </p>
         </a>

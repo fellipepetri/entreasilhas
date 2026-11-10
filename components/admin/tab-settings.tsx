@@ -51,7 +51,7 @@ export function TabSettings({
     subtitle:
       "Nosso novo portal está sendo finalizado com muito carinho para oferecer o melhor em passeios de lancha privativos, roteiros pelas ilhas e agendamento online na Baía de Todos-os-Santos.",
     estimatedReturn: "Previsão de retorno: em breve!",
-    contactWhatsApp: settings.whatsappNumber || "5571992517102",
+    contactWhatsApp: settings.whatsappNumber || "5571992517302",
     whatsappMessage:
       "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.",
     instagramHandle: settings.instagramHandle || "@entreasilhas",
@@ -592,7 +592,7 @@ export function TabSettings({
                 type="text"
                 value={maintenance.contactWhatsApp}
                 onChange={(e) => handleUpdateMaintenance("contactWhatsApp", e.target.value)}
-                placeholder="5571992517102"
+                placeholder="5571992517302"
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-mono"
               />
             </div>
@@ -660,11 +660,11 @@ export function TabSettings({
                   e.target.value.replace(/[^0-9]/g, "")
                 )
               }
-              placeholder="5571992517102"
+              placeholder="5571992517302"
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-mono"
             />
             <p className="text-[11px] text-slate-400 mt-1">
-              Código do país + DDD + telefone (ex: 5571992517102)
+              Código do país + DDD + telefone (ex: 5571992517302)
             </p>
           </div>
 
@@ -676,7 +676,7 @@ export function TabSettings({
               type="text"
               value={settings.whatsappFormatted}
               onChange={(e) => handleUpdate("whatsappFormatted", e.target.value)}
-              placeholder="+55 (71) 99251-7102"
+              placeholder="+55 (71) 99251-7302"
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
             />
           </div>
