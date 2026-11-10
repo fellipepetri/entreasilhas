@@ -63,6 +63,13 @@ export interface AboutStat {
   label: string;
 }
 
+export interface AboutCard {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
 export interface AboutSectionData {
   eyebrow: string;
   title: string;
@@ -71,6 +78,79 @@ export interface AboutSectionData {
   stats: AboutStat[];
   mainImage: string;
   secondaryImage: string;
+  pageEyebrow?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+  cards?: AboutCard[];
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtonText?: string;
+}
+
+export interface RoutesSectionData {
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  sectionButtonText?: string;
+  pageEyebrow?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtonText?: string;
+  homeItems: RouteItem[];
+  tours: Tour[];
+  bookingRoutes?: BookingRouteOption[];
+}
+
+export interface CtaSectionData {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  buttonLink: string;
+  showBoatTransition: boolean;
+  boatImage: string;
+  backgroundImage?: string;
+}
+
+export interface ContactCardItem {
+  badge: string;
+  title: string;
+  description: string;
+  value: string;
+  link: string;
+}
+
+export interface ContactSectionData {
+  pageEyebrow: string;
+  pageTitle: string;
+  pageDescription: string;
+  whatsappCard: ContactCardItem;
+  instagramCard: ContactCardItem;
+  locationCard: {
+    badge: string;
+    title: string;
+    description: string;
+    note: string;
+  };
+  email: string;
+  modalTitle: string;
+  modalSubtitle: string;
+}
+
+export interface FooterSectionData {
+  title: string;
+  description: string;
+  phoneFormatted: string;
+  phoneLink: string;
+  baseTitle: string;
+  baseLocation: string;
+  baseSchedule: string;
+  baseEmail: string;
+  newsletterTitle: string;
+  newsletterPlaceholder: string;
+  newsletterButton: string;
+  copyright: string;
 }
 
 export interface Experience360SectionData {
@@ -111,6 +191,7 @@ export interface SiteFeatures {
   instagram: boolean;
   about: boolean;
   booking: boolean;
+  cta?: boolean;
 }
 
 export interface GeneralSettings {
@@ -127,11 +208,7 @@ export interface GeneralSettings {
 export interface SiteContent {
   heroSlides: HeroSlide[];
   about: AboutSectionData;
-  routes: {
-    homeItems: RouteItem[];
-    tours: Tour[];
-    bookingRoutes?: BookingRouteOption[];
-  };
+  routes: RoutesSectionData;
   gallery: GallerySectionData;
   experience360: Experience360SectionData;
   testimonials: Testimonial[];
@@ -139,6 +216,9 @@ export interface SiteContent {
     profile: InstagramProfile;
     curatedPosts: InstagramPost[];
   };
+  cta: CtaSectionData;
+  contact: ContactSectionData;
+  footer: FooterSectionData;
   settings: GeneralSettings;
   lastUpdated?: string;
 }

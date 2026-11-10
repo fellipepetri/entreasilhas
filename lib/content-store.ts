@@ -18,9 +18,14 @@ function deepMergeDefaults(stored: Partial<SiteContent>): SiteContent {
     heroSlides: stored.heroSlides?.length ? stored.heroSlides : defaultSiteContent.heroSlides,
     about: {
       ...defaultSiteContent.about,
-      ...(stored.about || {})
+      ...(stored.about || {}),
+      cards: stored.about?.cards?.length
+        ? stored.about.cards
+        : defaultSiteContent.about.cards
     },
     routes: {
+      ...defaultSiteContent.routes,
+      ...(stored.routes || {}),
       homeItems: stored.routes?.homeItems?.length
         ? stored.routes.homeItems
         : defaultSiteContent.routes.homeItems,
@@ -59,6 +64,30 @@ function deepMergeDefaults(stored: Partial<SiteContent>): SiteContent {
       curatedPosts: stored.instagram?.curatedPosts?.length
         ? stored.instagram.curatedPosts
         : defaultSiteContent.instagram.curatedPosts
+    },
+    cta: {
+      ...defaultSiteContent.cta,
+      ...(stored.cta || {})
+    },
+    contact: {
+      ...defaultSiteContent.contact,
+      ...(stored.contact || {}),
+      whatsappCard: {
+        ...defaultSiteContent.contact.whatsappCard,
+        ...(stored.contact?.whatsappCard || {})
+      },
+      instagramCard: {
+        ...defaultSiteContent.contact.instagramCard,
+        ...(stored.contact?.instagramCard || {})
+      },
+      locationCard: {
+        ...defaultSiteContent.contact.locationCard,
+        ...(stored.contact?.locationCard || {})
+      }
+    },
+    footer: {
+      ...defaultSiteContent.footer,
+      ...(stored.footer || {})
     },
     settings: {
       ...defaultSiteContent.settings,

@@ -12,16 +12,24 @@ import { TabGallery } from "@/components/admin/tab-gallery";
 import { TabRoutes } from "@/components/admin/tab-routes";
 import { TabTestimonials } from "@/components/admin/tab-testimonials";
 import { TabAbout } from "@/components/admin/tab-about";
+import { TabInstagram } from "@/components/admin/tab-instagram";
+import { TabCta } from "@/components/admin/tab-cta";
+import { TabContact } from "@/components/admin/tab-contact";
+import { TabFooter } from "@/components/admin/tab-footer";
 import { TabSettings } from "@/components/admin/tab-settings";
 
 const TABS = [
   { id: "overview", label: "Visão Geral", icon: "📊" },
   { id: "hero", label: "Slide do Hero", icon: "🌅" },
+  { id: "about", label: "Sobre a Agência", icon: "ℹ️" },
+  { id: "routes", label: "Roteiros & Passeios", icon: "⛵" },
   { id: "360", label: "Experiência 360°", icon: "🌐" },
   { id: "gallery", label: "Galeria de Fotos", icon: "🖼️" },
-  { id: "routes", label: "Roteiros & Passeios", icon: "⛵" },
   { id: "testimonials", label: "Avaliações", icon: "⭐" },
-  { id: "about", label: "Sobre a Agência", icon: "ℹ️" },
+  { id: "instagram", label: "Feed Instagram", icon: "📸" },
+  { id: "cta", label: "Chamada Final (CTA)", icon: "📣" },
+  { id: "contact", label: "Contato & Canais", icon: "📞" },
+  { id: "footer", label: "Rodapé do Site", icon: "⚓" },
   { id: "settings", label: "Configurações", icon: "⚙️" }
 ] as const;
 
@@ -32,7 +40,9 @@ const TAB_FEATURE_MAP: Partial<Record<TabId, keyof SiteFeatures>> = {
   gallery: "gallery",
   routes: "routes",
   testimonials: "testimonials",
-  about: "about"
+  about: "about",
+  instagram: "instagram",
+  cta: "cta"
 };
 
 export default function AdminPainelPage() {
@@ -323,6 +333,22 @@ export default function AdminPainelPage() {
 
             {activeTab === "routes" && (
               <TabRoutes
+                sectionEyebrow={content.routes.sectionEyebrow}
+                sectionTitle={content.routes.sectionTitle}
+                sectionButtonText={content.routes.sectionButtonText}
+                pageEyebrow={content.routes.pageEyebrow}
+                pageTitle={content.routes.pageTitle}
+                pageDescription={content.routes.pageDescription}
+                ctaTitle={content.routes.ctaTitle}
+                ctaDescription={content.routes.ctaDescription}
+                ctaButtonText={content.routes.ctaButtonText}
+                onChangeHeaders={(field, value) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    routes: { ...prev.routes, [field]: value }
+                  }));
+                  setHasUnsavedChanges(true);
+                }}
                 homeItems={content.routes.homeItems}
                 tours={content.routes.tours}
                 bookingRoutes={content.routes.bookingRoutes}
@@ -372,6 +398,56 @@ export default function AdminPainelPage() {
                 onToggleEnabled={(enabled) =>
                   handleToggleFeature("about", enabled)
                 }
+              />
+            )}
+
+            {activeTab === "instagram" && (
+              <TabInstagram
+                profile={content.instagram.profile}
+                posts={content.instagram.curatedPosts}
+                isEnabled={features.instagram !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("instagram", enabled)
+                }
+                onChangeProfile={(profile) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    instagram: { ...prev.instagram, profile }
+                  }));
+                  setHasUnsavedChanges(true);
+                }}
+                onChangePosts={(curatedPosts) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    instagram: { ...prev.instagram, curatedPosts }
+                  }));
+                  setHasUnsavedChanges(true);
+                }}
+              />
+            )}
+
+            {activeTab === "cta" && (
+              <TabCta
+                data={content.cta}
+                onChange={(cta) => updateContent("cta", cta)}
+                isEnabled={features.cta !== false}
+                onToggleEnabled={(enabled) =>
+                  handleToggleFeature("cta", enabled)
+                }
+              />
+            )}
+
+            {activeTab === "contact" && (
+              <TabContact
+                data={content.contact}
+                onChange={(contact) => updateContent("contact", contact)}
+              />
+            )}
+
+            {activeTab === "footer" && (
+              <TabFooter
+                data={content.footer}
+                onChange={(footer) => updateContent("footer", footer)}
               />
             )}
 

@@ -450,6 +450,46 @@ export function TabSettings({
               />
             </button>
           </div>
+
+          {/* 8. Chamada Final & Barco (CTA) */}
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${
+            features.cta !== false ? "border-slate-200 bg-slate-50/50" : "border-slate-200/60 bg-slate-100/50 opacity-80"
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700 font-bold text-lg">
+                📣
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-slate-900">Chamada Final & Barco (CTA)</h4>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    features.cta !== false ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                  }`}>
+                    {features.cta !== false ? "Ativo no Site" : "Desativado (Oculto)"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Exibe o bloco animado &ldquo;Venha viver Entre as Ilhas!&rdquo; antes do feed do Instagram e rodapé.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={features.cta !== false}
+              onClick={() => handleUpdateFeature("cta", features.cta === false)}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none self-end sm:self-center ${
+                features.cta !== false ? "bg-emerald-500 ring-2 ring-emerald-300" : "bg-slate-300"
+              }`}
+              title={features.cta !== false ? "Clique para desativar Chamada Final" : "Clique para ativar Chamada Final"}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition duration-200 ease-in-out ${
+                  features.cta !== false ? "translate-x-7" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
         </div>
       </div>
 

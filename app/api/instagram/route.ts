@@ -4,6 +4,7 @@ import {
   CURATED_INSTAGRAM_POSTS,
   type InstagramPost
 } from "@/data/instagram";
+import { getSiteContent } from "@/lib/content-store";
 
 interface MetaGraphMediaItem {
   id: string;
@@ -55,19 +56,25 @@ function detectLocationFromCaption(caption?: string): string {
 }
 
 export async function GET() {
+  const siteContent = await getSiteContent().catch(() => null);
+  const activeProfile = siteContent?.instagram?.profile || INSTAGRAM_PROFILE;
+  const activePosts = siteContent?.instagram?.curatedPosts?.length
+    ? siteContent.instagram.curatedPosts
+    : CURATED_INSTAGRAM_POSTS;
+
   const token = process.env.INSTAGRAM_ACCESS_TOKEN || process.env.NEXT_PUBLIC_INSTAGRAM_TOKEN;
 
   if (!token) {
     return NextResponse.json(
       {
-        profile: INSTAGRAM_PROFILE,
-        posts: CURATED_INSTAGRAM_POSTS,
+        profile: activeProfile,
+        posts: activePosts,
         isLive: false,
         source: "curated"
       },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120"
         }
       }
     );

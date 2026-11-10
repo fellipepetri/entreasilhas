@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSiteContent } from "@/lib/use-site-content";
 
 export interface ContactModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ export interface ContactModalProps {
 }
 
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
+  const { content } = useSiteContent();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -245,10 +247,11 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 id="contact-modal-title"
                 className="mt-1 text-2xl font-bold tracking-tight text-white"
               >
-                Fale conosco
+                {content?.contact?.modalTitle || "Fale conosco"}
               </h3>
               <p className="mt-1 text-xs sm:text-sm text-slate-300">
-                Preencha os campos obrigatórios abaixo para entrar em contato com nossa equipe.
+                {content?.contact?.modalSubtitle ||
+                  "Preencha os campos obrigatórios abaixo para entrar em contato com nossa equipe."}
               </p>
             </div>
 

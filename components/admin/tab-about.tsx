@@ -1,6 +1,7 @@
 "use client";
 
-import type { AboutSectionData } from "@/lib/content-types";
+import { useState } from "react";
+import type { AboutSectionData, AboutCard } from "@/lib/content-types";
 import { ImageUploader } from "./image-uploader";
 
 interface TabAboutProps {
@@ -16,6 +17,8 @@ export function TabAbout({
   isEnabled,
   onToggleEnabled
 }: TabAboutProps) {
+  const [subTab, setSubTab] = useState<"home" | "page">("home");
+
   const handleUpdate = (field: keyof AboutSectionData, value: unknown) => {
     onChange({
       ...data,
@@ -41,6 +44,38 @@ export function TabAbout({
   const handleDeleteStat = (index: number) => {
     const nextStats = (data.stats || []).filter((_, i) => i !== index);
     handleUpdate("stats", nextStats);
+  };
+
+  const handleUpdateCard = (
+    index: number,
+    field: keyof AboutCard,
+    val: string
+  ) => {
+    const cards = [...(data.cards || [])];
+    cards[index] = { ...cards[index], [field]: val };
+    handleUpdate("cards", cards);
+  };
+
+  const handleAddCard = () => {
+    const nextCards = [
+      ...(data.cards || []),
+      {
+        id: `card-${Date.now()}`,
+        icon: "✨",
+        title: "Novo Diferencial",
+        description: "Descreva este diferencial náutico ou serviço oferecido."
+      }
+    ];
+    handleUpdate("cards", nextCards);
+  };
+
+  const handleDeleteCard = (index: number) => {
+    if ((data.cards || []).length <= 1) {
+      alert("Mantenha ao menos 1 cartão cadastrado.");
+      return;
+    }
+    const nextCards = (data.cards || []).filter((_, i) => i !== index);
+    handleUpdate("cards", nextCards);
   };
 
   return (
@@ -85,139 +120,364 @@ export function TabAbout({
         </div>
       )}
 
-      <div className="border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-bold text-slate-900">
-          Seção Sobre a Agência
-        </h2>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Configure a história, fotos de apresentação e métricas de destaque da empresa.
-        </p>
+      {/* Topo da Aba */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">
+            Sobre a Agência
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Configure a história, fotos de apresentação, métricas e o conteúdo da página /sobre.
+          </p>
+        </div>
+
+        {/* Sub-abas de navegação interna */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 self-start sm:self-auto text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setSubTab("home")}
+            className={[
+              "px-3 py-1.5 rounded-lg transition",
+              subTab === "home"
+                ? "bg-white text-brand-deep shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            ].join(" ")}
+          >
+            🏠 Seção da Home
+          </button>
+          <button
+            type="button"
+            onClick={() => setSubTab("page")}
+            className={[
+              "px-3 py-1.5 rounded-lg transition",
+              subTab === "page"
+                ? "bg-white text-brand-deep shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            ].join(" ")}
+          >
+            📄 Página Completa (/sobre)
+          </button>
+        </div>
       </div>
 
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2">
+      {/* SUB-ABA 1: SEÇÃO DA HOME */}
+      {subTab === "home" && (
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+                Etiqueta Superior (Eyebrow)
+              </label>
+              <input
+                type="text"
+                value={data.eyebrow}
+                onChange={(e) => handleUpdate("eyebrow", e.target.value)}
+                placeholder="Quem somos"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+                Título Principal
+              </label>
+              <input
+                type="text"
+                value={data.title}
+                onChange={(e) => handleUpdate("title", e.target.value)}
+                placeholder="Explorando a beleza entre ondas, ilhas e marés."
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-bold"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-              Etiqueta Superior (Eyebrow)
+              Primeiro Parágrafo (Destaque sob a foto principal)
             </label>
-            <input
-              type="text"
-              value={data.eyebrow}
-              onChange={(e) => handleUpdate("eyebrow", e.target.value)}
-              placeholder="Quem somos"
+            <textarea
+              rows={3}
+              value={data.paragraph1}
+              onChange={(e) => handleUpdate("paragraph1", e.target.value)}
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
             />
           </div>
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-              Título Principal
+              Segundo Parágrafo (Corpo explicativo)
             </label>
-            <input
-              type="text"
-              value={data.title}
-              onChange={(e) => handleUpdate("title", e.target.value)}
-              placeholder="Explorando a beleza entre ondas, ilhas e marés."
+            <textarea
+              rows={3}
+              value={data.paragraph2}
+              onChange={(e) => handleUpdate("paragraph2", e.target.value)}
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-            Primeiro Parágrafo (Destaque sob a foto principal)
-          </label>
-          <textarea
-            rows={3}
-            value={data.paragraph1}
-            onChange={(e) => handleUpdate("paragraph1", e.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-            Segundo Parágrafo (Corpo explicativo)
-          </label>
-          <textarea
-            rows={3}
-            value={data.paragraph2}
-            onChange={(e) => handleUpdate("paragraph2", e.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
-          />
-        </div>
-
-        {/* Métricas e Estatísticas */}
-        <div className="border-t border-slate-100 pt-5">
-          <div className="flex items-center justify-between mb-3">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
-              Contadores e Estatísticas
-            </label>
-            <button
-              type="button"
-              onClick={handleAddStat}
-              className="text-xs text-brand-sea hover:underline font-bold"
-            >
-              + Adicionar Contador
-            </button>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            {(data.stats || []).map((stat, sIdx) => (
-              <div
-                key={sIdx}
-                className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between gap-2"
+          {/* Métricas e Estatísticas */}
+          <div className="border-t border-slate-100 pt-5">
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+                Contadores e Estatísticas
+              </label>
+              <button
+                type="button"
+                onClick={handleAddStat}
+                className="text-xs text-brand-sea hover:underline font-bold"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase text-slate-400">
-                    Contador #{sIdx + 1}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteStat(sIdx)}
-                    className="text-xs text-rose-500 hover:text-rose-700"
-                  >
-                    ✕
-                  </button>
+                + Adicionar Contador
+              </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {(data.stats || []).map((stat, sIdx) => (
+                <div
+                  key={sIdx}
+                  className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between gap-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase text-slate-400">
+                      Contador #{sIdx + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteStat(sIdx)}
+                      className="text-xs text-rose-500 hover:text-rose-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={stat.value}
+                    onChange={(e) => handleUpdateStat(sIdx, "value", e.target.value)}
+                    placeholder="Ex: 10K, 12+"
+                    className="font-bold text-base text-slate-900 rounded-lg border border-slate-300 bg-white px-2.5 py-1"
+                  />
+                  <input
+                    type="text"
+                    value={stat.label}
+                    onChange={(e) => handleUpdateStat(sIdx, "label", e.target.value)}
+                    placeholder="Ex: viajantes atendidos"
+                    className="text-xs text-slate-600 rounded-lg border border-slate-300 bg-white px-2.5 py-1"
+                  />
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Imagens da Seção Sobre */}
+          <div className="border-t border-slate-100 pt-5 grid gap-6 sm:grid-cols-2">
+            <ImageUploader
+              label="Foto Principal com Borda Náutica"
+              value={data.mainImage}
+              onChange={(url) => handleUpdate("mainImage", url)}
+              helperText="Exibida no cartão vertical à esquerda."
+              previewHeightClass="h-44"
+            />
+
+            <ImageUploader
+              label="Foto Secundária / Galeria Inferior"
+              value={data.secondaryImage}
+              onChange={(url) => handleUpdate("secondaryImage", url)}
+              helperText="Exibida na horizontal à direita."
+              previewHeightClass="h-44"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* SUB-ABA 2: PÁGINA COMPLETA /SOBRE */}
+      {subTab === "page" && (
+        <div className="space-y-6">
+          {/* Cabeçalho da página /sobre */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+              Cabeçalho de Apresentação (/sobre)
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Eyebrow (Etiqueta Superior)
+                </label>
                 <input
                   type="text"
-                  value={stat.value}
-                  onChange={(e) => handleUpdateStat(sIdx, "value", e.target.value)}
-                  placeholder="Ex: 10K, 12+"
-                  className="font-bold text-base text-slate-900 rounded-lg border border-slate-300 bg-white px-2.5 py-1"
-                />
-                <input
-                  type="text"
-                  value={stat.label}
-                  onChange={(e) => handleUpdateStat(sIdx, "label", e.target.value)}
-                  placeholder="Ex: viajantes atendidos"
-                  className="text-xs text-slate-600 rounded-lg border border-slate-300 bg-white px-2.5 py-1"
+                  value={data.pageEyebrow || "Sobre a Entre as Ilhas"}
+                  onChange={(e) => handleUpdate("pageEyebrow", e.target.value)}
+                  placeholder="Ex: Sobre a Entre as Ilhas"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
                 />
               </div>
-            ))}
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Título Principal da Página
+                </label>
+                <input
+                  type="text"
+                  value={data.pageTitle || "Navegando pelos paraísos da Bahia"}
+                  onChange={(e) => handleUpdate("pageTitle", e.target.value)}
+                  placeholder="Ex: Navegando pelos paraísos da Bahia"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-bold"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Descrição da Página
+                </label>
+                <textarea
+                  rows={2}
+                  value={data.pageDescription || ""}
+                  onChange={(e) => handleUpdate("pageDescription", e.target.value)}
+                  placeholder="Ex: Conheça nossa proposta de turismo náutico exclusivo..."
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Cartões de Diferenciais da Página /sobre */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  Cartões de Diferenciais & Proposta
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Cards em grade exibidos no centro da página /sobre.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddCard}
+                className="text-xs font-bold text-brand-sea hover:underline"
+              >
+                + Adicionar Cartão
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {(data.cards || []).map((card, cIdx) => (
+                <div
+                  key={card.id || cIdx}
+                  className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700">
+                      Cartão #{cIdx + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCard(cIdx)}
+                      className="text-xs text-rose-500 hover:text-rose-700 font-bold"
+                    >
+                      Remover Cartão ✕
+                    </button>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-4">
+                    <div className="sm:col-span-1">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Ícone (Emoji)
+                      </label>
+                      <input
+                        type="text"
+                        value={card.icon}
+                        onChange={(e) => handleUpdateCard(cIdx, "icon", e.target.value)}
+                        placeholder="Ex: 🚤, 🌴, ⚓"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-center text-slate-900 focus:border-brand-sea focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-3">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Título do Diferencial
+                      </label>
+                      <input
+                        type="text"
+                        value={card.title}
+                        onChange={(e) => handleUpdateCard(cIdx, "title", e.target.value)}
+                        placeholder="Ex: Embarcações Exclusivas"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-900 focus:border-brand-sea focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-4">
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        Descrição Completa
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={card.description}
+                        onChange={(e) =>
+                          handleUpdateCard(cIdx, "description", e.target.value)
+                        }
+                        placeholder="Ex: Lanchas modernas equipadas com churrasqueira..."
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-brand-sea focus:outline-none resize-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Banner CTA Inferior da Página /sobre */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+              Banner de Fechamento & Contato (/sobre)
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Título do Banner
+                </label>
+                <input
+                  type="text"
+                  value={data.ctaTitle || "Quer planejar um dia no mar?"}
+                  onChange={(e) => handleUpdate("ctaTitle", e.target.value)}
+                  placeholder="Ex: Quer planejar um dia no mar?"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Texto do Botão
+                </label>
+                <input
+                  type="text"
+                  value={data.ctaButtonText || "Falar com a Equipe"}
+                  onChange={(e) => handleUpdate("ctaButtonText", e.target.value)}
+                  placeholder="Ex: Falar com a Equipe"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-bold"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Texto Explicativo
+                </label>
+                <input
+                  type="text"
+                  value={
+                    data.ctaDescription ||
+                    "Fale conosco diretamente pelo WhatsApp e monte o roteiro perfeito..."
+                  }
+                  onChange={(e) => handleUpdate("ctaDescription", e.target.value)}
+                  placeholder="Ex: Fale conosco diretamente pelo WhatsApp..."
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Imagens da Seção Sobre */}
-        <div className="border-t border-slate-100 pt-5 grid gap-6 sm:grid-cols-2">
-          <ImageUploader
-            label="Foto Principal com Borda Náutica"
-            value={data.mainImage}
-            onChange={(url) => handleUpdate("mainImage", url)}
-            helperText="Exibida no cartão vertical à esquerda."
-            previewHeightClass="h-44"
-          />
-
-          <ImageUploader
-            label="Foto Secundária / Galeria Inferior"
-            value={data.secondaryImage}
-            onChange={(url) => handleUpdate("secondaryImage", url)}
-            helperText="Exibida na horizontal à direita."
-            previewHeightClass="h-44"
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 }
+

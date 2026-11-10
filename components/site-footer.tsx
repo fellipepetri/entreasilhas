@@ -8,6 +8,7 @@ export function SiteFooter() {
   const pathname = usePathname();
   const { content } = useSiteContent();
   const features = content?.settings?.features;
+  const footer = content?.footer;
   const is360Page = pathname?.startsWith("/experiencia-360");
   const isAdmin = pathname?.startsWith("/admin-painel") || pathname?.startsWith("/agenda-painel");
 
@@ -38,14 +39,20 @@ export function SiteFooter() {
           <div className="flex flex-col gap-4 sm:gap-6 border-b border-white/12 pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
-                Vamos navegar
+                {footer?.title || "Vamos navegar"}
               </p>
               <p className="mt-2 sm:mt-4 max-w-2xl text-sm sm:text-base text-slate-200">
-                Experiências náuticas, águas mornas e os melhores roteiros de lancha na Baía de Todos-os-Santos.
+                {footer?.description ||
+                  "Experiências náuticas, águas mornas e os melhores roteiros de lancha na Baía de Todos-os-Santos."}
               </p>
             </div>
-            <a href="https://wa.me/5571992517302" target="_blank" rel="noopener noreferrer" className="text-lg sm:text-xl md:text-2xl font-bold text-white hover:text-cyan-300 transition flex items-center gap-2">
-              <span>+55 (71) 99251-7302</span>
+            <a
+              href={footer?.phoneLink || "https://wa.me/5571992517302"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg sm:text-xl md:text-2xl font-bold text-white hover:text-cyan-300 transition flex items-center gap-2"
+            >
+              <span>{footer?.phoneFormatted || "+55 (71) 99251-7302"}</span>
               <span>↗</span>
             </a>
           </div>
@@ -69,26 +76,36 @@ export function SiteFooter() {
                 </div>
               </div>
               <div>
-                <p className="text-xl font-semibold text-white">Base da operação</p>
+                <p className="text-xl font-semibold text-white">
+                  {footer?.baseTitle || "Base da operação"}
+                </p>
                 <div className="mt-5 space-y-3 text-white">
-                  <p className="text-white">Baía de Todos-os-Santos, Bahia</p>
-                  <p className="text-white">Atendimento por reserva e planejamento prévio</p>
-                  <p className="text-white">contato@entreasilhas.com.br</p>
+                  <p className="text-white">
+                    {footer?.baseLocation || "Baía de Todos-os-Santos, Bahia"}
+                  </p>
+                  <p className="text-white">
+                    {footer?.baseSchedule || "Atendimento por reserva e planejamento prévio"}
+                  </p>
+                  <p className="text-white">
+                    {footer?.baseEmail || "contato@entreasilhas.com.br"}
+                  </p>
                 </div>
               </div>
               <div>
-                <p className="text-xl font-semibold text-white">Receber novidades</p>
+                <p className="text-xl font-semibold text-white">
+                  {footer?.newsletterTitle || "Receber novidades"}
+                </p>
                 <div className="mt-5 flex flex-col overflow-hidden rounded-[1.6rem] border border-white/18 bg-white/10 sm:flex-row sm:items-center sm:rounded-full">
                   <input
                     type="email"
-                    placeholder="Seu melhor e-mail"
+                    placeholder={footer?.newsletterPlaceholder || "Seu melhor e-mail"}
                     className="w-full bg-transparent px-5 py-4 text-sm text-white placeholder:text-white focus:outline-none"
                   />
                   <button
                     type="button"
                     className="mx-2 mb-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-3 text-sm font-semibold text-white sm:mb-0"
                   >
-                    Enviar
+                    {footer?.newsletterButton || "Enviar"}
                   </button>
                 </div>
               </div>
@@ -97,7 +114,7 @@ export function SiteFooter() {
 
           <div className="flex flex-col items-center gap-1.5 text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-white/90">
             <p className="text-white">
-              Entre as Ilhas • 2026 • Todos os direitos reservados
+              {footer?.copyright || "Entre as Ilhas • 2026 • Todos os direitos reservados"}
             </p>
             <p className="text-white">
               <span className="text-white">Desenvolvido pela </span>

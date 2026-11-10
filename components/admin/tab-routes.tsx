@@ -7,6 +7,16 @@ import { TIDE_LEVELS, ALL_TIDE_KEYS, type TideLevelKey } from "@/lib/tide-engine
 import { ImageUploader } from "./image-uploader";
 
 interface TabRoutesProps {
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  sectionButtonText?: string;
+  pageEyebrow?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtonText?: string;
+  onChangeHeaders?: (field: string, value: string) => void;
   homeItems: RouteItem[];
   tours: Tour[];
   bookingRoutes?: BookingRouteOption[];
@@ -18,6 +28,16 @@ interface TabRoutesProps {
 }
 
 export function TabRoutes({
+  sectionEyebrow,
+  sectionTitle,
+  sectionButtonText,
+  pageEyebrow,
+  pageTitle,
+  pageDescription,
+  ctaTitle,
+  ctaDescription,
+  ctaButtonText,
+  onChangeHeaders,
   homeItems,
   tours,
   bookingRoutes,
@@ -27,7 +47,7 @@ export function TabRoutes({
   isEnabled,
   onToggleEnabled
 }: TabRoutesProps) {
-  const [subTab, setSubTab] = useState<"booking" | "home" | "tours">("booking");
+  const [subTab, setSubTab] = useState<"booking" | "home" | "tours" | "headers">("booking");
   const [selectedHomeIndex, setSelectedHomeIndex] = useState(0);
   const [selectedTourIndex, setSelectedTourIndex] = useState(0);
   const [selectedBookingIndex, setSelectedBookingIndex] = useState(0);
@@ -320,8 +340,172 @@ export function TabRoutes({
           >
             ⛵ Catálogo /passeios ({tours.length})
           </button>
+          <button
+            type="button"
+            onClick={() => setSubTab("headers")}
+            className={[
+              "px-3 py-1.5 rounded-lg transition",
+              subTab === "headers"
+                ? "bg-white text-brand-deep shadow-sm font-bold"
+                : "text-slate-600 hover:text-slate-900"
+            ].join(" ")}
+          >
+            🏷️ Títulos & Cabeçalhos
+          </button>
         </div>
       </div>
+
+      {/* SUB-ABA 0: TÍTULOS E CABEÇALHOS (HOME E /PASSEIOS) */}
+      {subTab === "headers" && (
+        <div className="space-y-6 max-w-3xl">
+          {/* Títulos da Seção na Home */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+              Títulos da Seção na Página Inicial (Home)
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Etiqueta Superior (Eyebrow)
+                </label>
+                <input
+                  type="text"
+                  value={sectionEyebrow || "Roteiros em destaque"}
+                  onChange={(e) => onChangeHeaders?.("sectionEyebrow", e.target.value)}
+                  placeholder="Ex: Roteiros em destaque"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Texto do Botão
+                </label>
+                <input
+                  type="text"
+                  value={sectionButtonText || "Ver passeios"}
+                  onChange={(e) => onChangeHeaders?.("sectionButtonText", e.target.value)}
+                  placeholder="Ex: Ver passeios"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Título Principal da Seção
+                </label>
+                <input
+                  type="text"
+                  value={sectionTitle || "Experiências Entre as Ilhas"}
+                  onChange={(e) => onChangeHeaders?.("sectionTitle", e.target.value)}
+                  placeholder="Ex: Experiências Entre as Ilhas"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Cabeçalho da Página /passeios */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+              Cabeçalho de Apresentação da Página (/passeios)
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Eyebrow da Página
+                </label>
+                <input
+                  type="text"
+                  value={pageEyebrow || "Experiências Náuticas"}
+                  onChange={(e) => onChangeHeaders?.("pageEyebrow", e.target.value)}
+                  placeholder="Ex: Experiências Náuticas"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Título da Página
+                </label>
+                <input
+                  type="text"
+                  value={pageTitle || "Roteiros de Lancha & Passeios"}
+                  onChange={(e) => onChangeHeaders?.("pageTitle", e.target.value)}
+                  placeholder="Ex: Roteiros de Lancha & Passeios"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Descrição Explicativa
+                </label>
+                <textarea
+                  rows={2}
+                  value={pageDescription || ""}
+                  onChange={(e) => onChangeHeaders?.("pageDescription", e.target.value)}
+                  placeholder="Ex: Descubra nossos passeios privativos e programados pela Baía de Todos-os-Santos..."
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Banner Inferior de CTA em /passeios */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
+              Banner de Fechamento / Roteiro sob Medida (/passeios)
+            </h3>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Título do Banner
+                </label>
+                <input
+                  type="text"
+                  value={ctaTitle || "Deseja um roteiro sob medida?"}
+                  onChange={(e) => onChangeHeaders?.("ctaTitle", e.target.value)}
+                  placeholder="Ex: Deseja um roteiro sob medida?"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Texto do Botão
+                </label>
+                <input
+                  type="text"
+                  value={ctaButtonText || "Solicitar no WhatsApp"}
+                  onChange={(e) => onChangeHeaders?.("ctaButtonText", e.target.value)}
+                  placeholder="Ex: Solicitar no WhatsApp"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Texto Explicativo
+                </label>
+                <input
+                  type="text"
+                  value={
+                    ctaDescription ||
+                    "Personalizamos saídas para aniversários, ensaios fotográficos e passeios em família."
+                  }
+                  onChange={(e) => onChangeHeaders?.("ctaDescription", e.target.value)}
+                  placeholder="Ex: Personalizamos saídas para aniversários..."
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SUB-ABA 1: ROTEIROS DE AGENDAMENTO (SINCRONIZADOS COM A MARÉ) */}
       {subTab === "booking" && (

@@ -57,6 +57,27 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
       icon: "⭐",
       tab: "testimonials",
       description: "Feedbacks com notas 5 estrelas de clientes"
+    },
+    {
+      label: "Posts no Feed Instagram",
+      count: content.instagram?.curatedPosts?.length || 0,
+      icon: "📸",
+      tab: "instagram",
+      description: "Galeria de publicações em destaque"
+    },
+    {
+      label: "Canais de Contato",
+      count: 3,
+      icon: "📞",
+      tab: "contact",
+      description: "WhatsApp, Instagram e Base de Operação"
+    },
+    {
+      label: "Chamada Final & Barco",
+      count: 1,
+      icon: "📣",
+      tab: "cta",
+      description: "CTA de fechamento com barco flutuante"
     }
   ];
 
@@ -194,7 +215,10 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
             { key: "gallery", label: "Galeria de Fotos", icon: "🖼️", active: features.gallery !== false, tab: "gallery" },
             { key: "testimonials", label: "Avaliações", icon: "⭐", active: features.testimonials !== false, tab: "testimonials" },
             { key: "about", label: "Sobre a Agência", icon: "ℹ️", active: features.about !== false, tab: "about" },
-            { key: "instagram", label: "Feed do Instagram", icon: "📸", active: features.instagram !== false, tab: "settings" },
+            { key: "instagram", label: "Feed do Instagram", icon: "📸", active: features.instagram !== false, tab: "instagram" },
+            { key: "cta", label: "Chamada Final (CTA)", icon: "📣", active: features.cta !== false, tab: "cta" },
+            { key: "contact", label: "Contato & Canais", icon: "📞", active: true, tab: "contact" },
+            { key: "footer", label: "Rodapé do Site", icon: "⚓", active: true, tab: "footer" },
             { key: "booking", label: "Botão Agendamento", icon: "📅", active: features.booking !== false, tab: "settings" },
           ].map((item) => (
             <button

@@ -12,7 +12,7 @@ import {
   showcaseCards as defaultShowcaseCards,
   testimonials as defaultTestimonials
 } from "@/data/home";
-import type { HeroSlide, RouteItem, Testimonial, SiteContent } from "@/lib/content-types";
+import type { HeroSlide, RouteItem, Testimonial, SiteContent, CtaSectionData } from "@/lib/content-types";
 import { useSiteContent } from "@/lib/use-site-content";
 import { Experience360Section } from "@/components/home/experience-360-section";
 import { InstagramSection } from "@/components/home/instagram-section";
@@ -132,7 +132,17 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
   );
 }
 
-function HoverRouteList({ items: propItems }: { items?: RouteItem[] } = {}) {
+function HoverRouteList({
+  items: propItems,
+  eyebrow,
+  title,
+  buttonText
+}: {
+  items?: RouteItem[];
+  eyebrow?: string;
+  title?: string;
+  buttonText?: string;
+} = {}) {
   const routeItems = propItems && propItems.length > 0 ? propItems : defaultRouteItems;
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -232,17 +242,17 @@ function HoverRouteList({ items: propItems }: { items?: RouteItem[] } = {}) {
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white">
-              Roteiros em destaque
+              {eyebrow || "Roteiros em destaque"}
             </p>
             <h2 className="font-display mt-4 text-[1.8rem] font-semibold tracking-tight text-white md:text-[2.3rem]">
-              Experiências Entre as Ilhas
+              {title || "Experiências Entre as Ilhas"}
             </h2>
           </div>
           <Link
             href="/passeios"
             className="rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-sm font-semibold text-white"
           >
-            Ver passeios
+            {buttonText || "Ver passeios"}
           </Link>
         </div>
 
@@ -785,7 +795,7 @@ function TestimonialSlider({ list }: { list?: Testimonial[] } = {}) {
     );
   }
 
-function Chamada() {
+function Chamada({ data }: { data?: CtaSectionData }) {
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -806,6 +816,12 @@ function Chamada() {
 
     return () => observer.disconnect();
   }, []);
+
+  const eyebrow = data?.eyebrow || "Venha viver";
+  const title = data?.title || "Entre as Ilhas!";
+  const subtitle = data?.subtitle;
+  const buttonText = data?.buttonText;
+  const buttonLink = data?.buttonLink || "#inicio";
 
   return (
     <section className="relative overflow-hidden bg-brand-deep py-24 text-white sm:py-28 md:py-36 lg:py-44">
@@ -839,7 +855,7 @@ function Chamada() {
       </div>
       <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-center md:py-24">
         <h3 className="text-[clamp(1.8rem,4vw,3rem)] font-semibold tracking-[0.12em] text-white">
-          Venha viver
+          {eyebrow}
         </h3>
         <h2
           ref={titleRef}
@@ -848,8 +864,23 @@ function Chamada() {
             isVisible ? "is-visible" : ""
           ].join(" ")}
         >
-          Entre as Ilhas!
+          {title}
         </h2>
+        {subtitle && (
+          <p className="mt-4 text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
+            {subtitle}
+          </p>
+        )}
+        {buttonText && (
+          <div className="mt-8">
+            <Link
+              href={buttonLink}
+              className="inline-flex rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:scale-105"
+            >
+              {buttonText}
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -869,6 +900,7 @@ export function HomeLanding({ initialContent }: { initialContent?: SiteContent }
   const testimonials = content.testimonials;
   const experience360 = content.experience360;
   const instagram = content.instagram;
+  const cta = content.cta;
   const features = content.settings.features;
 
   return (
@@ -945,57 +977,64 @@ export function HomeLanding({ initialContent }: { initialContent?: SiteContent }
         </section>
       )}
 
-      <section className="relative overflow-hidden bg-white pb-16 pt-8 sm:pb-20 sm:pt-10">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#9ce5f1_50%,#ffffff_100%)]"
-        />
-        <div className="relative mx-auto h-[19rem] w-full max-w-7xl px-4 sm:h-[24rem] md:h-[34rem]">
+      {cta?.showBoatTransition !== false && (
+        <section className="relative overflow-hidden bg-white pb-16 pt-8 sm:pb-20 sm:pt-10">
           <div
             aria-hidden="true"
-            className="absolute inset-x-0 top-[14%] h-[22%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.5),transparent_62%)] blur-3xl"
+            className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#9ce5f1_50%,#ffffff_100%)]"
           />
-          <div
-            className="absolute z-10 overflow-hidden"
-            style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
-          >
-            <div className="absolute inset-0 -top-4 ocean-wave ocean-wave-back" />
-          </div>
-          {Array.from({ length: 24 }).map((_, index) => (
-            <span
-              key={index}
-              className="absolute rounded-full border border-white/80"
-              style={{
-                width: `${index % 3 === 0 ? 18 : index % 3 === 1 ? 10 : 5}px`,
-                height: `${index % 3 === 0 ? 18 : index % 3 === 1 ? 10 : 5}px`,
-                left: `${(index * 13) % 96}%`,
-                bottom: `${18 + ((index * 9) % 68)}px`,
-                opacity: index % 4 === 0 ? 0.9 : 0.5
-              }}
+          <div className="relative mx-auto h-[19rem] w-full max-w-7xl px-4 sm:h-[24rem] md:h-[34rem]">
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-[14%] h-[22%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.5),transparent_62%)] blur-3xl"
             />
-          ))}
-          <div className="absolute left-1/2 top-[39.5%] z-20 -translate-x-1/2 -translate-y-1/2 sm:top-[39%] md:top-[37.75%]">
-            <div className="relative h-28 w-56 animate-boat sm:h-40 sm:w-80 md:h-64 md:w-[32rem]">
-              <Image
-                src="/images/barco.png"
-                alt="Barco flutuando"
-                fill
-                sizes="288px"
-                className="object-contain -scale-x-100"
+            <div
+              className="absolute z-10 overflow-hidden"
+              style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
+            >
+              <div className="absolute inset-0 -top-4 ocean-wave ocean-wave-back" />
+            </div>
+            {Array.from({ length: 24 }).map((_, index) => (
+              <span
+                key={index}
+                className="absolute rounded-full border border-white/80"
+                style={{
+                  width: `${index % 3 === 0 ? 18 : index % 3 === 1 ? 10 : 5}px`,
+                  height: `${index % 3 === 0 ? 18 : index % 3 === 1 ? 10 : 5}px`,
+                  left: `${(index * 13) % 96}%`,
+                  bottom: `${18 + ((index * 9) % 68)}px`,
+                  opacity: index % 4 === 0 ? 0.9 : 0.5
+                }}
               />
+            ))}
+            <div className="absolute left-1/2 top-[39.5%] z-20 -translate-x-1/2 -translate-y-1/2 sm:top-[39%] md:top-[37.75%]">
+              <div className="relative h-28 w-56 animate-boat sm:h-40 sm:w-80 md:h-64 md:w-[32rem]">
+                <Image
+                  src={cta?.boatImage || "/images/barco.png"}
+                  alt="Barco flutuando"
+                  fill
+                  sizes="288px"
+                  className="object-contain -scale-x-100"
+                />
+              </div>
+            </div>
+            <div
+              className="absolute z-30 pointer-events-none overflow-hidden"
+              style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
+            >
+              <div className="absolute inset-0 top-[-0.15rem] ocean-wave ocean-wave-front" />
             </div>
           </div>
-          <div
-            className="absolute z-30 pointer-events-none overflow-hidden"
-            style={{ left: "-40vw", right: "-40vw", top: "39%", bottom: "-5rem" }}
-          >
-            <div className="absolute inset-0 top-[-0.15rem] ocean-wave ocean-wave-front" />
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {features?.routes !== false && (
-        <HoverRouteList items={routeItems} />
+        <HoverRouteList
+          items={routeItems}
+          eyebrow={content.routes.sectionEyebrow}
+          title={content.routes.sectionTitle}
+          buttonText={content.routes.sectionButtonText}
+        />
       )}
 
       {features?.experience360 !== false && (
@@ -1048,7 +1087,9 @@ export function HomeLanding({ initialContent }: { initialContent?: SiteContent }
         <TestimonialSlider list={testimonials} />
       )}
 
-      <Chamada />
+      {features?.cta !== false && (
+        <Chamada data={cta} />
+      )}
 
       {features?.instagram !== false && (
         <InstagramSection data={instagram} />

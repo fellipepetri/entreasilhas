@@ -117,6 +117,15 @@ export function InstagramSection({ data }: InstagramSectionProps = {}) {
   };
 
   useEffect(() => {
+    if (data?.profile) {
+      setProfile(data.profile);
+    }
+    if (data?.curatedPosts && data.curatedPosts.length > 0) {
+      setPosts(data.curatedPosts);
+    }
+  }, [data]);
+
+  useEffect(() => {
     async function loadFeed() {
       try {
         const res = await fetch("/api/instagram");

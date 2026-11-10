@@ -13,13 +13,18 @@ export default async function PasseiosPage() {
     redirect("/");
   }
 
-  const tours = content?.routes?.tours || defaultTours;
+  const routes = content?.routes;
+  const tours = routes?.tours || defaultTours;
+  const whatsappNumber = content?.settings?.whatsappNumber || "5571992517302";
 
   return (
     <SectionShell
-      eyebrow="Experiências Náuticas"
-      title="Roteiros de Lancha & Passeios"
-      description="Descubra nossos passeios privativos e programados pela Baía de Todos-os-Santos. Embarcações seguras com marinheiro e estrutura completa."
+      eyebrow={routes?.pageEyebrow || "Experiências Náuticas"}
+      title={routes?.pageTitle || "Roteiros de Lancha & Passeios"}
+      description={
+        routes?.pageDescription ||
+        "Descubra nossos passeios privativos e programados pela Baía de Todos-os-Santos. Embarcações seguras com marinheiro e estrutura completa."
+      }
     >
       <div className="grid gap-6 sm:grid-cols-2">
         {tours.map((tour) => (
@@ -54,18 +59,21 @@ export default async function PasseiosPage() {
 
       <div className="mt-12 rounded-3xl bg-gradient-to-r from-brand-deep to-slate-900 p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
         <div>
-          <h3 className="text-xl font-bold text-white">Deseja um roteiro sob medida?</h3>
+          <h3 className="text-xl font-bold text-white">
+            {routes?.ctaTitle || "Deseja um roteiro sob medida?"}
+          </h3>
           <p className="text-sm text-slate-300 mt-1">
-            Personalizamos saídas para aniversários, ensaios fotográficos e passeios em família.
+            {routes?.ctaDescription ||
+              "Personalizamos saídas para aniversários, ensaios fotográficos e passeios em família."}
           </p>
         </div>
         <a
-          href="https://wa.me/5571992517302?text=Ol%C3%A1!%20Gostaria%20de%20um%20or%C3%A7amento%20personalizado%20para%20passeio%20de%20lancha."
+          href={`https://wa.me/${whatsappNumber}?text=Ol%C3%A1!%20Gostaria%20de%20um%20or%C3%A7amento%20personalizado%20para%20passeio%20de%20lancha.`}
           target="_blank"
           rel="noopener noreferrer"
           className="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-bold px-7 py-3.5 text-sm transition shadow-lg hover:scale-105"
         >
-          <span>Solicitar no WhatsApp</span>
+          <span>{routes?.ctaButtonText || "Solicitar no WhatsApp"}</span>
           <span>💬</span>
         </a>
       </div>
