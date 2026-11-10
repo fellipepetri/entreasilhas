@@ -298,6 +298,12 @@ function DesktopScrolledHeader({
   );
 }
 
+function getAdminBannerHeight() {
+  if (typeof window === "undefined") return 0;
+  const val = getComputedStyle(document.documentElement).getPropertyValue("--admin-banner-height");
+  return parseFloat(val) || 0;
+}
+
 export function SiteHeader() {
   const { content } = useSiteContent();
   const features = content?.settings?.features;
@@ -346,7 +352,8 @@ export function SiteHeader() {
       } else {
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
-          const headerOffset = window.innerWidth >= 1024 ? 80 : 70;
+          const bannerOffset = getAdminBannerHeight();
+          const headerOffset = (window.innerWidth >= 1024 ? 80 : 70) + bannerOffset;
           const elementPosition = targetElement.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
@@ -379,7 +386,8 @@ export function SiteHeader() {
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
         const timer = setTimeout(() => {
-          const headerOffset = window.innerWidth >= 1024 ? 80 : 70;
+          const bannerOffset = getAdminBannerHeight();
+          const headerOffset = (window.innerWidth >= 1024 ? 80 : 70) + bannerOffset;
           const elementPosition = targetElement.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - headerOffset;
           window.scrollTo({
@@ -464,7 +472,10 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
+      <header
+        className="fixed inset-x-0 z-50 transition-[top] duration-150"
+        style={{ top: "var(--admin-banner-height, 0px)" }}
+      >
         <DesktopTopHeader
           isScrolled={isScrolled}
           activeSection={activeSection}

@@ -4,6 +4,7 @@
 
 :root {
   color-scheme: light;
+  --admin-banner-height: 0px;
 }
 
 html {

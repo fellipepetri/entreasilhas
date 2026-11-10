@@ -7,6 +7,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { PwaRegister } from "@/components/pwa-register";
 import { MaintenanceGuard } from "@/components/maintenance-guard";
 import { getSiteContent } from "@/lib/content-store";
+import { isServerAuthenticated } from "@/lib/admin-auth";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -51,7 +52,10 @@ type RootLayoutProps = Readonly<{
 }>;
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const content = await getSiteContent().catch(() => null);
+  const [content, isAdmin] = await Promise.all([
+    getSiteContent().catch(() => null),
+    isServerAuthenticated().catch(() => false)
+  ]);
 
   return (
     <html lang="pt-BR">
@@ -59,7 +63,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <PwaRegister />
         <SmoothScroll />
         <CursorTrails />
-        <MaintenanceGuard maintenance={content?.settings?.maintenance}>
+        <MaintenanceGuard
+          maintenance={content?.settings?.maintenance}
+          initialIsAdmin={isAdmin}
+        >
           <div className="relative isolate flex min-h-screen flex-col">
             <div
               aria-hidden="true"

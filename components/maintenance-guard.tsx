@@ -1,25 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { MaintenanceSettings } from "@/lib/content-types";
 import { UnderConstruction } from "./under-construction";
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 interface MaintenanceGuardProps {
   maintenance?: MaintenanceSettings;
+  initialIsAdmin?: boolean;
   children: React.ReactNode;
 }
 
 export function MaintenanceGuard({
   maintenance,
+  initialIsAdmin = false,
   children
 }: MaintenanceGuardProps) {
   const pathname = usePathname();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const [liveMaintenance, setLiveMaintenance] = useState<MaintenanceSettings | undefined>(
     maintenance
   );
+  const [bannerElement, setBannerElement] = useState<HTMLElement | null>(null);
 
   // Rotas administrativas que NUNCA devem ser bloqueadas
   const isAdminRoute =
@@ -27,7 +33,7 @@ export function MaintenanceGuard({
     pathname?.startsWith("/agenda-painel") ||
     pathname?.startsWith("/api/");
 
-  // Verifica se o usuário tem sessão ativa de administrador
+  // Verifica se o usuário tem sessão ativa de administrador e sincroniza conteúdo
   useEffect(() => {
     let isMounted = true;
 
@@ -40,8 +46,8 @@ export function MaintenanceGuard({
 
         if (authRes.ok) {
           const authData = await authRes.json();
-          if (authData.authenticated && isMounted) {
-            setIsAdmin(true);
+          if (isMounted) {
+            setIsAdmin(Boolean(authData.authenticated));
           }
         }
 
@@ -63,6 +69,44 @@ export function MaintenanceGuard({
     };
   }, [pathname]);
 
+  // Mede com precisão a altura da barra administrativa e atualiza a variável CSS global --admin-banner-height
+  useIsomorphicLayoutEffect(() => {
+    if (!bannerElement) {
+      document.documentElement.style.setProperty("--admin-banner-height", "0px");
+      return;
+    }
+
+    const updateHeight = () => {
+      const h = Math.round(
+        bannerElement.getBoundingClientRect().height ||
+          bannerElement.offsetHeight ||
+          0
+      );
+      if (h > 0) {
+        document.documentElement.style.setProperty(
+          "--admin-banner-height",
+          `${h}px`
+        );
+      }
+    };
+
+    updateHeight();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(updateHeight);
+      ro.observe(bannerElement);
+    }
+
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener("resize", updateHeight);
+      document.documentElement.style.setProperty("--admin-banner-height", "0px");
+    };
+  }, [bannerElement]);
+
   // Se estiver em rota do painel administrativo, libera sempre
   if (isAdminRoute) {
     return <>{children}</>;
@@ -74,26 +118,35 @@ export function MaintenanceGuard({
     if (isAdmin && liveMaintenance.allowAdminBypass) {
       return (
         <>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: ":root { --admin-banner-height: 41px; }"
+            }}
+          />
           <aside
+            ref={setBannerElement}
             role="status"
             aria-live="polite"
-            className="fixed top-0 inset-x-0 z-[9999] bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 font-semibold px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-2 shadow-xl border-b border-amber-600"
+            className="fixed top-0 inset-x-0 z-[9999] bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 font-semibold px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-2 shadow-xl border-b border-amber-600/80"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-base">🚧</span>
-              <span>
+            <div className="flex items-center gap-2 max-w-full">
+              <span className="text-base shrink-0">🚧</span>
+              <span className="leading-snug">
                 <strong>Modo Em Construção ATIVO:</strong> O público está visualizando a página de manutenção. Você tem permissão de administrador para navegar no site.
               </span>
             </div>
             <Link
               href="/admin-painel"
-              className="inline-flex items-center gap-1 bg-slate-950 hover:bg-slate-900 text-white px-3 py-1 rounded-full text-[11px] font-bold transition shadow-sm"
+              className="inline-flex shrink-0 items-center gap-1.5 bg-slate-950 hover:bg-slate-900 text-white px-3.5 py-1.5 rounded-full text-[11px] font-bold transition shadow-sm"
             >
               <span>Gerenciar no Painel</span>
               <span>⚙️</span>
             </Link>
           </aside>
-          <div className="pt-9">
+          <div
+            style={{ paddingTop: "var(--admin-banner-height, 41px)" }}
+            className="min-h-screen flex flex-col transition-[padding-top] duration-150"
+          >
             {children}
           </div>
         </>
