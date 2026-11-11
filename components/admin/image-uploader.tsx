@@ -24,6 +24,9 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccessInfo, setUploadSuccessInfo] = useState<string | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +35,7 @@ export function ImageUploader({
 
     setIsUploading(true);
     setUploadError(null);
+    setUploadSuccessInfo(null);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -45,10 +49,20 @@ export function ImageUploader({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Erro ao fazer upload da imagem");
+        throw new Error(data.error || "Erro ao fazer upload da mídia");
       }
 
       onChange(data.url);
+
+      if (data.reductionPercent && data.reductionPercent > 0) {
+        const origMb = (data.originalSize / (1024 * 1024)).toFixed(1);
+        const newMb = (data.size / (1024 * 1024)).toFixed(1);
+        setUploadSuccessInfo(
+          `✓ Mídia convertida e otimizada com sucesso! (${origMb}MB ➔ ${newMb}MB, -${data.reductionPercent}% de peso com resolução original preservada)`
+        );
+      } else {
+        setUploadSuccessInfo("✓ Arquivo enviado e otimizado com sucesso!");
+      }
     } catch (err: unknown) {
       setUploadError(
         err instanceof Error ? err.message : "Erro desconhecido no upload."
@@ -85,7 +99,10 @@ export function ImageUploader({
           <input
             type="text"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              setUploadSuccessInfo(null);
+              onChange(e.target.value);
+            }}
             placeholder={placeholder}
             className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-sea focus:outline-none focus:ring-2 focus:ring-brand-sea/20"
           />
@@ -112,7 +129,7 @@ export function ImageUploader({
           {isUploading ? (
             <>
               <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Enviando...</span>
+              <span>Otimizando & Enviando...</span>
             </>
           ) : (
             <>
@@ -123,6 +140,12 @@ export function ImageUploader({
         </button>
       </div>
 
+      {uploadSuccessInfo && (
+        <p className="text-xs text-emerald-600 font-medium">
+          {uploadSuccessInfo}
+        </p>
+      )}
+
       {uploadError && (
         <p className="text-xs text-rose-600 font-medium">{uploadError}</p>
       )}
@@ -131,19 +154,25 @@ export function ImageUploader({
         <p className="text-[11px] text-slate-500">{helperText}</p>
       )}
 
-      {/* Miniatura de Pré-visualização */}
+      {/* Miniatura de Pré-visualização com Proteção Anti-Cópia */}
       {value && (
         <div
-          className={`relative ${previewHeightClass} w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-900 mt-2 flex items-center justify-center`}
+          className={`relative ${previewHeightClass} w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-900 mt-2 flex items-center justify-center select-none`}
+          onContextMenu={(e) => e.preventDefault()}
         >
           {/\.(mp4|webm|ogg|mov)(\?|$)/i.test(value) ? (
             <video
+              key={value}
               src={value}
               controls
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
+              controlsList="nodownload nofullscreen noremoteplayback"
+              disablePictureInPicture
+              onContextMenu={(e) => e.preventDefault()}
               className="w-full h-full object-contain"
             />
           ) : value.startsWith("http") || value.startsWith("/") ? (
@@ -154,6 +183,8 @@ export function ImageUploader({
               sizes="(max-width: 768px) 100vw, 400px"
               className="object-contain"
               unoptimized
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
             />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-slate-400">

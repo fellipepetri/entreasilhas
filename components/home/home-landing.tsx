@@ -61,7 +61,12 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover"
+                  preload="auto"
+                  controlsList="nodownload nofullscreen noremoteplayback"
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="w-full h-full object-cover select-none pointer-events-none"
                 />
               ) : (
                 <Image
@@ -70,7 +75,9 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className="object-cover"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="object-cover select-none pointer-events-none"
                 />
               )}
             </div>
@@ -88,7 +95,14 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(7,23,44,0.72)_0%,rgba(10,35,68,0.25)_45%,transparent_100%)]"
       />
-      <div className={`relative mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-16 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
+      {/* Camada transparente de proteção anti-cópia e anti-download da mídia de fundo */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-auto absolute inset-0 z-[1] select-none"
+        onContextMenu={(e) => e.preventDefault()}
+        onDragStart={(e) => e.preventDefault()}
+      />
+      <div className={`relative z-[2] mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-16 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
         <div className="grid w-full gap-10 md:-translate-y-8 lg:-translate-y-16 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,21rem)] lg:items-end xl:-translate-y-20 xl:gap-14">
           <div className="max-w-[58rem]">
             <div className="mb-6 flex gap-3 text-[#78c85f] sm:mb-8">
@@ -862,7 +876,12 @@ function Chamada({ data }: { data?: CtaSectionData }) {
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            preload="auto"
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-full h-full object-cover select-none pointer-events-none"
           />
         ) : isImage && data?.backgroundImage ? (
           <Image
@@ -870,7 +889,9 @@ function Chamada({ data }: { data?: CtaSectionData }) {
             alt={title}
             fill
             sizes="100vw"
-            className="object-cover"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            className="object-cover select-none pointer-events-none"
           />
         ) : (
           <div
@@ -888,6 +909,13 @@ function Chamada({ data }: { data?: CtaSectionData }) {
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(7,23,44,0.40)_0%,transparent_75%)]"
+      />
+      {/* Camada transparente de proteção anti-cópia e anti-download da mídia de fundo */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-auto absolute inset-0 z-[1] select-none"
+        onContextMenu={(e) => e.preventDefault()}
+        onDragStart={(e) => e.preventDefault()}
       />
       <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
         <svg
@@ -913,7 +941,7 @@ function Chamada({ data }: { data?: CtaSectionData }) {
           />
         </svg>
       </div>
-      <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-center md:py-24">
+      <div className="relative z-[2] mx-auto w-full max-w-6xl px-6 py-20 text-center md:py-24">
         <h3 className="text-[clamp(1.8rem,4vw,3rem)] font-semibold tracking-[0.12em] text-white">
           {eyebrow}
         </h3>

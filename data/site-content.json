@@ -2,6 +2,8 @@
   "heroSlides": [
     {
       "id": "hero-slide-1",
+      "mediaType": "video",
+      "video": "/uploads/loreto_slide_slow-1794419335148-7158.mp4",
       "image": "/images/hero-banner.svg",
       "alt": "Vista costeira com mar aberto e ilhas ao fundo",
       "title": "Vista costeira com mar aberto e ilhas ao fundo",

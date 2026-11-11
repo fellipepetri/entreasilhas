@@ -97,19 +97,26 @@ export function TabCta({
         <div className="absolute inset-0">
           {data.mediaType === "video" && data.backgroundVideo ? (
             <video
+              key={data.backgroundVideo}
               src={data.backgroundVideo}
               poster={data.backgroundImage}
               autoPlay
               loop
               muted
               playsInline
-              className="w-full h-full object-cover"
+              preload="auto"
+              controlsList="nodownload nofullscreen noremoteplayback"
+              disablePictureInPicture
+              onContextMenu={(e) => e.preventDefault()}
+              className="w-full h-full object-cover select-none"
             />
           ) : (data.mediaType === "image" || !data.mediaType) && data.backgroundImage ? (
             <img
               src={data.backgroundImage}
               alt={data.title || "Fundo"}
-              className="w-full h-full object-cover"
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              className="w-full h-full object-cover select-none"
             />
           ) : (
             <div className="w-full h-full bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center" />

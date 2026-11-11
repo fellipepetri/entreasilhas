@@ -53,6 +53,17 @@ a[class*="rounded-xl"] * {
   -webkit-backface-visibility: hidden;
 }
 
+/* Proteção global de mídia contra cópia, download e arrasto pelo navegador */
+img,
+video {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
 html {
   scroll-behavior: smooth;
 }
