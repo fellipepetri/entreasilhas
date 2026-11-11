@@ -197,7 +197,7 @@ export default function AgendaPainelPage() {
     <div className="min-h-screen bg-[#071326] text-white flex flex-col selection:bg-cyan-500 selection:text-slate-950 font-sans">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-2xl animate-slideUp">
+        <div className="fixed bottom-20 sm:bottom-22 right-6 z-50 flex items-center gap-2.5 rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-2xl animate-slideUp">
           <span>🔔</span>
           <span>{toastMessage}</span>
         </div>
