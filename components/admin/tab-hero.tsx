@@ -201,24 +201,10 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
                   label="Arquivo de Vídeo (MP4, WebM ou link)"
                   value={currentSlide.video || ""}
                   onChange={(url) => handleUpdateSlide("video", url)}
-                  onUploadComplete={(info) => {
-                    handleUpdateSlide("video", info.url);
-                    if (info.posterUrl) {
-                      handleUpdateSlide("image", info.posterUrl);
-                    }
-                  }}
                   placeholder="/uploads/video.mp4 ou https://..."
                   helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop silencioso no fundo do Hero."
                   previewHeightClass="h-56"
                   acceptVideo
-                />
-                <ImageUploader
-                  label="Foto de Capa / Poster do Vídeo (Opcional)"
-                  value={currentSlide.image}
-                  onChange={(url) => handleUpdateSlide("image", url)}
-                  placeholder="/images/hero-banner.svg ou foto enviada"
-                  helperText="Exibida enquanto o vídeo carrega ou como fallback em conexões móveis lentas."
-                  previewHeightClass="h-32"
                 />
               </div>
             ) : (

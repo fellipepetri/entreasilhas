@@ -13,13 +13,35 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/webp",
   "image/svg+xml",
   "image/gif",
+  "image/avif",
   "video/mp4",
   "video/webm",
   "video/ogg",
-  "video/quicktime"
+  "video/quicktime",
+  "video/x-matroska",
+  "video/mp4v-es"
 ]);
 
-const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB máximo aceito no upload inicial
+const VIDEO_EXTENSIONS = new Set([
+  ".mp4",
+  ".webm",
+  ".ogg",
+  ".mov",
+  ".m4v",
+  ".mkv"
+]);
+
+const IMAGE_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".gif",
+  ".svg",
+  ".avif"
+]);
+
+const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB máximo aceito no upload
 
 export async function POST(request: Request) {
   if (!isRequestAuthenticated(request)) {
@@ -44,7 +66,16 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+    const originalName = file.name || "midia";
+    const rawExtension = path.extname(originalName).toLowerCase() || "";
+
+    // Detecção segura: verifica tanto o MIME type quanto a extensão real do arquivo
+    const isVideo =
+      file.type.startsWith("video/") || VIDEO_EXTENSIONS.has(rawExtension);
+    const isImage =
+      file.type.startsWith("image/") || IMAGE_EXTENSIONS.has(rawExtension);
+
+    if (!ALLOWED_MIME_TYPES.has(file.type) && !isVideo && !isImage) {
       return NextResponse.json(
         {
           error:
@@ -57,8 +88,6 @@ export async function POST(request: Request) {
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
-    const originalName = file.name || "midia";
-    const rawExtension = path.extname(originalName) || "";
     const baseName = path
       .basename(originalName, rawExtension)
       .toLowerCase()
@@ -73,28 +102,18 @@ export async function POST(request: Request) {
     let originalSize = rawBuffer.length;
     let newSize = rawBuffer.length;
 
-    const isVideo = file.type.startsWith("video/");
     const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-    let posterUrl: string | undefined = undefined;
-
     if (isVideo) {
-      // Otimização ultra-leve de vídeo: Converte para H.264 Universal 1080p, taxa de bits controlada, sem áudio e FastStart
+      // Otimização de vídeo: Converte para MP4 universal H.264 1080p, taxa de bits controlada, sem áudio e FastStart
       const result = await optimizeVideoBuffer(rawBuffer, originalName);
       finalBuffer = result.buffer;
       finalExt = ".mp4";
       originalSize = result.originalSize;
       newSize = result.newSize;
-
-      if (result.posterBuffer) {
-        const posterFileName = `${baseName}-${uniqueSuffix}-poster.webp`;
-        const posterPath = path.join(uploadsDir, posterFileName);
-        await fs.writeFile(posterPath, result.posterBuffer);
-        posterUrl = `/uploads/${posterFileName}`;
-      }
     } else {
-      // Otimização inteligente de imagem: Converte para WebP 80, limitando dimensões a Full HD / 4K Panoramas
-      const result = await optimizeImageBuffer(rawBuffer, file.type);
+      // Otimização de imagem: Converte para WebP 80 com resolução preservada
+      const result = await optimizeImageBuffer(rawBuffer, file.type || "image/jpeg");
       finalBuffer = result.buffer;
       finalExt = `.${result.format}`;
       originalSize = result.originalSize;
@@ -115,7 +134,6 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       url: publicUrl,
-      posterUrl,
       fileName: finalFileName,
       size: newSize,
       originalSize,

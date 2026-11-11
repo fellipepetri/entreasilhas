@@ -121,14 +121,12 @@ function applyPureJsFastStart(buffer: Buffer): Buffer {
 /**
  * Otimiza e converte vídeo para MP4 ultra-leve (Full HD 1080p, taxa de bits controlada, sem áudio inútil, FastStart)
  * Redução típica: 90% a 96% do peso original, com qualidade visual indistinguível do original.
- * Gera também imagem de poster instantânea em WebP.
  */
 export async function optimizeVideoBuffer(
   inputBuffer: Buffer,
   originalFileName: string
 ): Promise<{
   buffer: Buffer;
-  posterBuffer: Buffer | null;
   format: string;
   mimeType: string;
   originalSize: number;
@@ -144,7 +142,6 @@ export async function optimizeVideoBuffer(
     const fastStarted = applyPureJsFastStart(inputBuffer);
     return {
       buffer: fastStarted,
-      posterBuffer: null,
       format: "mp4",
       mimeType: "video/mp4",
       originalSize,
@@ -156,12 +153,11 @@ export async function optimizeVideoBuffer(
   const ext = path.extname(originalFileName) || ".mp4";
   const tempInput = path.join(os.tmpdir(), `upload_raw_${tempId}${ext}`);
   const tempOutput = path.join(os.tmpdir(), `upload_opt_${tempId}.mp4`);
-  const tempPosterJpg = path.join(os.tmpdir(), `upload_poster_${tempId}.jpg`);
 
   try {
     await fs.writeFile(tempInput, inputBuffer);
 
-    // 1. Otimização de Vídeo:
+    // Otimização de Vídeo:
     // - Codec universal H.264
     // - CRF 28 com taxa de bits controlada (1500k média, 2000k teto) para impedir picos gigantes em ondas de mar
     // - Altura máx 1080p preservando aspecto e proporções pares
@@ -203,43 +199,8 @@ export async function optimizeVideoBuffer(
 
     const outputBuffer = await fs.readFile(tempOutput);
 
-    // 2. Extração automática de Poster Instantâneo (frame do segundo 0.5)
-    let posterBuffer: Buffer | null = null;
-    try {
-      const posterArgs = [
-        "-y",
-        "-ss",
-        "00:00:00.500",
-        "-i",
-        tempInput,
-        "-vframes",
-        "1",
-        "-vf",
-        "scale=-2:min(1080\\,ih)",
-        "-q:v",
-        "2",
-        tempPosterJpg
-      ];
-
-      execFileSync(ffmpegPath, posterArgs, {
-        stdio: ["ignore", "ignore", "ignore"],
-        timeout: 20000
-      });
-
-      if (fsSync.existsSync(tempPosterJpg)) {
-        const rawPoster = await fs.readFile(tempPosterJpg);
-        // Converte o poster para WebP super compacto (~40KB a 80KB)
-        posterBuffer = await sharp(rawPoster)
-          .webp({ quality: 80, effort: 4 })
-          .toBuffer();
-      }
-    } catch (posterErr) {
-      console.warn("Aviso ao extrair poster automático:", posterErr);
-    }
-
     return {
       buffer: outputBuffer,
-      posterBuffer,
       format: "mp4",
       mimeType: "video/mp4",
       originalSize,
@@ -253,7 +214,6 @@ export async function optimizeVideoBuffer(
     const fallbackBuffer = applyPureJsFastStart(inputBuffer);
     return {
       buffer: fallbackBuffer,
-      posterBuffer: null,
       format: "mp4",
       mimeType: "video/mp4",
       originalSize,
@@ -263,7 +223,6 @@ export async function optimizeVideoBuffer(
     try {
       await fs.unlink(tempInput).catch(() => {});
       await fs.unlink(tempOutput).catch(() => {});
-      await fs.unlink(tempPosterJpg).catch(() => {});
     } catch {
       // Ignora limpeza de temporários
     }

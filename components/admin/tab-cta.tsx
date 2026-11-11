@@ -217,24 +217,10 @@ export function TabCta({
               label="Arquivo de Vídeo (MP4, WebM ou link)"
               value={data.backgroundVideo || ""}
               onChange={(url) => handleUpdate("backgroundVideo", url)}
-              onUploadComplete={(info) => {
-                handleUpdate("backgroundVideo", info.url);
-                if (info.posterUrl) {
-                  handleUpdate("backgroundImage", info.posterUrl);
-                }
-              }}
               placeholder="/uploads/video-cta.mp4 ou https://..."
               helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop contínuo no fundo da chamada."
               previewHeightClass="h-56"
               acceptVideo
-            />
-            <ImageUploader
-              label="Foto de Capa / Poster do Vídeo (Opcional)"
-              value={data.backgroundImage || ""}
-              onChange={(url) => handleUpdate("backgroundImage", url)}
-              placeholder="/images/routes-bg.svg ou foto enviada"
-              helperText="Exibida enquanto o vídeo carrega no navegador."
-              previewHeightClass="h-32"
             />
           </div>
         ) : data.mediaType === "image" || !data.mediaType ? (
