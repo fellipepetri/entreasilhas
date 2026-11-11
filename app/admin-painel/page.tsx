@@ -222,7 +222,7 @@ export default function AdminPainelPage() {
 
   // Estado 3: Autenticado -> Painel de Controle Completo
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans">
       {/* Toast Flutuante */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-slate-900 border border-emerald-500/40 p-4 text-xs font-semibold text-white shadow-2xl animate-bounce">

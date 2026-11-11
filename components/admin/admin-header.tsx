@@ -209,21 +209,22 @@ export function AdminHeader({
                 {/* Dropdown com Lista Vertical e Barra de Rolagem */}
                 {isSectionsMenuOpen && (
                   <div
-                    className="fixed sm:absolute inset-x-4 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-2 w-auto sm:w-80 rounded-2xl border border-slate-200 bg-white/98 backdrop-blur-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    className="fixed sm:absolute inset-x-4 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-2 w-auto sm:w-80 rounded-2xl border border-slate-300/90 bg-slate-100 shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150"
                     style={{
+                      backgroundColor: "#f1f5f9",
                       boxShadow:
                         "0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 8px 16px -6px rgba(15, 23, 42, 0.12)"
                     }}
                   >
                     {/* Cabeçalho do Submenu */}
-                    <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                    <div className="px-3 py-2 border-b border-slate-200 flex items-center justify-between mb-1">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs">📂</span>
                         <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                           Seções do Site
                         </span>
                       </div>
-                      <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
                         {tabs.length} seções
                       </span>
                     </div>
@@ -248,7 +249,7 @@ export function AdminHeader({
                               "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition cursor-pointer group",
                               isActive
                                 ? "bg-brand-deep text-white shadow-sm"
-                                : "text-slate-700 hover:bg-slate-100 hover:text-slate-950",
+                                : "text-slate-700 hover:bg-white hover:text-slate-950 hover:shadow-xs",
                               isFeatureDisabled && !isActive ? "opacity-75" : ""
                             ].join(" ")}
                           >
