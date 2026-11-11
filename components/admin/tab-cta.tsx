@@ -217,6 +217,12 @@ export function TabCta({
               label="Arquivo de Vídeo (MP4, WebM ou link)"
               value={data.backgroundVideo || ""}
               onChange={(url) => handleUpdate("backgroundVideo", url)}
+              onUploadComplete={(info) => {
+                handleUpdate("backgroundVideo", info.url);
+                if (info.posterUrl) {
+                  handleUpdate("backgroundImage", info.posterUrl);
+                }
+              }}
               placeholder="/uploads/video-cta.mp4 ou https://..."
               helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop contínuo no fundo da chamada."
               previewHeightClass="h-56"

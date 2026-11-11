@@ -7,6 +7,7 @@ interface ImageUploaderProps {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  onUploadComplete?: (info: { url: string; posterUrl?: string }) => void;
   placeholder?: string;
   helperText?: string;
   previewHeightClass?: string;
@@ -17,6 +18,7 @@ export function ImageUploader({
   label,
   value,
   onChange,
+  onUploadComplete,
   placeholder = "/images/exemplo.jpg ou https://...",
   helperText,
   previewHeightClass = "h-36",
@@ -53,6 +55,9 @@ export function ImageUploader({
       }
 
       onChange(data.url);
+      if (onUploadComplete) {
+        onUploadComplete({ url: data.url, posterUrl: data.posterUrl });
+      }
 
       if (data.reductionPercent && data.reductionPercent > 0) {
         const origMb = (data.originalSize / (1024 * 1024)).toFixed(1);

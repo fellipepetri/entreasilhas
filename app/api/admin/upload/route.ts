@@ -74,16 +74,26 @@ export async function POST(request: Request) {
     let newSize = rawBuffer.length;
 
     const isVideo = file.type.startsWith("video/");
+    const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+
+    let posterUrl: string | undefined = undefined;
 
     if (isVideo) {
-      // Otimização inteligente de vídeo: Converte para H.264 Universal, CRF 26, +faststart e remove áudio desnecessário
+      // Otimização ultra-leve de vídeo: Converte para H.264 Universal 1080p, taxa de bits controlada, sem áudio e FastStart
       const result = await optimizeVideoBuffer(rawBuffer, originalName);
       finalBuffer = result.buffer;
       finalExt = ".mp4";
       originalSize = result.originalSize;
       newSize = result.newSize;
+
+      if (result.posterBuffer) {
+        const posterFileName = `${baseName}-${uniqueSuffix}-poster.webp`;
+        const posterPath = path.join(uploadsDir, posterFileName);
+        await fs.writeFile(posterPath, result.posterBuffer);
+        posterUrl = `/uploads/${posterFileName}`;
+      }
     } else {
-      // Otimização inteligente de imagem: Converte para WebP de alta fidelidade e resolução preservada
+      // Otimização inteligente de imagem: Converte para WebP 80, limitando dimensões a Full HD / 4K Panoramas
       const result = await optimizeImageBuffer(rawBuffer, file.type);
       finalBuffer = result.buffer;
       finalExt = `.${result.format}`;
@@ -91,7 +101,6 @@ export async function POST(request: Request) {
       newSize = result.newSize;
     }
 
-    const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     const finalFileName = `${baseName}-${uniqueSuffix}${finalExt}`;
     const destinationPath = path.join(uploadsDir, finalFileName);
 
@@ -106,6 +115,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       url: publicUrl,
+      posterUrl,
       fileName: finalFileName,
       size: newSize,
       originalSize,
