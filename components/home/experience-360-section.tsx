@@ -54,7 +54,7 @@ export function Experience360Section({ data }: Experience360SectionProps) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Link
               href="/experiencia-360"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-400 hover:to-sky-500 px-7 py-3.5 text-sm font-bold text-white shadow-xl transition hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-400 hover:to-sky-500 px-7 py-3.5 text-sm font-bold text-white shadow-xl transition-all duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform [transform:translateZ(0)]"
             >
               <span>Abrir Experiência Imersiva Completa</span>
               <span>↗</span>

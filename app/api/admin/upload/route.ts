@@ -8,10 +8,14 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/png",
   "image/webp",
   "image/svg+xml",
-  "image/gif"
+  "image/gif",
+  "video/mp4",
+  "video/webm",
+  "video/ogg",
+  "video/quicktime"
 ]);
 
-const MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024; // 30 MB (para fotos e panoramas 360)
+const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB (para fotos, panoramas 360 e vídeos em alta resolução)
 
 export async function POST(request: Request) {
   if (!isRequestAuthenticated(request)) {
@@ -31,7 +35,7 @@ export async function POST(request: Request) {
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return NextResponse.json(
-        { error: "Arquivo muito grande. O limite máximo é de 30MB." },
+        { error: "Arquivo muito grande. O limite máximo é de 100MB." },
         { status: 400 }
       );
     }
@@ -40,7 +44,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "Formato não suportado. Envie imagens JPG, PNG, WebP, SVG ou GIF."
+            "Formato não suportado. Envie imagens (JPG, PNG, WebP, SVG, GIF) ou vídeos (MP4, WebM, MOV)."
         },
         { status: 400 }
       );

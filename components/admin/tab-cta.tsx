@@ -93,6 +93,39 @@ export function TabCta({
 
       {/* Pré-visualização da Chamada */}
       <div className="rounded-3xl bg-brand-deep text-white p-8 sm:p-12 text-center relative overflow-hidden shadow-xl border border-slate-800">
+        {/* Fundo da Prévia */}
+        <div className="absolute inset-0">
+          {data.mediaType === "video" && data.backgroundVideo ? (
+            <video
+              src={data.backgroundVideo}
+              poster={data.backgroundImage}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          ) : (data.mediaType === "image" || !data.mediaType) && data.backgroundImage ? (
+            <img
+              src={data.backgroundImage}
+              alt={data.title || "Fundo"}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center" />
+          )}
+        </div>
+
+        {/* Filtro degradê suave: azul escuro no topo até transparente na base */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,23,44,0.85)_0%,rgba(10,35,68,0.50)_40%,rgba(10,35,68,0.12)_70%,transparent_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(7,23,44,0.40)_0%,transparent_75%)]"
+        />
+
         <div className="relative z-10 max-w-xl mx-auto space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
             {data.eyebrow || "Venha viver"}
@@ -114,6 +147,94 @@ export function TabCta({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Mídia de Fundo da Chamada Final */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+        <div className="border-b border-slate-100 pb-3">
+          <h3 className="text-base font-bold text-slate-900">
+            Mídia de Fundo da Chamada Final
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Escolha uma foto ou vídeo para o fundo da seção. O filtro com degradê (azul escuro no topo até transparência na base) será aplicado automaticamente na frente da mídia para realçar os títulos e manter as cores originais da cena.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+            Tipo de Fundo
+          </label>
+          <div className="grid grid-cols-3 gap-3 max-w-lg">
+            <button
+              type="button"
+              onClick={() => handleUpdate("mediaType", "none")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                data.mediaType === "none"
+                  ? "border-brand-deep bg-brand-deep text-white shadow-sm"
+                  : "border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+              }`}
+            >
+              <span>🌊</span>
+              <span>Padrão Náutico</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleUpdate("mediaType", "image")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                data.mediaType === "image" || !data.mediaType
+                  ? "border-brand-deep bg-brand-deep text-white shadow-sm"
+                  : "border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+              }`}
+            >
+              <span>📷</span>
+              <span>Foto / Imagem</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleUpdate("mediaType", "video")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                data.mediaType === "video"
+                  ? "border-brand-deep bg-brand-deep text-white shadow-sm"
+                  : "border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+              }`}
+            >
+              <span>🎥</span>
+              <span>Vídeo</span>
+            </button>
+          </div>
+        </div>
+
+        {data.mediaType === "video" ? (
+          <div className="space-y-4">
+            <ImageUploader
+              label="Arquivo de Vídeo (MP4, WebM ou link)"
+              value={data.backgroundVideo || ""}
+              onChange={(url) => handleUpdate("backgroundVideo", url)}
+              placeholder="/uploads/video-cta.mp4 ou https://..."
+              helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop contínuo no fundo da chamada."
+              previewHeightClass="h-56"
+              acceptVideo
+            />
+            <ImageUploader
+              label="Foto de Capa / Poster do Vídeo (Opcional)"
+              value={data.backgroundImage || ""}
+              onChange={(url) => handleUpdate("backgroundImage", url)}
+              placeholder="/images/routes-bg.svg ou foto enviada"
+              helperText="Exibida enquanto o vídeo carrega no navegador."
+              previewHeightClass="h-32"
+            />
+          </div>
+        ) : data.mediaType === "image" || !data.mediaType ? (
+          <ImageUploader
+            label="Foto / Imagem de Fundo"
+            value={data.backgroundImage || "/images/routes-bg.svg"}
+            onChange={(url) => handleUpdate("backgroundImage", url)}
+            placeholder="/images/routes-bg.svg ou foto enviada"
+            helperText="Recomendado: foto em alta resolução com paisagem tropical (1920x1080)."
+            previewHeightClass="h-48"
+            acceptVideo
+          />
+        ) : null}
       </div>
 
       {/* Campos de Edição */}

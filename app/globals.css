@@ -26,6 +26,33 @@
   scrollbar-color: #cbd5e1 #e2e8f0;
 }
 
+/* Sincronização e estabilização de fontes e ícones em botões durante animações de hover */
+button,
+a[role="button"],
+.btn-stabilize,
+a[class*="rounded-full"],
+a[class*="rounded-2xl"],
+a[class*="rounded-xl"] {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+button *,
+a[role="button"] *,
+.btn-stabilize *,
+a[class*="rounded-full"] *,
+a[class*="rounded-2xl"] *,
+a[class*="rounded-xl"] * {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 html {
   scroll-behavior: smooth;
 }

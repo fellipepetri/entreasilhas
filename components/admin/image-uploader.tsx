@@ -10,6 +10,7 @@ interface ImageUploaderProps {
   placeholder?: string;
   helperText?: string;
   previewHeightClass?: string;
+  acceptVideo?: boolean;
 }
 
 export function ImageUploader({
@@ -18,7 +19,8 @@ export function ImageUploader({
   onChange,
   placeholder = "/images/exemplo.jpg ou https://...",
   helperText,
-  previewHeightClass = "h-36"
+  previewHeightClass = "h-36",
+  acceptVideo = false
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -92,7 +94,11 @@ export function ImageUploader({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+          accept={
+            acceptVideo
+              ? "image/png,image/jpeg,image/webp,image/svg+xml,image/gif,video/mp4,video/webm,video/ogg,video/quicktime"
+              : "image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+          }
           onChange={handleFileChange}
           className="hidden"
         />
@@ -101,7 +107,7 @@ export function ImageUploader({
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white px-4 py-2.5 text-xs font-semibold shadow-sm transition"
+          className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white px-4 py-2.5 text-xs font-semibold shadow-sm transition cursor-pointer"
         >
           {isUploading ? (
             <>
@@ -110,7 +116,7 @@ export function ImageUploader({
             </>
           ) : (
             <>
-              <span>Subir Foto</span>
+              <span>{acceptVideo ? "Subir Foto/Vídeo" : "Subir Foto"}</span>
               <span>📁</span>
             </>
           )}
@@ -128,9 +134,19 @@ export function ImageUploader({
       {/* Miniatura de Pré-visualização */}
       {value && (
         <div
-          className={`relative ${previewHeightClass} w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100 mt-2`}
+          className={`relative ${previewHeightClass} w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-900 mt-2 flex items-center justify-center`}
         >
-          {value.startsWith("http") || value.startsWith("/") ? (
+          {/\.(mp4|webm|ogg|mov)(\?|$)/i.test(value) ? (
+            <video
+              src={value}
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-contain"
+            />
+          ) : value.startsWith("http") || value.startsWith("/") ? (
             <Image
               src={value}
               alt="Pré-visualização"
@@ -141,7 +157,7 @@ export function ImageUploader({
             />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-slate-400">
-              Caminho de imagem não reconhecido
+              Caminho de mídia não reconhecido
             </div>
           )}
         </div>

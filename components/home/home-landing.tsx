@@ -23,7 +23,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
-  const slides = propSlides && propSlides.length > 0 ? propSlides : defaultHeroSlides;
+  const slides: HeroSlide[] = propSlides && propSlides.length > 0 ? propSlides : defaultHeroSlides;
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -42,28 +42,52 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
       className="scroll-mt-20 lg:scroll-mt-24 relative overflow-hidden bg-brand-deep pt-24 text-white sm:pt-28 lg:pt-32"
     >
       <div className="absolute inset-0">
-        {slides.map((slide, index) => (
-          <div
-            key={slide.image}
-            className={[
-              "absolute inset-0 transition-opacity duration-[1800ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-              index === activeIndex ? "opacity-100" : "opacity-0"
-            ].join(" ")}
-            aria-hidden={index !== activeIndex}
-          >
-            <Image
-              src={slide.image}
-              alt={slide.alt}
-              fill
-              priority={index === 0}
-              sizes="100vw"
-              className="object-cover"
-            />
-          </div>
-        ))}
+        {slides.map((slide, index) => {
+          const isVideo = slide.mediaType === "video" || Boolean(slide.video);
+          return (
+            <div
+              key={slide.id || slide.image || index}
+              className={[
+                "absolute inset-0 transition-opacity duration-[1800ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+                index === activeIndex ? "opacity-100" : "opacity-0 pointer-events-none"
+              ].join(" ")}
+              aria-hidden={index !== activeIndex}
+            >
+              {isVideo && slide.video ? (
+                <video
+                  src={slide.video}
+                  poster={slide.image}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={slide.image}
+                  alt={slide.alt || slide.title}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
       <div key={activeIndex} aria-hidden="true" className="hero-image-flash absolute inset-0" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,29,59,0.76),rgba(8,29,59,0.18)_54%,rgba(8,29,59,0.48))]" />
+      {/* Filtro degradê suave: azul escuro no topo até transparência na base para revelar as cores naturais da foto/vídeo */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,23,44,0.85)_0%,rgba(10,35,68,0.50)_35%,rgba(10,35,68,0.12)_65%,transparent_100%)]"
+      />
+      {/* Leve vinheta lateral à esquerda para garantir leitura nítida dos textos brancos */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(7,23,44,0.72)_0%,rgba(10,35,68,0.25)_45%,transparent_100%)]"
+      />
       <div className={`relative mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-16 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
         <div className="grid w-full gap-10 md:-translate-y-8 lg:-translate-y-16 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,21rem)] lg:items-end xl:-translate-y-20 xl:gap-14">
           <div className="max-w-[58rem]">
@@ -823,11 +847,47 @@ function Chamada({ data }: { data?: CtaSectionData }) {
   const buttonText = data?.buttonText;
   const buttonLink = data?.buttonLink || "#inicio";
 
+  const isVideo = data?.mediaType === "video" && Boolean(data?.backgroundVideo);
+  const isImage = (data?.mediaType === "image" || !data?.mediaType) && Boolean(data?.backgroundImage);
+
   return (
     <section className="relative overflow-hidden bg-brand-deep py-24 text-white sm:py-28 md:py-36 lg:py-44">
+      {/* Mídia de Fundo: Vídeo, Foto ou Padrão Náutico */}
+      <div className="absolute inset-0">
+        {isVideo && data?.backgroundVideo ? (
+          <video
+            src={data.backgroundVideo}
+            poster={data?.backgroundImage}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : isImage && data?.backgroundImage ? (
+          <Image
+            src={data.backgroundImage}
+            alt={title}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div
+            className="w-full h-full bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
+          />
+        )}
+      </div>
+
+      {/* Filtro degradê suave: azul escuro no topo até transparência total na base */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,23,44,0.85)_0%,rgba(10,35,68,0.50)_40%,rgba(10,35,68,0.12)_70%,transparent_100%)]"
+      />
+      {/* Vinheta central suave para destacar os textos */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(7,23,44,0.40)_0%,transparent_75%)]"
       />
       <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
         <svg
@@ -875,7 +935,7 @@ function Chamada({ data }: { data?: CtaSectionData }) {
           <div className="mt-8">
             <Link
               href={buttonLink}
-              className="inline-flex rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:scale-105"
+              className="inline-flex rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform [transform:translateZ(0)]"
             >
               {buttonText}
             </Link>

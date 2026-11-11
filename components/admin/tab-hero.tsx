@@ -109,8 +109,9 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700">
                       {idx + 1}
                     </span>
-                    <span className="text-xs font-semibold text-slate-800 truncate">
-                      {slide.title || `Slide ${idx + 1}`}
+                    <span className="text-xs font-semibold text-slate-800 truncate flex items-center gap-1.5">
+                      <span>{slide.mediaType === "video" ? "🎥" : "📷"}</span>
+                      <span className="truncate">{slide.title || `Slide ${idx + 1}`}</span>
                     </span>
                   </div>
 
@@ -160,15 +161,71 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
               </p>
             </div>
 
-            {/* Imagem do Slide */}
-            <ImageUploader
-              label="Imagem de Fundo do Slide"
-              value={currentSlide.image}
-              onChange={(url) => handleUpdateSlide("image", url)}
-              placeholder="/images/hero-banner.svg ou foto enviada"
-              helperText="Recomendado: imagem panorâmica ou horizontal em alta resolução (1920x1080)."
-              previewHeightClass="h-48"
-            />
+            {/* Tipo de Mídia: Foto ou Vídeo */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+                Tipo de Mídia de Fundo
+              </label>
+              <div className="grid grid-cols-2 gap-3 max-w-md">
+                <button
+                  type="button"
+                  onClick={() => handleUpdateSlide("mediaType", "image")}
+                  className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                    (currentSlide.mediaType || "image") === "image"
+                      ? "border-brand-deep bg-brand-deep text-white shadow-sm"
+                      : "border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+                  }`}
+                >
+                  <span>📷</span>
+                  <span>Foto / Imagem</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleUpdateSlide("mediaType", "video")}
+                  className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                    currentSlide.mediaType === "video"
+                      ? "border-brand-deep bg-brand-deep text-white shadow-sm"
+                      : "border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+                  }`}
+                >
+                  <span>🎥</span>
+                  <span>Vídeo</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Mídia do Slide: Vídeo ou Imagem */}
+            {currentSlide.mediaType === "video" ? (
+              <div className="space-y-4">
+                <ImageUploader
+                  label="Arquivo de Vídeo (MP4, WebM ou link)"
+                  value={currentSlide.video || ""}
+                  onChange={(url) => handleUpdateSlide("video", url)}
+                  placeholder="/uploads/video.mp4 ou https://..."
+                  helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop silencioso no fundo do Hero."
+                  previewHeightClass="h-56"
+                  acceptVideo
+                />
+                <ImageUploader
+                  label="Foto de Capa / Poster do Vídeo (Opcional)"
+                  value={currentSlide.image}
+                  onChange={(url) => handleUpdateSlide("image", url)}
+                  placeholder="/images/hero-banner.svg ou foto enviada"
+                  helperText="Exibida enquanto o vídeo carrega ou como fallback em conexões móveis lentas."
+                  previewHeightClass="h-32"
+                />
+              </div>
+            ) : (
+              <ImageUploader
+                label="Imagem de Fundo do Slide"
+                value={currentSlide.image}
+                onChange={(url) => handleUpdateSlide("image", url)}
+                placeholder="/images/hero-banner.svg ou foto enviada"
+                helperText="Recomendado: imagem panorâmica ou horizontal em alta resolução (1920x1080)."
+                previewHeightClass="h-48"
+                acceptVideo
+              />
+            )}
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">

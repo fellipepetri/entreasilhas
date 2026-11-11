@@ -363,7 +363,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-[#1249a1] shadow-lg transition duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-[#1249a1] shadow-lg transition duration-200 ease-out hover:-translate-y-0.5 will-change-transform [transform:translateZ(0)] disabled:opacity-50 disabled:pointer-events-none"
                 >
                   {isSubmitting ? (
                     <>

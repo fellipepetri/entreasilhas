@@ -1,3 +1,5 @@
+import type { HeroSlide } from "@/lib/content-types";
+
 export const primaryNavigationLinks = [
   { href: "/", label: "Início" },
   { href: "#experiencia-360", label: "Entre as Ilhas 360º" },
@@ -8,29 +10,38 @@ export const primaryNavigationLinks = [
   { href: "#instagram", label: "Instagram" }
 ];
 
-export const heroSlides = [
+export const heroSlides: HeroSlide[] = [
   {
+    id: "hero-slide-1",
+    mediaType: "image",
     image: "/images/hero-banner.svg",
+    video: "",
     alt: "Vista costeira com mar aberto e ilhas ao fundo",
-    title: "Vista costeira com mar aberto e ilhas ao fundo", // "Explore o litoral entre as ilhas, enseadas e mar aberto.",
+    title: "Vista costeira com mar aberto e ilhas ao fundo",
     stat: "10+",
     statLabel: "Anos de operação turística",
     description:
       "Descubra águas transparentes, paisagens tropicais e travessias desenhadas para grupos, casais e viagens sob medida."
   },
   {
+    id: "hero-slide-2",
+    mediaType: "image",
     image: "/images/hero-diver.svg",
-    alt: "...", //"Cenário marítimo com destaque para mergulho e mar azul",
-    title: "Vista costeira com mar aberto e ilhas ao fundo",//"Travessias com ritmo leve.",  //paisagem ampla e paradas memoráveis.
+    video: "",
+    alt: "Cenário marítimo com destaque para mergulho e mar azul",
+    title: "Vista costeira com mar aberto e ilhas ao fundo",
     stat: "12+",
     statLabel: "Roteiros costeiros sob medida",
     description:
       "Monte saídas com banho de mar, pontos fotográficos e percursos que equilibram contemplação, conforto e tempo de bordo."
   },
   {
+    id: "hero-slide-3",
+    mediaType: "image",
     image: "/images/hero-praia.svg",
+    video: "",
     alt: "Praia tropical com faixa de areia clara e água calma",
-    title: "Vista costeira com mar aberto e ilhas ao fundo", //"Experiências náuticas que conectam.", // horizonte e descanso.
+    title: "Vista costeira com mar aberto e ilhas ao fundo",
     stat: "100%",
     statLabel: "Planejamento alinhado ao grupo",
     description:

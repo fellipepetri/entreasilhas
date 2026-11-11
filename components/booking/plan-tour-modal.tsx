@@ -907,7 +907,7 @@ export function PlanTourModal({
               <button
                 type="button"
                 onClick={handleProceedToBooking}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-sky-600 hover:from-cyan-400 hover:to-sky-500 text-white font-bold text-sm transition shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-sky-600 hover:from-cyan-400 hover:to-sky-500 text-white font-bold text-sm transition-all duration-200 ease-out shadow-lg hover:scale-105 active:scale-95 will-change-transform [transform:translateZ(0)] cursor-pointer"
               >
                 <span>Avançar para Detalhes e Reserva</span>
                 <span>↗</span>

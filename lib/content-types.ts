@@ -27,7 +27,9 @@ export type {
 
 export interface HeroSlide {
   id: string;
+  mediaType?: "image" | "video";
   image: string;
+  video?: string;
   alt: string;
   title: string;
   stat: string;
@@ -110,7 +112,9 @@ export interface CtaSectionData {
   buttonLink: string;
   showBoatTransition: boolean;
   boatImage: string;
+  mediaType?: "none" | "image" | "video";
   backgroundImage?: string;
+  backgroundVideo?: string;
 }
 
 export interface ContactCardItem {

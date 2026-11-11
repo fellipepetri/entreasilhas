@@ -29,7 +29,9 @@ import { CURATED_INSTAGRAM_POSTS, INSTAGRAM_PROFILE } from "./instagram";
 export const defaultSiteContent: SiteContent = {
   heroSlides: heroSlides.map((slide, index) => ({
     id: `hero-slide-${index + 1}`,
+    mediaType: "image" as const,
     image: slide.image,
+    video: "",
     alt: slide.alt,
     title: slide.title,
     stat: slide.stat,
@@ -141,7 +143,9 @@ export const defaultSiteContent: SiteContent = {
     buttonLink: "#inicio",
     showBoatTransition: true,
     boatImage: "/images/barco.png",
-    backgroundImage: "/images/routes-bg.svg"
+    mediaType: "image" as const,
+    backgroundImage: "/images/routes-bg.svg",
+    backgroundVideo: ""
   },
   contact: {
     pageEyebrow: "Fale Conosco",

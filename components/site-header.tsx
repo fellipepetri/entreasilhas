@@ -179,10 +179,10 @@ function DesktopTopHeader({
             <button
               type="button"
               onClick={onOpenPlanTourModal}
-              className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-6 py-2.5 text-[0.89rem] font-bold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer will-change-transform"
             >
-              <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-              <span>Planejar passeio</span>
+              <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-200 ease-out" />
+              <span className="transition-colors duration-200 ease-out">Planejar passeio</span>
             </button>
           )}
           <div className="flex items-center gap-2.5">
@@ -191,9 +191,9 @@ function DesktopTopHeader({
               onClick={onOpenContactModal}
               title="Fale conosco / Envie uma mensagem"
               aria-label="Fale conosco - Abrir formulário"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition duration-300 hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition-all duration-200 ease-out hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs will-change-transform"
             >
-              <ChatBubbleIcon className="h-4 w-4" />
+              <ChatBubbleIcon className="h-4 w-4 transition-colors duration-200 ease-out" />
             </button>
             <a
               href="https://wa.me/5571992517302"
@@ -201,7 +201,7 @@ function DesktopTopHeader({
               rel="noopener noreferrer"
               title="Fale conosco no WhatsApp"
               aria-label="Fale conosco no WhatsApp"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition-all duration-200 ease-out hover:bg-emerald-600 hover:scale-105 active:scale-95 will-change-transform"
             >
               <WhatsAppIcon className="h-4 w-4" />
             </a>
@@ -266,10 +266,10 @@ function DesktopScrolledHeader({
               <button
                 type="button"
                 onClick={onOpenPlanTourModal}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-5 py-2 text-[0.88rem] font-bold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-surf hover:brightness-105 hover:text-[#1249a1] cursor-pointer will-change-transform"
               >
-                <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-                <span>Planejar passeio</span>
+                <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-200 ease-out" />
+                <span className="transition-colors duration-200 ease-out">Planejar passeio</span>
               </button>
             )}
             <button
@@ -277,9 +277,9 @@ function DesktopScrolledHeader({
               onClick={onOpenContactModal}
               title="Fale conosco / Envie uma mensagem"
               aria-label="Fale conosco - Abrir formulário"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition duration-300 hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-brand-deep border border-slate-200 transition-all duration-200 ease-out hover:bg-brand-deep hover:text-white hover:scale-105 active:scale-95 cursor-pointer shadow-xs will-change-transform"
             >
-              <ChatBubbleIcon className="h-4 w-4" />
+              <ChatBubbleIcon className="h-4 w-4 transition-colors duration-200 ease-out" />
             </button>
             <a
               href="https://wa.me/5571992517302"
@@ -287,7 +287,7 @@ function DesktopScrolledHeader({
               rel="noopener noreferrer"
               title="Fale conosco no WhatsApp"
               aria-label="Fale conosco no WhatsApp"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xs transition-all duration-200 ease-out hover:bg-emerald-600 hover:scale-105 active:scale-95 will-change-transform"
             >
               <WhatsAppIcon className="h-4 w-4" />
             </a>
@@ -565,10 +565,10 @@ export function SiteHeader() {
                           setIsOpen(false);
                           setIsPlanTourModalOpen(true);
                         }}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:text-[#1249a1] shadow-sm cursor-pointer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-200 ease-out hover:text-[#1249a1] shadow-sm cursor-pointer will-change-transform"
                       >
-                        <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-300" />
-                        <span>Planejar passeio</span>
+                        <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-200 ease-out" />
+                        <span className="transition-colors duration-200 ease-out">Planejar passeio</span>
                       </button>
                     )}
                     <div className="grid grid-cols-2 gap-2">

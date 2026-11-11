@@ -161,7 +161,7 @@ export function PwaTopBanner() {
         <button
           type="button"
           onClick={() => setIsBoxOpen((prev) => !prev)}
-          className={`flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-full bg-gradient-to-tr from-slate-950 via-[#163a70] to-[#1498d5] text-white border-2 border-white/30 shadow-[0_10px_30px_rgba(20,152,213,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ${
+          className={`flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-full bg-gradient-to-tr from-slate-950 via-[#163a70] to-[#1498d5] text-white border-2 border-white/30 shadow-[0_10px_30px_rgba(20,152,213,0.4)] transition-all duration-200 ease-out hover:scale-105 active:scale-95 cursor-pointer will-change-transform [transform:translateZ(0)] ${
             isBoxOpen
               ? "ring-4 ring-cyan-400/40"
               : "hover:shadow-[0_12px_35px_rgba(20,152,213,0.6)]"
@@ -171,11 +171,11 @@ export function PwaTopBanner() {
           aria-label="Ajuda e instalação do aplicativo Entre as Ilhas"
         >
           {isBoxOpen ? (
-            <span className="text-base font-bold transition-transform duration-200">
+            <span className="text-base font-bold transition-transform duration-200 [transform:translateZ(0)]">
               ✕
             </span>
           ) : (
-            <span className="text-xl font-black tracking-tight leading-none">
+            <span className="text-xl font-black tracking-tight leading-none [transform:translateZ(0)]">
               ?
             </span>
           )}

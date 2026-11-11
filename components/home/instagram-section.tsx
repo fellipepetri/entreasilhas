@@ -211,7 +211,7 @@ export function InstagramSection({ data }: InstagramSectionProps = {}) {
               href={profile.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-500 via-pink-600 to-purple-600 hover:from-rose-600 hover:to-purple-700 px-6 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-500 via-pink-600 to-purple-600 hover:from-rose-600 hover:to-purple-700 px-6 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform [transform:translateZ(0)]"
             >
               <InstagramIcon className="w-4 h-4 text-white" />
               <span>Seguir Perfil</span>
@@ -376,7 +376,7 @@ export function InstagramSection({ data }: InstagramSectionProps = {}) {
             href={profile.profileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-100 text-slate-950 font-bold px-7 py-3 text-sm transition shadow-lg hover:scale-105"
+            className="shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white hover:bg-slate-100 text-slate-950 font-bold px-7 py-3 text-sm transition-all duration-200 ease-out shadow-lg hover:scale-105 active:scale-95 will-change-transform [transform:translateZ(0)]"
           >
             <InstagramIcon className="w-4 h-4 text-rose-600" />
             <span>Acessar @entreasilhas</span>
