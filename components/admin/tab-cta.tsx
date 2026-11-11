@@ -220,7 +220,7 @@ export function TabCta({
               placeholder="/uploads/video-cta.mp4 ou https://..."
               helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop contínuo no fundo da chamada."
               previewHeightClass="h-56"
-              acceptVideo
+              videoOnly
             />
           </div>
         ) : data.mediaType === "image" || !data.mediaType ? (
@@ -231,7 +231,6 @@ export function TabCta({
             placeholder="/images/routes-bg.svg ou foto enviada"
             helperText="Recomendado: foto em alta resolução com paisagem tropical (1920x1080)."
             previewHeightClass="h-48"
-            acceptVideo
           />
         ) : null}
       </div>

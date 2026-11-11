@@ -56,7 +56,7 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
               {isVideo && slide.video ? (
                 <video
                   src={slide.video}
-                  poster={slide.image}
+                  poster={slide.image && slide.image.trim() ? slide.image : undefined}
                   autoPlay
                   loop
                   muted
@@ -871,7 +871,7 @@ function Chamada({ data }: { data?: CtaSectionData }) {
         {isVideo && data?.backgroundVideo ? (
           <video
             src={data.backgroundVideo}
-            poster={data?.backgroundImage}
+            poster={data?.backgroundImage && data.backgroundImage.trim() ? data.backgroundImage : undefined}
             autoPlay
             loop
             muted

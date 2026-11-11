@@ -11,6 +11,7 @@ interface ImageUploaderProps {
   helperText?: string;
   previewHeightClass?: string;
   acceptVideo?: boolean;
+  videoOnly?: boolean;
 }
 
 export function ImageUploader({
@@ -20,7 +21,8 @@ export function ImageUploader({
   placeholder = "/images/exemplo.jpg ou https://...",
   helperText,
   previewHeightClass = "h-36",
-  acceptVideo = false
+  acceptVideo = false,
+  videoOnly = false
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -52,13 +54,14 @@ export function ImageUploader({
         throw new Error(data.error || "Erro ao fazer upload da mídia");
       }
 
+      // Aplica diretamente o URL da mídia otimizada no campo
       onChange(data.url);
 
       if (data.reductionPercent && data.reductionPercent > 0) {
         const origMb = (data.originalSize / (1024 * 1024)).toFixed(1);
         const newMb = (data.size / (1024 * 1024)).toFixed(1);
         setUploadSuccessInfo(
-          `✓ Mídia convertida e otimizada com sucesso! (${origMb}MB ➔ ${newMb}MB, -${data.reductionPercent}% de peso com resolução original preservada)`
+          `✓ ${videoOnly ? "Vídeo otimizado" : "Mídia convertida"} com sucesso! (${origMb}MB ➔ ${newMb}MB, -${data.reductionPercent}% de peso com resolução original preservada)`
         );
       } else {
         setUploadSuccessInfo("✓ Arquivo enviado e otimizado com sucesso!");
@@ -73,6 +76,41 @@ export function ImageUploader({
         fileInputRef.current.value = "";
       }
     }
+  };
+
+  const getAcceptMimes = () => {
+    if (videoOnly) {
+      return "video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.mov";
+    }
+    if (acceptVideo) {
+      return "image/png,image/jpeg,image/webp,image/svg+xml,image/gif,video/mp4,video/webm,video/ogg,video/quicktime";
+    }
+    return "image/png,image/jpeg,image/webp,image/svg+xml,image/gif";
+  };
+
+  const getButtonLabel = () => {
+    if (videoOnly) {
+      return (
+        <>
+          <span>Subir Vídeo</span>
+          <span>🎬</span>
+        </>
+      );
+    }
+    if (acceptVideo) {
+      return (
+        <>
+          <span>Subir Foto/Vídeo</span>
+          <span>📁</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span>Subir Foto</span>
+        <span>📷</span>
+      </>
+    );
   };
 
   return (
@@ -111,11 +149,7 @@ export function ImageUploader({
         <input
           ref={fileInputRef}
           type="file"
-          accept={
-            acceptVideo
-              ? "image/png,image/jpeg,image/webp,image/svg+xml,image/gif,video/mp4,video/webm,video/ogg,video/quicktime"
-              : "image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
-          }
+          accept={getAcceptMimes()}
           onChange={handleFileChange}
           className="hidden"
         />
@@ -129,13 +163,10 @@ export function ImageUploader({
           {isUploading ? (
             <>
               <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Otimizando & Enviando...</span>
+              <span>{videoOnly ? "Otimizando Vídeo..." : "Otimizando & Enviando..."}</span>
             </>
           ) : (
-            <>
-              <span>{acceptVideo ? "Subir Foto/Vídeo" : "Subir Foto"}</span>
-              <span>📁</span>
-            </>
+            getButtonLabel()
           )}
         </button>
       </div>
@@ -160,7 +191,7 @@ export function ImageUploader({
           className={`relative ${previewHeightClass} w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-900 mt-2 flex items-center justify-center select-none`}
           onContextMenu={(e) => e.preventDefault()}
         >
-          {/\.(mp4|webm|ogg|mov)(\?|$)/i.test(value) ? (
+          {/\.(mp4|webm|ogg|mov)(\?|$)/i.test(value) || (videoOnly && !/\.(png|jpe?g|webp|gif|svg)(\?|$)/i.test(value)) ? (
             <video
               key={value}
               src={value}

@@ -1,5 +1,5 @@
 // Entre as Ilhas - Service Worker para suporte a PWA (Android / iOS)
-const CACHE_NAME = "eai-pwa-v1";
+const CACHE_NAME = "eai-pwa-v2";
 const STATIC_ASSETS = [
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
@@ -17,10 +17,15 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
+  // Purga imediatamente todas as versões anteriores do cache
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     })
   );
@@ -33,8 +38,14 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
 
-  // Never cache API routes or admin mutations
-  if (url.pathname.startsWith("/api/")) {
+  // NUNCA interceptar ou cachear requisições do painel admin, agenda, uploads ou rotas de API
+  if (
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/admin-painel") ||
+    url.pathname.startsWith("/agenda-painel") ||
+    url.pathname.startsWith("/uploads/") ||
+    url.pathname.startsWith("/videos/")
+  ) {
     return;
   }
 

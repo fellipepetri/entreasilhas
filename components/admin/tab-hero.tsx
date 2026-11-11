@@ -16,10 +16,13 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
 
   const handleUpdateSlide = (field: keyof HeroSlide, value: string) => {
     const updated = [...slides];
-    updated[selectedSlideIndex] = {
+    const current = {
       ...updated[selectedSlideIndex],
       [field]: value
     };
+    // Remove qualquer poster residual para garantir que não haja campos ou referências de imagem no vídeo
+    delete (current as Record<string, unknown>).poster;
+    updated[selectedSlideIndex] = current;
     onChange(updated);
   };
 
@@ -204,7 +207,7 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
                   placeholder="/uploads/video.mp4 ou https://..."
                   helperText="Envie um vídeo em MP4 ou WebM (até 100MB) para reproduzir em loop silencioso no fundo do Hero."
                   previewHeightClass="h-56"
-                  acceptVideo
+                  videoOnly
                 />
               </div>
             ) : (
@@ -215,7 +218,6 @@ export function TabHero({ slides, onChange }: TabHeroProps) {
                 placeholder="/images/hero-banner.svg ou foto enviada"
                 helperText="Recomendado: imagem panorâmica ou horizontal em alta resolução (1920x1080)."
                 previewHeightClass="h-48"
-                acceptVideo
               />
             )}
 

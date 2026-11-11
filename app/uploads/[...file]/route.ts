@@ -39,11 +39,19 @@ export async function GET(request: Request, props: RouteProps) {
       return new Response("Acesso negado", { status: 403 });
     }
 
-    // Proteção de Mídia: Evita acesso direto pela barra de navegação do browser (sec-fetch-dest: document)
-    // Visitantes comuns que tentarem colar o link diretamente no navegador são redirecionados para a Home
+    // Proteção de Mídia: Evita acesso direto como página HTML pela barra de navegação
+    // Visitantes comuns que tentarem abrir o link como página web (HTML) são redirecionados para a Home
     const secFetchDest = request.headers.get("sec-fetch-dest");
     const secFetchMode = request.headers.get("sec-fetch-mode");
-    if (secFetchDest === "document" || secFetchMode === "navigate") {
+    const acceptHeader = request.headers.get("accept") || "";
+    const rangeHeader = request.headers.get("range");
+
+    const isHtmlNav =
+      (secFetchDest === "document" || secFetchMode === "navigate") &&
+      acceptHeader.includes("text/html") &&
+      !rangeHeader;
+
+    if (isHtmlNav) {
       const url = new URL("/", request.url);
       return NextResponse.redirect(url);
     }
@@ -95,7 +103,6 @@ export async function GET(request: Request, props: RouteProps) {
     const contentType = MIME_MAP[ext] || "application/octet-stream";
 
     const isVideo = contentType.startsWith("video/");
-    const rangeHeader = request.headers.get("range");
 
     // Headers comuns de segurança e entrega de mídia
     const securityHeaders: Record<string, string> = {
@@ -103,7 +110,8 @@ export async function GET(request: Request, props: RouteProps) {
       "Content-Disposition": "inline", // Força exibição no player sem baixar o arquivo
       "Accept-Ranges": "bytes",
       "X-Content-Type-Options": "nosniff",
-      "Cross-Origin-Resource-Policy": "same-origin",
+      "Cross-Origin-Resource-Policy": "cross-origin",
+      "Access-Control-Allow-Origin": "*",
       "Cache-Control": "public, max-age=31536000, immutable"
     };
 
