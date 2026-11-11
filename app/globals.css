@@ -515,3 +515,99 @@ a {
   }
 }
 
+/* ==========================================================================
+   Animações do Preloader Náutico (Zoom in/Bounce in -> Loading -> Bounce/Zoom out)
+   ========================================================================== */
+
+@keyframes preloader-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.18);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  72% {
+    transform: scale(0.93);
+  }
+  86% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes preloader-bounce-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  48% {
+    transform: scale(0.90);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.12);
+  }
+}
+
+@keyframes preloader-halo-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes preloader-pulse-wave {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+@keyframes preloader-shimmer-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+.animate-preloader-logo-in {
+  animation: preloader-bounce-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-preloader-logo-out {
+  animation: preloader-bounce-out 0.75s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+.animate-preloader-spin {
+  animation: preloader-halo-spin 6s linear infinite;
+}
+
+.animate-preloader-pulse {
+  animation: preloader-pulse-wave 2.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-preloader-sweep {
+  animation: preloader-shimmer-sweep 1.8s ease-in-out infinite;
+}
+

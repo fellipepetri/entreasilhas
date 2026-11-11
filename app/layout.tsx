@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { CursorTrails } from "@/components/cursor-trails";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SitePreloader } from "@/components/site-preloader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { PwaRegister } from "@/components/pwa-register";
 import { MaintenanceGuard } from "@/components/maintenance-guard";
@@ -60,6 +61,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="pt-BR">
       <body className={`${plusJakartaSans.className} min-h-screen bg-brand-foam text-slate-900 antialiased`}>
+        <SitePreloader />
         <PwaRegister />
         <SmoothScroll />
         <CursorTrails />
