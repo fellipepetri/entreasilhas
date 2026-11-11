@@ -90,7 +90,7 @@ export function TabOverview({ content, onNavigateTab }: TabOverviewProps) {
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
             Central de Controle
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Bem-vindo ao Painel de Administração
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-300 leading-relaxed">
