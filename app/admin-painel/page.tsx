@@ -231,7 +231,7 @@ export default function AdminPainelPage() {
         </div>
       )}
 
-      {/* Header do Painel */}
+      {/* Header do Painel com Submenu Vertical de Seções */}
       <AdminHeader
         username={username}
         isSaving={isSaving}
@@ -241,50 +241,12 @@ export default function AdminPainelPage() {
         lastSavedAt={lastSavedAt}
         isMaintenanceEnabled={content.settings.maintenance?.enabled}
         onNavigateTab={(t) => setActiveTab(t as TabId)}
+        tabs={TABS}
+        activeTab={activeTab}
+        onSelectTab={(t) => setActiveTab(t as TabId)}
+        features={features}
+        tabFeatureMap={TAB_FEATURE_MAP}
       />
-
-      {/* Barra de Navegação por Abas */}
-      <div className="border-b border-slate-200 bg-white sticky top-[61px] z-30 shadow-xs">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-1 overflow-x-auto py-2.5 scrollbar-none">
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.id;
-              const mappedFeature = TAB_FEATURE_MAP[tab.id];
-              const isFeatureDisabled =
-                mappedFeature && features[mappedFeature] === false;
-
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={[
-                    "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition",
-                    isActive
-                      ? "bg-brand-deep text-white shadow-sm"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
-                    isFeatureDisabled && !isActive ? "opacity-60" : ""
-                  ].join(" ")}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                  {isFeatureDisabled && (
-                    <span
-                      className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-extrabold ${
-                        isActive
-                          ? "bg-amber-400 text-slate-950"
-                          : "bg-amber-100 text-amber-800"
-                      }`}
-                    >
-                      Oculto
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
 
       {/* Conteúdo Principal da Aba Ativa */}
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">

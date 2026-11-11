@@ -1,8 +1,16 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PwaTopBanner } from "@/components/pwa-top-banner";
+import type { SiteFeatures } from "@/lib/content-types";
+
+export interface TabItem {
+  id: string;
+  label: string;
+  icon: string;
+}
 
 interface AdminHeaderProps {
   username: string;
@@ -13,6 +21,11 @@ interface AdminHeaderProps {
   lastSavedAt?: string | null;
   isMaintenanceEnabled?: boolean;
   onNavigateTab?: (tabId: string) => void;
+  tabs?: readonly TabItem[];
+  activeTab?: string;
+  onSelectTab?: (tabId: string) => void;
+  features?: SiteFeatures;
+  tabFeatureMap?: Partial<Record<string, keyof SiteFeatures>>;
 }
 
 export function AdminHeader({
@@ -23,8 +36,42 @@ export function AdminHeader({
   onLogout,
   lastSavedAt,
   isMaintenanceEnabled,
-  onNavigateTab
+  onNavigateTab,
+  tabs,
+  activeTab,
+  onSelectTab,
+  features,
+  tabFeatureMap
 }: AdminHeaderProps) {
+  const [isSectionsMenuOpen, setIsSectionsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o submenu ao clicar fora ou pressionar a tecla Escape
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsSectionsMenuOpen(false);
+      }
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setIsSectionsMenuOpen(false);
+      }
+    }
+
+    if (isSectionsMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isSectionsMenuOpen]);
+
+  const activeTabItem = tabs?.find((t) => t.id === activeTab);
+
   return (
     <>
       {/* Banner / Card flutuante que desce do topo */}
@@ -53,11 +100,14 @@ export function AdminHeader({
           </div>
 
           {/* Status de Salvamento e Botões de Ação */}
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             {isMaintenanceEnabled && (
               <button
                 type="button"
-                onClick={() => onNavigateTab?.("settings")}
+                onClick={() => {
+                  if (onSelectTab) onSelectTab("settings");
+                  else onNavigateTab?.("settings");
+                }}
                 className="inline-flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 px-3 py-1.5 text-xs font-bold transition shadow-xs cursor-pointer"
                 title="O Modo Em Construção está ativo no site. Clique para gerenciar."
               >
@@ -70,7 +120,7 @@ export function AdminHeader({
             )}
 
             {lastSavedAt && (
-              <span className="hidden md:inline-block text-[11px] text-slate-400">
+              <span className="hidden lg:inline-block text-[11px] text-slate-400">
                 Salvo às {lastSavedAt}
               </span>
             )}
@@ -81,7 +131,7 @@ export function AdminHeader({
               onClick={onSave}
               disabled={isSaving}
               className={[
-                "inline-flex items-center gap-2 rounded-xl px-4 sm:px-5 py-2 text-xs font-bold transition shadow-sm",
+                "inline-flex items-center gap-2 rounded-xl px-3.5 sm:px-4 py-2 text-xs font-bold transition shadow-sm cursor-pointer",
                 hasUnsavedChanges
                   ? "bg-emerald-500 hover:bg-emerald-600 text-white animate-pulse shadow-emerald-500/30 shadow-md ring-2 ring-emerald-400"
                   : "bg-slate-900 hover:bg-slate-800 text-white"
@@ -104,6 +154,137 @@ export function AdminHeader({
                 </>
               )}
             </button>
+
+            {/* Submenu Vertical de Seções (ao lado direito de Salvar) */}
+            {tabs && tabs.length > 0 && onSelectTab && (
+              <div className="relative" ref={menuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsSectionsMenuOpen((prev) => !prev)}
+                  className={[
+                    "inline-flex items-center gap-2 rounded-xl px-3 sm:px-3.5 py-2 text-xs font-bold transition shadow-xs border cursor-pointer",
+                    isSectionsMenuOpen
+                      ? "border-brand-deep bg-brand-deep text-white shadow-sm ring-2 ring-brand-deep/20"
+                      : "border-slate-300 bg-white hover:bg-slate-50 text-slate-800 hover:border-slate-400"
+                  ].join(" ")}
+                  title="Clique para escolher a seção do site para editar"
+                  aria-expanded={isSectionsMenuOpen}
+                >
+                  <span className="text-sm">📑</span>
+                  <span className="flex items-center gap-1.5">
+                    <span>Seções</span>
+                    {activeTabItem && (
+                      <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-semibold opacity-90 border-l border-current/25 pl-1.5">
+                        <span>{activeTabItem.icon}</span>
+                        <span className="max-w-[125px] truncate">{activeTabItem.label}</span>
+                      </span>
+                    )}
+                  </span>
+                  <svg
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      isSectionsMenuOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                {/* Backdrop no mobile para fechar facilmente ao tocar fora */}
+                {isSectionsMenuOpen && (
+                  <div
+                    className="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-xs sm:hidden"
+                    onClick={() => setIsSectionsMenuOpen(false)}
+                    aria-hidden="true"
+                  />
+                )}
+
+                {/* Dropdown com Lista Vertical e Barra de Rolagem */}
+                {isSectionsMenuOpen && (
+                  <div
+                    className="fixed sm:absolute inset-x-4 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-2 w-auto sm:w-80 rounded-2xl border border-slate-200 bg-white/98 backdrop-blur-xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    style={{
+                      boxShadow:
+                        "0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 8px 16px -6px rgba(15, 23, 42, 0.12)"
+                    }}
+                  >
+                    {/* Cabeçalho do Submenu */}
+                    <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs">📂</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                          Seções do Site
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                        {tabs.length} seções
+                      </span>
+                    </div>
+
+                    {/* Lista Vertical de Seções com Rolagem Customizada */}
+                    <div className="max-h-[min(380px,65vh)] overflow-y-auto py-1.5 space-y-1 custom-scrollbar pr-1">
+                      {tabs.map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        const mappedFeature = tabFeatureMap?.[tab.id];
+                        const isFeatureDisabled =
+                          mappedFeature && features?.[mappedFeature] === false;
+
+                        return (
+                          <button
+                            key={tab.id}
+                            type="button"
+                            onClick={() => {
+                              onSelectTab(tab.id);
+                              setIsSectionsMenuOpen(false);
+                            }}
+                            className={[
+                              "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition cursor-pointer group",
+                              isActive
+                                ? "bg-brand-deep text-white shadow-sm"
+                                : "text-slate-700 hover:bg-slate-100 hover:text-slate-950",
+                              isFeatureDisabled && !isActive ? "opacity-75" : ""
+                            ].join(" ")}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <span className="text-base shrink-0">{tab.icon}</span>
+                              <span className="truncate">{tab.label}</span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {isFeatureDisabled && (
+                                <span
+                                  className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-extrabold ${
+                                    isActive
+                                      ? "bg-amber-400 text-slate-950"
+                                      : "bg-amber-100 text-amber-800"
+                                  }`}
+                                >
+                                  Oculto
+                                </span>
+                              )}
+                              {isActive ? (
+                                <span className="text-xs font-bold text-cyan-300">✓</span>
+                              ) : (
+                                <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition">
+                                  →
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Atalho para Painel de Agendamentos */}
             <Link
@@ -135,7 +316,7 @@ export function AdminHeader({
               <button
                 type="button"
                 onClick={onLogout}
-                className="inline-flex items-center gap-1 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 px-2.5 py-1.5 text-xs font-medium transition"
+                className="inline-flex items-center gap-1 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 px-2.5 py-1.5 text-xs font-medium transition cursor-pointer"
                 title="Encerrar sessão administrativa"
               >
                 <span>Sair</span>
@@ -148,4 +329,3 @@ export function AdminHeader({
     </>
   );
 }
-
