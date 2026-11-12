@@ -54,7 +54,12 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Portainer Webhook (opcional)
-        if: ${{ secrets.PORTAINER_WEBHOOK != '' }}
+        env:
+          PORTAINER_WEBHOOK: ${{ secrets.PORTAINER_WEBHOOK }}
         run: |
-          echo "Disparando webhook do Portainer..."
-          curl -k -i -X POST "${{ secrets.PORTAINER_WEBHOOK }}"
+          if [ -n "$PORTAINER_WEBHOOK" ]; then
+            echo "Disparando webhook do Portainer..."
+            curl -k -i -X POST "$PORTAINER_WEBHOOK"
+          else
+            echo "PORTAINER_WEBHOOK nao configurado nos secrets."
+          fi
