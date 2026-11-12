@@ -157,14 +157,14 @@ export async function optimizeVideoBuffer(
   try {
     await fs.writeFile(tempInput, inputBuffer);
 
-    // Otimização Avançada de Vídeo para Web (Hero & Fundo):
-    // - Codec universal H.264 High Profile 4.1 (com 8x8 DCT intra/inter para compressão máxima)
-    // - Preset medium com tune film: preserva nitidez de água, vegetação e céu sem artefatos de bloco
-    // - CRF 30 com teto de taxa de bits (700k média, 900k teto): corta o peso pela metade (~1.5MB a 1.8MB)
-    // - 24 fps cinematográfico: elimina quadros redundantes sem perda visual de fluidez (-20% de peso)
-    // - Altura máx 1080p preservando aspect ratio e dimensões pares
-    // - Remove canal de áudio (hero roda 100% silencioso em background)
-    // - FastStart (+faststart) para início de reprodução imediato via stream
+    // Otimização Premium de Vídeo para Web (Alta Fidelidade Náutica):
+    // - Codec universal H.264 High Profile 4.2 com DCT 8x8 adaptativo
+    // - CRF 22: preserva máxima nitidez e textura orgânica da água, ondas, reflexos e céu sem artefatos
+    // - Teto generoso de bitrate (maxrate 4000k, bufsize 6000k) para permitir picos de detalhes em água agitada
+    // - Full HD 1080p preservado com proporções pares
+    // - Colorimetria BT.709 fiel para manter o azul e verde tropicais vibrantes
+    // - Remove áudio inútil para economizar dados
+    // - FastStart (+faststart) para início de reprodução imediato por streaming parcial HTTP 206
     const videoArgs = [
       "-y",
       "-i",
@@ -174,26 +174,26 @@ export async function optimizeVideoBuffer(
       "-profile:v",
       "high",
       "-level",
-      "4.1",
+      "4.2",
       "-preset",
       "medium",
-      "-tune",
-      "film",
       "-crf",
-      "30",
-      "-b:v",
-      "700k",
+      "22",
       "-maxrate",
-      "900k",
+      "4000k",
       "-bufsize",
-      "1400k",
-      "-r",
-      "24",
+      "6000k",
       "-vf",
       "scale=-2:'min(1080,ih)'",
       "-an",
       "-pix_fmt",
       "yuv420p",
+      "-color_primaries",
+      "bt709",
+      "-color_trc",
+      "bt709",
+      "-colorspace",
+      "bt709",
       "-movflags",
       "+faststart",
       tempOutput
