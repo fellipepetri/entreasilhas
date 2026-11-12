@@ -119,8 +119,7 @@ function applyPureJsFastStart(buffer: Buffer): Buffer {
 }
 
 /**
- * Otimiza e converte vídeo para MP4 ultra-leve (Full HD 1080p, taxa de bits controlada, sem áudio inútil, FastStart)
- * Redução típica: 90% a 96% do peso original, com qualidade visual indistinguível do original.
+ * Otimiza e converte vídeo para MP4 ultra-leve compatível com todos os navegadores
  */
 export async function optimizeVideoBuffer(
   inputBuffer: Buffer,
@@ -157,43 +156,23 @@ export async function optimizeVideoBuffer(
   try {
     await fs.writeFile(tempInput, inputBuffer);
 
-    // Otimização Premium de Vídeo para Web (Alta Fidelidade Náutica):
-    // - Codec universal H.264 High Profile 4.2 com DCT 8x8 adaptativo
-    // - CRF 22: preserva máxima nitidez e textura orgânica da água, ondas, reflexos e céu sem artefatos
-    // - Teto generoso de bitrate (maxrate 4000k, bufsize 6000k) para permitir picos de detalhes em água agitada
-    // - Full HD 1080p preservado com proporções pares
-    // - Colorimetria BT.709 fiel para manter o azul e verde tropicais vibrantes
-    // - Remove áudio inútil para economizar dados
-    // - FastStart (+faststart) para início de reprodução imediato por streaming parcial HTTP 206
+    // Converte para H.264 (Universal), remove áudio (vídeo de fundo mudo economiza ~30%),
+    // ajusta dimensões pares, aplica CRF 26 (qualidade cristalina e leveza extrema) e move moov para o início (+faststart)
     const videoArgs = [
       "-y",
       "-i",
       tempInput,
       "-c:v",
       "libx264",
-      "-profile:v",
-      "high",
-      "-level",
-      "4.2",
-      "-preset",
-      "medium",
       "-crf",
-      "22",
-      "-maxrate",
-      "4000k",
-      "-bufsize",
-      "6000k",
-      "-vf",
-      "scale=-2:'min(1080,ih)'",
+      "26",
+      "-preset",
+      "fast",
       "-an",
       "-pix_fmt",
       "yuv420p",
-      "-color_primaries",
-      "bt709",
-      "-color_trc",
-      "bt709",
-      "-colorspace",
-      "bt709",
+      "-vf",
+      "scale=trunc(iw/2)*2:trunc(ih/2)*2",
       "-movflags",
       "+faststart",
       tempOutput
@@ -201,7 +180,7 @@ export async function optimizeVideoBuffer(
 
     execFileSync(ffmpegPath, videoArgs, {
       stdio: ["ignore", "ignore", "ignore"],
-      timeout: 120000
+      timeout: 90000
     });
 
     const outputBuffer = await fs.readFile(tempOutput);
@@ -238,7 +217,6 @@ export async function optimizeVideoBuffer(
 
 /**
  * Otimiza e converte imagens para WebP ultra-leve com resolução e nitidez preservadas
- * Redução típica: 75% a 95% do peso original.
  */
 export async function optimizeImageBuffer(
   inputBuffer: Buffer,
@@ -269,35 +247,18 @@ export async function optimizeImageBuffer(
 
     let pipeline = image.rotate(); // auto-rotação conforme orientação EXIF do celular
 
-    const width = metadata.width || 0;
-    const height = metadata.height || 0;
-    const isPanorama = width > 0 && height > 0 && width / height >= 1.7;
-
-    if (isPanorama) {
-      // Panoramas da Experiência 360° mantêm até 4096px para nitidez máxima na esfera 3D
-      if (width > 4096) {
-        pipeline = pipeline.resize({
-          width: 4096,
-          withoutEnlargement: true,
-          fit: "inside"
-        });
-      }
-    } else {
-      // Fotos normais (Hero, Sobre, Galeria, Passeios): Full HD (1920x1080) é perfeito para telas Retina
-      if (width > 1920 || height > 1080) {
-        pipeline = pipeline.resize({
-          width: 1920,
-          height: 1080,
-          withoutEnlargement: true,
-          fit: "inside"
-        });
-      }
+    // Se a imagem for gigantesca (> 2560px), limita em 2560px para tela 4K
+    if (metadata.width && metadata.width > 2560) {
+      pipeline = pipeline.resize({
+        width: 2560,
+        withoutEnlargement: true,
+        fit: "inside"
+      });
     }
 
-    // WebP na qualidade 80 atinge o equilíbrio perfeito: arquivo ultraleve (100KB-250KB) com 0 artefatos visuais
     const outputBuffer = await pipeline
       .webp({
-        quality: 80,
+        quality: 85,
         effort: 4,
         smartSubsample: true
       })
