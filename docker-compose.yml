@@ -1,6 +1,7 @@
 services:
   site:
     image: ghcr.io/fellipepetri/entreasilhas:latest
+    pull_policy: always
     container_name: entreasilhas
     restart: unless-stopped
     expose:
