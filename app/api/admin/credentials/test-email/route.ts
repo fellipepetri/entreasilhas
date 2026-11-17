@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const config = getSecurityConfig();
     const testCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await sendSecurityEmail({
+    const result = await sendSecurityEmail({
       to: config.securityEmail,
       subject: `🧪 Teste de Conexão 2FA Entre as Ilhas: ${testCode}`,
       code: testCode,
@@ -19,8 +19,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({
-      success: true,
-      message: `Código de teste disparado para ${config.securityEmail}. Verifique sua caixa de entrada e spam.`
+      success: result.success,
+      method: result.method,
+      message: result.message
     });
   } catch (error) {
     console.error("Erro ao testar envio de email:", error);

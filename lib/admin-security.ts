@@ -431,11 +431,30 @@ export async function sendSecurityEmail(options: {
   subject: string;
   code: string;
   username: string;
-}): Promise<boolean> {
+}): Promise<{ success: boolean; method: string; message: string }> {
   const config = getSecurityConfig();
   const to = options.to || config.securityEmail;
 
-  // Se houver chave da Resend API configurada
+  const htmlContent = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0b1a2e; color: #ffffff; border-radius: 16px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #38bdf8; font-size: 20px; margin: 0;">Entre as Ilhas</h1>
+        <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Autenticação em Duas Etapas (2FA)</p>
+      </div>
+      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 24px; border-radius: 12px; text-align: center;">
+        <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 16px;">Olá, <strong>${options.username}</strong>! Use o código abaixo para autenticar seu acesso ao painel:</p>
+        <div style="display: inline-block; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #38bdf8; background: #071526; padding: 14px 28px; border-radius: 10px; border: 1px solid #38bdf8; margin: 8px 0;">
+          ${options.code}
+        </div>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 16px;">Este código expira em <strong>10 minutos</strong>. Nunca compartilhe este código com ninguém.</p>
+      </div>
+      <div style="text-align: center; margin-top: 24px; font-size: 11px; color: #64748b;">
+        Entre as Ilhas • Baía de Todos-os-Santos • Salvador, Bahia
+      </div>
+    </div>
+  `;
+
+  // 1. Tentar envio via Resend API se chave configurada
   const resendApiKey = config.smtp?.resendApiKey || process.env.RESEND_API_KEY;
   if (resendApiKey) {
     try {
@@ -446,44 +465,69 @@ export async function sendSecurityEmail(options: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          from: config.smtp?.from || "Entre as Ilhas <nao-responda@entreasilhas.com.br>",
+          from: config.smtp?.from || process.env.SMTP_FROM || "Entre as Ilhas <nao-responda@entreasilhas.com.br>",
           to: [to],
           subject: options.subject,
-          html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0b1a2e; color: #ffffff; border-radius: 16px;">
-              <div style="text-align: center; margin-bottom: 24px;">
-                <h1 style="color: #38bdf8; font-size: 20px; margin: 0;">Entre as Ilhas</h1>
-                <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Autenticação em Duas Etapas (2FA)</p>
-              </div>
-              <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 24px; border-radius: 12px; text-align: center;">
-                <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 16px;">Olá, <strong>${options.username}</strong>! Use o código abaixo para autenticar seu acesso ao painel:</p>
-                <div style="display: inline-block; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #38bdf8; background: #071526; padding: 14px 28px; border-radius: 10px; border: 1px solid #38bdf8; margin: 8px 0;">
-                  ${options.code}
-                </div>
-                <p style="font-size: 12px; color: #94a3b8; margin-top: 16px;">Este código expira em <strong>10 minutos</strong>. Nunca compartilhe este código com ninguém.</p>
-              </div>
-              <div style="text-align: center; margin-top: 24px; font-size: 11px; color: #64748b;">
-                Entre as Ilhas • Baía de Todos-os-Santos • Salvador, Bahia
-              </div>
-            </div>
-          `
+          html: htmlContent
         })
       });
       if (res.ok) {
         console.log(`[2FA Resend] Email enviado com sucesso para ${to}`);
-        return true;
+        return { success: true, method: "resend", message: `Email enviado com sucesso via Resend para ${to}!` };
       } else {
         const errorText = await res.text();
-        console.warn(`[2FA Resend] Resposta não-ok (${res.status}): ${errorText}`);
+        console.warn(`[2FA Resend] Erro Resend (${res.status}): ${errorText}`);
       }
     } catch (e) {
       console.error("[2FA Resend] Falha ao enviar via API:", e);
     }
   }
 
-  // Fallback seguro: log estruturado no console para ambientes locais e servidores Docker
+  // 2. Tentar envio via SMTP com Nodemailer (Gmail, Hostinger, Outlook, etc.)
+  const smtpHost = config.smtp?.host || process.env.SMTP_HOST;
+  const smtpPort = Number(config.smtp?.port || process.env.SMTP_PORT || 465);
+  const smtpUser = config.smtp?.user || process.env.SMTP_USER;
+  const smtpPass = config.smtp?.pass || process.env.SMTP_PASS;
+  const smtpFrom = config.smtp?.from || process.env.SMTP_FROM || `Entre as Ilhas <${smtpUser || "nao-responda@entreasilhas.com.br"}>`;
+
+  if (smtpHost && smtpUser && smtpPass) {
+    try {
+      const nodemailer = await import("nodemailer");
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass
+        }
+      });
+
+      await transporter.sendMail({
+        from: smtpFrom,
+        to,
+        subject: options.subject,
+        text: `Olá ${options.username}! Seu código de verificação 2FA Entre as Ilhas é: ${options.code}. Válido por 10 minutos.`,
+        html: htmlContent
+      });
+
+      console.log(`[2FA SMTP] Email enviado com sucesso via ${smtpHost} para ${to}`);
+      return { success: true, method: "smtp", message: `Email enviado com sucesso via SMTP (${smtpHost}) para ${to}!` };
+    } catch (smtpErr) {
+      console.error("[2FA SMTP] Erro no envio SMTP:", smtpErr);
+      const errMsg = smtpErr instanceof Error ? smtpErr.message : "Erro desconhecido no servidor SMTP.";
+      return { success: false, method: "smtp", message: `Falha na conexão SMTP (${smtpHost}): ${errMsg}` };
+    }
+  }
+
+  // 3. Fallback: Log estruturado no console do servidor Docker (Portainer)
   console.log(
     `[2FA SECURITY DISPATCH] Código enviado com sucesso para ${to}: [${options.code}] (Usuário: ${options.username})`
   );
-  return true;
+
+  return {
+    success: false,
+    method: "console_fallback",
+    message: `Aviso: Nenhum servidor SMTP (como Gmail) ou chave Resend foi configurado ainda. O código [${options.code}] foi gerado e registrado nos logs do servidor (Portainer). Para receber no Gmail, configure o SMTP abaixo.`
+  };
 }

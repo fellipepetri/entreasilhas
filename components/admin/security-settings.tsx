@@ -7,6 +7,8 @@ export function SecuritySettings() {
   const [securityEmail, setSecurityEmail] = useState("contato.felipepetri@gmail.com");
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [hasEmergencyCode, setHasEmergencyCode] = useState(false);
+  const [smtpConfigured, setSmtpConfigured] = useState(false);
+  const [activeSmtpHost, setActiveSmtpHost] = useState("");
   const [isLoadingInfo, setIsLoadingInfo] = useState(true);
 
   // Formulário de Alteração de Credenciais
@@ -28,9 +30,19 @@ export function SecuritySettings() {
   const [revealedEmergencyCode, setRevealedEmergencyCode] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState(false);
 
+  // Configuração de Servidor SMTP / Gmail / Resend
+  const [showSmtpConfig, setShowSmtpConfig] = useState(false);
+  const [smtpProvider, setSmtpProvider] = useState<"gmail" | "resend" | "custom">("gmail");
+  const [smtpHost, setSmtpHost] = useState("smtp.gmail.com");
+  const [smtpPort, setSmtpPort] = useState(465);
+  const [smtpUser, setSmtpUser] = useState("contato.felipepetri@gmail.com");
+  const [smtpPass, setSmtpPass] = useState("");
+  const [resendApiKey, setResendApiKey] = useState("");
+  const [showSmtpPass, setShowSmtpPass] = useState(false);
+
   // Teste de Email
   const [isTestingEmail, setIsTestingEmail] = useState(false);
-  const [testEmailResult, setTestEmailResult] = useState<string | null>(null);
+  const [testEmailResult, setTestEmailResult] = useState<{ success: boolean; message: string } | null>(null);
 
   // Carregar dados de segurança atuais do servidor (apenas dados não-sensíveis)
   useEffect(() => {
@@ -45,6 +57,10 @@ export function SecuritySettings() {
           setNewSecurityEmail(data.securityEmail || "contato.felipepetri@gmail.com");
           setTwoFactorEnabled(data.twoFactorEnabled ?? true);
           setHasEmergencyCode(data.hasEmergencyCode ?? false);
+          setSmtpConfigured(data.smtpConfigured ?? false);
+          setActiveSmtpHost(data.smtpHost || (data.hasResendApiKey ? "Resend API" : ""));
+          if (data.smtpHost) setSmtpHost(data.smtpHost);
+          if (data.smtpUser) setSmtpUser(data.smtpUser);
         }
       } catch {
         // silencioso
@@ -123,6 +139,66 @@ export function SecuritySettings() {
     }
   };
 
+  const handleSaveSmtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    if (!currentPassword) {
+      setErrorMessage("Digite sua Senha Atual para autorizar a configuração de email.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      let smtpPayload = {};
+      if (smtpProvider === "resend") {
+        if (!resendApiKey.trim()) {
+          throw new Error("Por favor, insira a chave da Resend API (re_...).");
+        }
+        smtpPayload = {
+          resendApiKey: resendApiKey.trim()
+        };
+      } else {
+        if (!smtpHost || !smtpUser || !smtpPass) {
+          throw new Error("Preencha o servidor, usuário e a senha de app para configurar o SMTP.");
+        }
+        smtpPayload = {
+          host: smtpHost.trim(),
+          port: Number(smtpPort),
+          user: smtpUser.trim(),
+          pass: smtpPass.trim()
+        };
+      }
+
+      const res = await fetch("/api/admin/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword,
+          smtp: smtpPayload
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Erro ao salvar configurações de email.");
+      }
+
+      setSuccessMessage("Servidor de email configurado com sucesso! Agora teste o envio abaixo.");
+      setSmtpConfigured(true);
+      setActiveSmtpHost(smtpProvider === "resend" ? "Resend API" : smtpHost);
+      setSmtpPass("");
+      setResendApiKey("");
+      setCurrentPassword("");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Erro ao salvar SMTP.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleTestEmail = async () => {
     setIsTestingEmail(true);
     setTestEmailResult(null);
@@ -131,12 +207,15 @@ export function SecuritySettings() {
         method: "POST"
       });
       const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Falha no envio do teste.");
-      }
-      setTestEmailResult(`✅ ${data.message}`);
+      setTestEmailResult({
+        success: data.success,
+        message: data.message
+      });
     } catch (err) {
-      setTestEmailResult(`⚠️ ${err instanceof Error ? err.message : "Erro no envio."}`);
+      setTestEmailResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Erro desconhecido ao testar envio."
+      });
     } finally {
       setIsTestingEmail(false);
     }
@@ -227,7 +306,7 @@ export function SecuritySettings() {
               {revealedEmergencyCode}
             </div>
             <p className="text-[11px] text-cyan-100/80 leading-relaxed">
-              Guarde esta chave em um gerenciador de senhas ou local seguro. Caso não consiga receber o código de 6 dígitos no seu email, você poderá usar esta chave de emergência para acessar o painel a qualquer momento.
+              Guarde esta chave em um gerenciador de senhas ou local seguro. Caso não consiga receber o código de 6 dígitos no seu email, você poderá digitar esta chave de emergência diretamente no campo do 2FA para acessar o painel a qualquer momento.
             </p>
           </div>
         )}
@@ -365,7 +444,7 @@ export function SecuritySettings() {
             Verificação em Duas Etapas (2FA) & Recuperação
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            Protege o acesso administrativo mesmo se um invasor descobrir ou tentar adivinhar a senha. Ao fazer login, um código numérico temporário de 6 dígitos é exigido.
+            Protege o acesso administrativo mesmo se um invasor descobrir a senha. Ao fazer login, um código numérico temporário de 6 dígitos é exigido.
           </p>
         </div>
 
@@ -378,7 +457,7 @@ export function SecuritySettings() {
               </span>
               <span className="text-[11px] text-slate-500">
                 {twoFactorEnabled
-                  ? "Ativada: exige código de 6 dígitos no login do painel."
+                  ? "Ativada: exige código de 6 dígitos (ou Chave de Emergência) no login."
                   : "Desativada: login direto com usuário e senha."}
               </span>
             </div>
@@ -413,7 +492,7 @@ export function SecuritySettings() {
                 disabled={isTestingEmail}
                 className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition shrink-0"
               >
-                <span>{isTestingEmail ? "Enviando..." : "Testar Envio"}</span>
+                <span>{isTestingEmail ? "Testando..." : "Testar Envio"}</span>
                 <span>📧</span>
               </button>
             </div>
@@ -421,9 +500,193 @@ export function SecuritySettings() {
               Destinatário oficial para recebimento dos códigos OTP de acesso e recuperação de conta.
             </p>
             {testEmailResult && (
-              <p className="text-xs font-medium mt-1.5 text-slate-700">
-                {testEmailResult}
-              </p>
+              <div
+                className={`text-xs p-3 rounded-xl mt-2 border ${
+                  testEmailResult.success
+                    ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                    : "bg-amber-50 text-amber-900 border-amber-200"
+                }`}
+              >
+                {testEmailResult.message}
+              </div>
+            )}
+          </div>
+
+          {/* Status do Servidor de Email de Saída */}
+          <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span className="text-xs font-bold text-slate-900 block flex items-center gap-1.5">
+                  <span>📬</span> Servidor de Saída de Email (SMTP / Gmail / Resend)
+                </span>
+                <span className="text-[11px] text-slate-600">
+                  Status atual:{" "}
+                  {smtpConfigured ? (
+                    <strong className="text-emerald-700 font-bold">
+                      Conectado ({activeSmtpHost || "SMTP Ativo"})
+                    </strong>
+                  ) : (
+                    <strong className="text-amber-700 font-bold">
+                      Não configurado (os códigos ficam gravados nos logs do Portainer)
+                    </strong>
+                  )}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSmtpConfig(!showSmtpConfig)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm transition self-start sm:self-center"
+              >
+                <span>{showSmtpConfig ? "Ocultar Configuração" : "Configurar SMTP / Gmail"}</span>
+                <span>⚙️</span>
+              </button>
+            </div>
+
+            {/* Formulário Retrátil de Configuração SMTP */}
+            {showSmtpConfig && (
+              <form onSubmit={handleSaveSmtp} className="mt-3 pt-3 border-t border-slate-200 space-y-4">
+                <div className="grid grid-cols-2 gap-3 max-w-sm">
+                  <button
+                    type="button"
+                    onClick={() => setSmtpProvider("gmail")}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                      smtpProvider === "gmail"
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-700 border-slate-300 hover:bg-slate-100"
+                    }`}
+                  >
+                    Gmail (SMTP)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSmtpProvider("resend")}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                      smtpProvider === "resend"
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-700 border-slate-300 hover:bg-slate-100"
+                    }`}
+                  >
+                    Resend API
+                  </button>
+                </div>
+
+                {smtpProvider === "gmail" ? (
+                  <div className="space-y-3">
+                    <div className="p-3 bg-cyan-50 rounded-xl border border-cyan-200 text-xs text-cyan-900 space-y-1">
+                      <p className="font-bold flex items-center gap-1">
+                        <span>💡</span> Como usar o Gmail gratuitamente:
+                      </p>
+                      <p className="text-[11px] leading-relaxed">
+                        1. Acesse sua Conta Google em <strong>myaccount.google.com/apppasswords</strong>.<br />
+                        2. Crie uma <strong>Senha de App</strong> com o nome &ldquo;Entre as Ilhas&rdquo;.<br />
+                        3. Cole o código de 16 letras gerado no campo de senha abaixo.
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Servidor SMTP
+                        </label>
+                        <input
+                          type="text"
+                          value={smtpHost}
+                          onChange={(e) => setSmtpHost(e.target.value)}
+                          placeholder="smtp.gmail.com"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Porta SSL
+                        </label>
+                        <input
+                          type="number"
+                          value={smtpPort}
+                          onChange={(e) => setSmtpPort(Number(e.target.value))}
+                          placeholder="465"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Email da Conta Gmail (Usuário SMTP)
+                      </label>
+                      <input
+                        type="email"
+                        value={smtpUser}
+                        onChange={(e) => setSmtpUser(e.target.value)}
+                        placeholder="contato.felipepetri@gmail.com"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Senha de App do Google (16 caracteres)
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showSmtpPass ? "text" : "password"}
+                          value={smtpPass}
+                          onChange={(e) => setSmtpPass(e.target.value)}
+                          placeholder="Ex: abcd efgh ijkl mnop"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowSmtpPass(!showSmtpPass)}
+                          className="absolute right-3 top-2 text-xs text-slate-400 hover:text-slate-600"
+                        >
+                          {showSmtpPass ? "👁️" : "🙈"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-xs text-slate-600">
+                      Crie uma conta gratuita em <strong>resend.com</strong> e gere uma API Key (100 emails/dia grátis sem configuração de servidor):
+                    </p>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Resend API Key
+                      </label>
+                      <input
+                        type="password"
+                        value={resendApiKey}
+                        onChange={(e) => setResendApiKey(e.target.value)}
+                        placeholder="re_123456789..."
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2 border-t border-slate-200">
+                  <label className="block text-xs font-bold text-slate-900 mb-1">
+                    Confirme sua Senha Atual de Administrador
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Sua senha atual para autorizar"
+                    className="w-full max-w-sm rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !currentPassword}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition"
+                >
+                  Salvar Servidor de Email
+                </button>
+              </form>
             )}
           </div>
 
@@ -450,7 +713,7 @@ export function SecuritySettings() {
               </button>
             </div>
             <p className="text-[11px] text-slate-500 leading-relaxed">
-              A chave de emergência é um código mestre que permite acesso imediato ao painel mesmo se sua caixa de email estiver temporariamente inacessível.
+              A chave de emergência é um código mestre que permite acesso imediato ao painel mesmo se sua caixa de email estiver temporariamente inacessível ou sem SMTP conectado.
             </p>
           </div>
         </div>

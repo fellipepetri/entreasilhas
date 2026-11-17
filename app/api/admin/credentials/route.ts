@@ -13,13 +13,22 @@ export async function GET(request: Request) {
 
   const config = getSecurityConfig();
 
-  // Retorna informações seguras SEM NUNCA expor senhas ou segredos
+  const smtpConfigured = Boolean(
+    config.smtp?.resendApiKey ||
+    process.env.RESEND_API_KEY ||
+    (config.smtp?.host && config.smtp?.user && config.smtp?.pass) ||
+    (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
+  );
+
   return NextResponse.json({
     username: config.username,
     securityEmail: config.securityEmail,
     twoFactorEnabled: config.twoFactorEnabled,
     hasEmergencyCode: Boolean(config.emergencyRecoveryCode),
-    smtpConfigured: Boolean(config.smtp?.resendApiKey || config.smtp?.host),
+    smtpConfigured,
+    smtpHost: config.smtp?.host || process.env.SMTP_HOST || "",
+    smtpUser: config.smtp?.user || process.env.SMTP_USER || "",
+    hasResendApiKey: Boolean(config.smtp?.resendApiKey || process.env.RESEND_API_KEY),
     updatedAt: config.updatedAt
   });
 }
