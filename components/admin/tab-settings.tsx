@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import type { GeneralSettings, MaintenanceSettings, SiteContent, SiteFeatures } from "@/lib/content-types";
 import { defaultSiteFeatures } from "@/data/default-content";
+import { MediaManager } from "./media-manager";
+import { SecuritySettings } from "./security-settings";
 
 interface TabSettingsProps {
   settings: GeneralSettings;
@@ -56,8 +58,7 @@ export function TabSettings({
       "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.",
     instagramHandle: settings.instagramHandle || "@entreasilhas",
     instagramUrl: settings.instagramUrl || "https://www.instagram.com/entreasilhas",
-    allowAdminBypass: true,
-    showAdminLink: true
+    allowAdminBypass: true
   };
 
   const handleUpdateMaintenance = <K extends keyof MaintenanceSettings>(
@@ -664,18 +665,6 @@ export function TabSettings({
                 Permitir que <strong>administradores logados</strong> naveguem e visualizem o site normalmente (Bypass de Prévia)
               </span>
             </label>
-
-            <label className="flex items-center gap-2.5 cursor-pointer select-none text-xs text-slate-700 font-medium">
-              <input
-                type="checkbox"
-                checked={maintenance.showAdminLink}
-                onChange={(e) => handleUpdateMaintenance("showAdminLink", e.target.checked)}
-                className="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 cursor-pointer"
-              />
-              <span>
-                Exibir link discreto de &ldquo;Acesso Administrativo 🔐&rdquo; no rodapé da página de construção
-              </span>
-            </label>
           </div>
         </div>
       </div>
@@ -738,31 +727,11 @@ export function TabSettings({
         </div>
       </div>
 
-      {/* Gerenciamento de Credenciais de Acesso */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-        <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">
-          Segurança & Credenciais do Administrador
-        </h3>
-        <p className="text-xs text-slate-600 leading-relaxed">
-          Para garantir a máxima segurança, o usuário e a senha de administrador são
-          protegidos diretamente por variáveis de ambiente do servidor no arquivo{" "}
-          <code className="text-brand-deep bg-slate-100 px-2 py-0.5 rounded font-mono text-xs">
-            .env.local
-          </code>
-          :
-        </p>
+      {/* Gerenciador de Arquivos & Mídias Enviadas */}
+      <MediaManager />
 
-        <div className="rounded-2xl bg-slate-950 p-4 text-xs font-mono text-cyan-300 space-y-1">
-          <p>ADMIN_USERNAME=admin</p>
-          <p>ADMIN_PASSWORD=entreasilhas2026!</p>
-          <p>ADMIN_SESSION_SECRET=eai_admin_super_secret_session_key_2026</p>
-        </div>
-
-        <p className="text-[11px] text-slate-500">
-          Você pode alterar a senha a qualquer momento editando a variável{" "}
-          <code>ADMIN_PASSWORD</code> no arquivo <code>.env.local</code> (ou no painel da sua hospedagem).
-        </p>
-      </div>
+      {/* Segurança, Credenciais Criptografadas & 2FA */}
+      <SecuritySettings />
 
       {/* Backup & Restauração */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">

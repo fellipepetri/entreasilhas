@@ -184,7 +184,7 @@ export interface MaintenanceSettings {
   instagramHandle: string;
   instagramUrl: string;
   allowAdminBypass: boolean;
-  showAdminLink: boolean;
+  showAdminLink?: boolean;
 }
 
 export interface SiteFeatures {

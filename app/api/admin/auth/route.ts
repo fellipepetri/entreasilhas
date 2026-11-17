@@ -5,6 +5,11 @@ import {
   getAdminCredentials,
   isRequestAuthenticated
 } from "@/lib/admin-auth";
+import {
+  getSecurityConfig,
+  verifyAdminLogin,
+  createTwoFactorChallenge
+} from "@/lib/admin-security";
 
 export async function GET(request: Request) {
   const authenticated = isRequestAuthenticated(request);
@@ -21,18 +26,38 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password } = body;
 
-    const credentials = getAdminCredentials();
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: "Por favor, preencha o usuário e a senha." },
+        { status: 400 }
+      );
+    }
 
-    if (
-      username !== credentials.username ||
-      password !== credentials.password
-    ) {
+    const isValid = verifyAdminLogin(username, password);
+
+    if (!isValid) {
       return NextResponse.json(
         { error: "Usuário ou senha inválidos." },
         { status: 401 }
       );
     }
 
+    const config = getSecurityConfig();
+
+    // Se 2FA estiver ativado, gera o desafio e solicita o código de 6 dígitos
+    if (config.twoFactorEnabled) {
+      const challenge = await createTwoFactorChallenge(username);
+      return NextResponse.json({
+        success: true,
+        requires2FA: true,
+        tempToken: challenge.tempToken,
+        maskedEmail: challenge.maskedEmail,
+        expiresInSeconds: challenge.expiresInSeconds,
+        username
+      });
+    }
+
+    // Se 2FA estiver desativado, efetua login direto
     const token = createSessionToken(username);
     const response = NextResponse.json({
       success: true,
@@ -50,9 +75,10 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch {
+  } catch (error) {
+    console.error("Erro na autenticação admin:", error);
     return NextResponse.json(
-      { error: "Erro ao processar login." },
+      { error: "Erro interno ao processar login." },
       { status: 500 }
     );
   }

@@ -1,17 +1,16 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
+import { getSecurityConfig } from "./admin-security";
 
 export const ADMIN_COOKIE_NAME = "eai_admin_session";
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
 
 export function getAdminCredentials() {
-  const username = process.env.ADMIN_USERNAME?.trim() || "admin";
-  const password = process.env.ADMIN_PASSWORD?.trim() || "entreasilhas2026!";
-  const secret =
-    process.env.ADMIN_SESSION_SECRET?.trim() ||
-    "eai_admin_secret_session_default_key_2026";
-
-  return { username, password, secret };
+  const config = getSecurityConfig();
+  return {
+    username: config.username,
+    secret: config.sessionSecret
+  };
 }
 
 export function createSessionToken(username: string): string {

@@ -99,7 +99,6 @@ export function TabCta({
             <video
               key={data.backgroundVideo}
               src={data.backgroundVideo}
-              poster={data.backgroundImage}
               autoPlay
               loop
               muted

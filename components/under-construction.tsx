@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import type { MaintenanceSettings } from "@/lib/content-types";
 
 interface UnderConstructionProps {
@@ -39,7 +38,6 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
     "Olá! Vi que o site da Entre as Ilhas está em construção, mas gostaria de tirar dúvidas e consultar disponibilidade de passeios de lancha.";
   const instagramHandle = maintenance?.instagramHandle || "@entreasilhas";
   const instagramUrl = maintenance?.instagramUrl || "https://www.instagram.com/entreasilhas";
-  const showAdminLink = maintenance?.showAdminLink ?? true;
 
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
@@ -225,19 +223,6 @@ export function UnderConstruction({ maintenance }: UnderConstructionProps) {
             SquidFlare
           </a>
         </p>
-
-        {showAdminLink && (
-          <div className="pt-2">
-            <Link
-              href="/admin-painel"
-              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-cyan-300 transition text-[11px] font-medium tracking-normal normal-case"
-              title="Acesso Administrativo ao Painel"
-            >
-              <span>Acesso Administrativo</span>
-              <span>🔐</span>
-            </Link>
-          </div>
-        )}
       </footer>
     </div>
   );

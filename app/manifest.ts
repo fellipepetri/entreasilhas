@@ -2,11 +2,11 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Entre as Ilhas - Painel & Agenda",
-    short_name: "EAI Agenda",
-    description: "Painel de administração, reservas e agenda da Entre as Ilhas",
-    start_url: "/agenda-painel",
-    id: "/agenda-painel",
+    name: "Entre as Ilhas - Passeios de Lancha",
+    short_name: "Entre as Ilhas",
+    description: "Passeios exclusivos de lancha e experiências inesquecíveis na Baía de Todos-os-Santos",
+    start_url: "/",
+    id: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",
@@ -34,17 +34,24 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: "Agenda de Reservas",
-        short_name: "Agenda",
-        description: "Visualizar calendário e status de pagamentos",
-        url: "/agenda-painel",
+        name: "Roteiros & Passeios",
+        short_name: "Roteiros",
+        description: "Conheça nossos roteiros e ilhas paradisíacas",
+        url: "/#roteiros",
         icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }]
       },
       {
-        name: "Painel de Conteúdo",
-        short_name: "Conteúdo",
-        description: "Gerenciar fotos, 360 e roteiros",
-        url: "/admin-painel",
+        name: "Experiência 360°",
+        short_name: "360°",
+        description: "Explore os pontos turísticos em 360 graus",
+        url: "/#experiencia-360",
+        icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }]
+      },
+      {
+        name: "Fale Conosco",
+        short_name: "Contato",
+        description: "Entre em contato e agende seu passeio",
+        url: "/#contato",
         icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }]
       }
     ]

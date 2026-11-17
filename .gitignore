@@ -32,6 +32,9 @@ Thumbs.db
 # typescript
 *.tsbuildinfo
 
+# admin security credentials & recovery
+/data/admin-security.json
+
 # uploads
 /public/uploads/*
 !/public/uploads/.gitkeep
