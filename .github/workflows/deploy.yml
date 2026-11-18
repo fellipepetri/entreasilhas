@@ -53,13 +53,19 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Trigger Portainer Webhook (opcional)
+      - name: Trigger Portainer Webhook (Pull and Redeploy Automático)
         env:
           PORTAINER_WEBHOOK: ${{ secrets.PORTAINER_WEBHOOK }}
         run: |
           if [ -n "$PORTAINER_WEBHOOK" ]; then
-            echo "Disparando webhook do Portainer..."
-            curl -k -i -X POST "$PORTAINER_WEBHOOK"
+            echo "🚀 Disparando Webhook do Portainer para Pull & Redeploy automático..."
+            HTTP_STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "$PORTAINER_WEBHOOK" || echo "failed")
+            echo "Resposta do Portainer HTTP Status: $HTTP_STATUS"
+            if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "204" ]; then
+              echo "✅ Webhook do Portainer executado com sucesso! A stack foi atualizada e reiniciada."
+            else
+              echo "⚠️ Aviso: Webhook retornou status $HTTP_STATUS (verifique se a URL do webhook no Portainer ainda está ativa)."
+            fi
           else
-            echo "PORTAINER_WEBHOOK nao configurado nos secrets."
+            echo "ℹ️ PORTAINER_WEBHOOK não configurado em Repository Secrets. Para ativar o redeploy 100% automático a cada push, adicione a secret PORTAINER_WEBHOOK no repositório GitHub."
           fi

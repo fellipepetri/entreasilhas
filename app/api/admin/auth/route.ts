@@ -3,7 +3,8 @@ import {
   ADMIN_COOKIE_NAME,
   createSessionToken,
   getAdminCredentials,
-  isRequestAuthenticated
+  isRequestAuthenticated,
+  isRequestFromTrustedDevice
 } from "@/lib/admin-auth";
 import {
   getSecurityConfig,
@@ -44,8 +45,11 @@ export async function POST(request: Request) {
 
     const config = getSecurityConfig();
 
-    // Se 2FA estiver ativado, gera o desafio e solicita o código de 6 dígitos
-    if (config.twoFactorEnabled) {
+    // Verifica se o dispositivo atual já foi autenticado e lembrado anteriormente
+    const isTrusted = isRequestFromTrustedDevice(request, username);
+
+    // Se 2FA estiver ativado e o dispositivo NÃO for reconhecido, gera o desafio e solicita o código de 6 dígitos
+    if (config.twoFactorEnabled && !isTrusted) {
       const challenge = await createTwoFactorChallenge(username);
       return NextResponse.json({
         success: true,
@@ -57,11 +61,12 @@ export async function POST(request: Request) {
       });
     }
 
-    // Se 2FA estiver desativado, efetua login direto
+    // Se o dispositivo já é confiável ou 2FA estiver desativado, autoriza o login direto
     const token = createSessionToken(username);
     const response = NextResponse.json({
       success: true,
-      username
+      username,
+      deviceRecognized: isTrusted
     });
 
     response.cookies.set({

@@ -305,6 +305,13 @@ export function AdminLogin({
                 <div className="inline-block px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono font-bold">
                   {maskedEmail}
                 </div>
+
+                <div className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-400/30 text-[11px] text-teal-200 text-left flex items-start gap-2">
+                  <span className="text-base shrink-0">🛡️</span>
+                  <span>
+                    <strong>Novo dispositivo/navegador:</strong> ao confirmar o código, este aparelho será lembrado por <strong>90 dias</strong> sem pedir 2FA novamente.
+                  </span>
+                </div>
               </div>
 
               <div>

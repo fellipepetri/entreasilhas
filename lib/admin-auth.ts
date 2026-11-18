@@ -1,9 +1,18 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { getSecurityConfig } from "./admin-security";
+import {
+  getSecurityConfig,
+  isTrustedDeviceToken,
+  registerTrustedDevice,
+  revokeAllTrustedDevices,
+  getTrustedDevicesSummary
+} from "./admin-security";
 
 export const ADMIN_COOKIE_NAME = "eai_admin_session";
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 dias
+
+export const TRUSTED_DEVICE_COOKIE = "eai_trusted_device";
+export const TRUSTED_DEVICE_MAX_AGE = 90 * 24 * 60 * 60; // 90 dias em segundos (segurança balanceada)
 
 export function getAdminCredentials() {
   const config = getSecurityConfig();
@@ -84,3 +93,24 @@ export function isRequestAuthenticated(request: Request): boolean {
     return false;
   }
 }
+
+/**
+ * Verifica se a requisição provém de um dispositivo previamente validado por 2FA
+ */
+export function isRequestFromTrustedDevice(request: Request, username: string): boolean {
+  try {
+    const cookieHeader = request.headers.get("cookie") || "";
+    const cookiesObj: Record<string, string> = {};
+    cookieHeader.split(";").forEach((pair) => {
+      const [k, v] = pair.trim().split("=");
+      if (k && v) cookiesObj[k] = decodeURIComponent(v);
+    });
+
+    const token = cookiesObj[TRUSTED_DEVICE_COOKIE];
+    return isTrustedDeviceToken(token, username);
+  } catch {
+    return false;
+  }
+}
+
+export { registerTrustedDevice, revokeAllTrustedDevices, getTrustedDevicesSummary };

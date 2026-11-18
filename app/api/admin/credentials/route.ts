@@ -3,7 +3,10 @@ import { isRequestAuthenticated } from "@/lib/admin-auth";
 import {
   getSecurityConfig,
   updateAdminSecurity,
-  regenerateEmergencyCode
+  regenerateEmergencyCode,
+  revokeAllTrustedDevices,
+  getTrustedDevicesSummary,
+  verifyAdminPassword
 } from "@/lib/admin-security";
 
 export async function GET(request: Request) {
@@ -20,6 +23,8 @@ export async function GET(request: Request) {
     (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
   );
 
+  const trustedDevicesInfo = getTrustedDevicesSummary();
+
   return NextResponse.json({
     username: config.username,
     securityEmail: config.securityEmail,
@@ -29,6 +34,8 @@ export async function GET(request: Request) {
     smtpHost: config.smtp?.host || process.env.SMTP_HOST || "",
     smtpUser: config.smtp?.user || process.env.SMTP_USER || "",
     hasResendApiKey: Boolean(config.smtp?.resendApiKey || process.env.RESEND_API_KEY),
+    trustedDevicesCount: trustedDevicesInfo.count,
+    trustedDevices: trustedDevicesInfo.devices,
     updatedAt: config.updatedAt
   });
 }
@@ -66,6 +73,22 @@ export async function POST(request: Request) {
         success: true,
         emergencyRecoveryCode: res.emergencyRecoveryCode,
         message: "Nova Chave de Emergência gerada com sucesso! Guarde-a em local seguro."
+      });
+    }
+
+    if (action === "revoke-trusted-devices") {
+      if (!verifyAdminPassword(currentPassword)) {
+        return NextResponse.json(
+          { error: "A senha atual informada está incorreta." },
+          { status: 400 }
+        );
+      }
+      revokeAllTrustedDevices();
+      return NextResponse.json({
+        success: true,
+        message: "Todos os dispositivos autorizados foram revogados com sucesso. No próximo acesso de qualquer navegador, o código 2FA será solicitado.",
+        trustedDevicesCount: 0,
+        trustedDevices: []
       });
     }
 

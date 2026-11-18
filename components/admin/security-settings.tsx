@@ -40,6 +40,20 @@ export function SecuritySettings() {
   const [resendApiKey, setResendApiKey] = useState("");
   const [showSmtpPass, setShowSmtpPass] = useState(false);
 
+  // Dispositivos Confiáveis (2FA por dispositivo)
+  interface TrustedDeviceItem {
+    id: string;
+    label: string;
+    createdAt: string;
+    lastUsedAt: string;
+    userAgent?: string;
+  }
+  const [trustedDevicesCount, setTrustedDevicesCount] = useState(0);
+  const [trustedDevicesList, setTrustedDevicesList] = useState<TrustedDeviceItem[]>([]);
+  const [isRevokingDevices, setIsRevokingDevices] = useState(false);
+  const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
+  const [revokePassword, setRevokePassword] = useState("");
+
   // Teste de Email
   const [isTestingEmail, setIsTestingEmail] = useState(false);
   const [testEmailResult, setTestEmailResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -59,6 +73,8 @@ export function SecuritySettings() {
           setHasEmergencyCode(data.hasEmergencyCode ?? false);
           setSmtpConfigured(data.smtpConfigured ?? false);
           setActiveSmtpHost(data.smtpHost || (data.hasResendApiKey ? "Resend API" : ""));
+          setTrustedDevicesCount(data.trustedDevicesCount ?? 0);
+          setTrustedDevicesList(data.trustedDevices ?? []);
           if (data.smtpHost) setSmtpHost(data.smtpHost);
           if (data.smtpUser) setSmtpUser(data.smtpUser);
         }
@@ -252,6 +268,43 @@ export function SecuritySettings() {
       setErrorMessage(err instanceof Error ? err.message : "Erro ao gerar chave.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleRevokeTrustedDevices = async () => {
+    if (!revokePassword) {
+      setErrorMessage("Por favor, digite sua senha atual para autorizar a revogação de dispositivos.");
+      return;
+    }
+
+    setIsRevokingDevices(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      const res = await fetch("/api/admin/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: revokePassword,
+          action: "revoke-trusted-devices"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Falha ao revogar dispositivos.");
+      }
+
+      setTrustedDevicesCount(0);
+      setTrustedDevicesList([]);
+      setShowRevokeConfirm(false);
+      setRevokePassword("");
+      setSuccessMessage(data.message || "Todos os dispositivos autorizados foram revogados com sucesso!");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Erro ao revogar dispositivos.");
+    } finally {
+      setIsRevokingDevices(false);
     }
   };
 
@@ -718,6 +771,150 @@ export function SecuritySettings() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Card 3: Dispositivos Confiáveis (2FA por Dispositivo) */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-semibold mb-2">
+              <span>💻📱</span>
+              <span>Dispositivos Confiáveis & Navegadores</span>
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">
+              Dispositivos Confiáveis (2FA Apenas no 1º Acesso)
+            </h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+              O código 2FA de 6 dígitos é solicitado <strong>apenas na primeira vez</strong> em que você acessa de um computador, celular ou navegador diferente. Uma vez verificado com sucesso, aquele aparelho é lembrado com segurança por <strong>90 dias</strong>, dispensando o código a cada novo login.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-center">
+            <span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
+              {trustedDevicesCount} ativo{trustedDevicesCount === 1 ? "" : "s"}
+            </span>
+            {trustedDevicesCount > 0 && !showRevokeConfirm && (
+              <button
+                type="button"
+                onClick={() => setShowRevokeConfirm(true)}
+                className="px-3 py-1 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition"
+              >
+                Revogar Todos
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Modal/Formulário de Confirmação de Revogação */}
+        {showRevokeConfirm && (
+          <div className="rounded-2xl border border-rose-300 bg-rose-50/70 p-5 space-y-3 animate-fadeIn">
+            <div className="flex items-center gap-2 text-rose-900 font-bold text-xs">
+              <span className="text-base">⚠️</span>
+              <span>Revogar todos os dispositivos autorizados?</span>
+            </div>
+            <p className="text-xs text-rose-800/90 leading-relaxed">
+              Essa ação cancelará a autorização de todos os computadores e celulares conectados. No próximo acesso de qualquer navegador, o código de 6 dígitos enviado por e-mail será obrigatoriamente exigido.
+            </p>
+            <div className="space-y-2 max-w-md">
+              <label className="block text-[11px] font-bold text-slate-800 uppercase">
+                Digite sua senha atual de administrador para confirmar:
+              </label>
+              <input
+                type="password"
+                required
+                value={revokePassword}
+                onChange={(e) => setRevokePassword(e.target.value)}
+                placeholder="Sua senha atual"
+                className="w-full rounded-xl border border-rose-300 bg-white px-3 py-2 text-xs text-slate-900"
+              />
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleRevokeTrustedDevices}
+                disabled={isRevokingDevices || !revokePassword}
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs transition"
+              >
+                {isRevokingDevices ? "Revogando..." : "Confirmar e Revogar Todos"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowRevokeConfirm(false);
+                  setRevokePassword("");
+                }}
+                className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Lista de Dispositivos Confiáveis */}
+        {trustedDevicesList.length > 0 ? (
+          <div className="overflow-hidden rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="px-4 py-3">Dispositivo / Navegador</th>
+                  <th className="px-4 py-3">Autorizado em</th>
+                  <th className="px-4 py-3">Último Acesso</th>
+                  <th className="px-4 py-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {trustedDevicesList.map((dev) => (
+                  <tr key={dev.id} className="hover:bg-slate-50/60 transition">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-slate-900 flex items-center gap-2">
+                        <span>🖥️</span>
+                        <span>{dev.label || "Navegador Autorizado"}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        ID: {dev.id.slice(0, 8)}...
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {new Date(dev.createdAt).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {new Date(dev.lastUsedAt).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Confiável (90d)
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-center space-y-1.5">
+            <span className="text-2xl block">🌐</span>
+            <p className="text-xs font-semibold text-slate-800">
+              Nenhum dispositivo registrado na lista de confiança ainda
+            </p>
+            <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+              Ao digitar o código 2FA no seu próximo login, este computador/navegador será automaticamente reconhecido e lembrado por 90 dias.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

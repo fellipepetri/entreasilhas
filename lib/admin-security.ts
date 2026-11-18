@@ -12,6 +12,14 @@ export interface SmtpConfig {
   resendApiKey?: string;
 }
 
+export interface TrustedDeviceInfo {
+  id: string;
+  label: string;
+  createdAt: string;
+  lastUsedAt: string;
+  userAgent?: string;
+}
+
 export interface AdminSecurityConfig {
   username: string;
   passwordHash: string;
@@ -22,6 +30,8 @@ export interface AdminSecurityConfig {
   sessionSecret: string;
   smtp?: SmtpConfig;
   updatedAt: string;
+  trustedDevices?: Record<string, TrustedDeviceInfo>;
+  deviceTrustRevokedAt?: number;
 }
 
 const SECURITY_FILE_PATH = path.join(process.cwd(), "data", "admin-security.json");
@@ -577,4 +587,155 @@ export async function sendSecurityEmail(options: {
     text: `Olá ${options.username}! Seu código de verificação 2FA Entre as Ilhas é: ${options.code}. Válido por 10 minutos.`,
     html: htmlContent
   });
+}
+
+/**
+ * Identifica o dispositivo e sistema operacional a partir do User-Agent
+ */
+export function parseDeviceLabel(ua?: string): string {
+  if (!ua) return "Dispositivo Autorizado";
+
+  let browser = "Navegador";
+  if (ua.includes("Edg/")) browser = "Edge";
+  else if (ua.includes("Chrome/") && !ua.includes("Edg/")) browser = "Chrome";
+  else if (ua.includes("Firefox/")) browser = "Firefox";
+  else if (ua.includes("Safari/") && !ua.includes("Chrome/")) browser = "Safari";
+  else if (ua.includes("Opera") || ua.includes("OPR/")) browser = "Opera";
+
+  let os = "Desktop";
+  if (ua.includes("Windows NT 10.0") || ua.includes("Windows")) os = "Windows";
+  else if (ua.includes("Macintosh") || ua.includes("Mac OS")) os = "macOS";
+  else if (ua.includes("Android")) os = "Android";
+  else if (ua.includes("iPhone")) os = "iPhone";
+  else if (ua.includes("iPad")) os = "iPad";
+  else if (ua.includes("Linux")) os = "Linux";
+
+  return `${browser} (${os})`;
+}
+
+/**
+ * Registra um novo dispositivo confiável após validação de 2FA
+ * Retorna o token assinado e salva os metadados do dispositivo
+ */
+export function registerTrustedDevice(
+  username: string,
+  userAgent?: string
+): { deviceId: string; token: string } {
+  const config = getSecurityConfig();
+  if (!config.trustedDevices) {
+    config.trustedDevices = {};
+  }
+
+  const deviceId = crypto.randomBytes(16).toString("hex");
+  const now = new Date().toISOString();
+  const label = parseDeviceLabel(userAgent);
+
+  config.trustedDevices[deviceId] = {
+    id: deviceId,
+    label,
+    createdAt: now,
+    lastUsedAt: now,
+    userAgent: userAgent ? userAgent.slice(0, 200) : undefined
+  };
+
+  saveSecurityConfig(config);
+
+  const expiresAt = Date.now() + 90 * 24 * 60 * 60 * 1000; // 90 dias
+  const payload = `${deviceId}:${username}:${expiresAt}`;
+  const sig = crypto
+    .createHmac("sha256", config.sessionSecret)
+    .update(payload)
+    .digest("hex");
+
+  return {
+    deviceId,
+    token: `${payload}:${sig}`
+  };
+}
+
+/**
+ * Valida se um token de dispositivo confiável é autêntico, válido e não expirado
+ */
+export function isTrustedDeviceToken(
+  token: string | undefined | null,
+  username: string,
+  updateLastUsed = true
+): boolean {
+  if (!token) return false;
+
+  try {
+    const parts = token.split(":");
+    if (parts.length !== 4) return false;
+
+    const [deviceId, tokenUser, expStr, sig] = parts;
+    const expiresAt = Number(expStr);
+
+    if (isNaN(expiresAt) || Date.now() > expiresAt) {
+      return false;
+    }
+
+    if (tokenUser !== username) {
+      return false;
+    }
+
+    const config = getSecurityConfig();
+
+    // Se houve revogação global dos dispositivos confiáveis posterior à criação do token
+    if (config.deviceTrustRevokedAt) {
+      const issuedAt = expiresAt - 90 * 24 * 60 * 60 * 1000;
+      if (issuedAt < config.deviceTrustRevokedAt) {
+        return false;
+      }
+    }
+
+    const expectedSig = crypto
+      .createHmac("sha256", config.sessionSecret)
+      .update(`${deviceId}:${tokenUser}:${expStr}`)
+      .digest("hex");
+
+    const a = Buffer.from(sig, "hex");
+    const b = Buffer.from(expectedSig, "hex");
+
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+      return false;
+    }
+
+    // Se a lista de dispositivos existir, valida o registro do deviceId
+    if (config.trustedDevices) {
+      const device = config.trustedDevices[deviceId];
+      if (!device) {
+        return false;
+      }
+      if (updateLastUsed) {
+        device.lastUsedAt = new Date().toISOString();
+        saveSecurityConfig(config);
+      }
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Revoga todos os dispositivos confiáveis cadastrados, forçando novo 2FA em todos os acessos
+ */
+export function revokeAllTrustedDevices(): void {
+  const config = getSecurityConfig();
+  config.trustedDevices = {};
+  config.deviceTrustRevokedAt = Date.now();
+  saveSecurityConfig(config);
+}
+
+/**
+ * Retorna o resumo dos dispositivos confiáveis autorizados
+ */
+export function getTrustedDevicesSummary(): { count: number; devices: TrustedDeviceInfo[] } {
+  const config = getSecurityConfig();
+  const devices = config.trustedDevices ? Object.values(config.trustedDevices) : [];
+  return {
+    count: devices.length,
+    devices
+  };
 }
