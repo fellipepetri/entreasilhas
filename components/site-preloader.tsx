@@ -19,6 +19,11 @@ export function SitePreloader() {
   const [progress, setProgress] = useState(12);
   const [isMounted, setIsMounted] = useState(true);
 
+  // Parâmetros para o anel de loading circular náutico ao redor da logo
+  const radius = 46;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   // Não exibe o preloader completo dentro dos painéis administrativos para não atrapalhar o fluxo de trabalho
   const isAdminRoute =
     pathname?.startsWith("/admin-painel") || pathname?.startsWith("/agenda-painel");
@@ -158,12 +163,146 @@ export function SitePreloader() {
               isExiting ? "opacity-0" : "opacity-100"
             }`}
           />
+          {/* ========================================================
+              ANEL DE LOADING CIRCULAR NÁUTICO AO REDOR DA LOGO
+              (Substitui a barra horizontal com os mesmos efeitos)
+              * Progresso suave de 0 a 100% preenchendo no sentido horário (inicia no topo)
+              * Gradiente náutico: esmeralda -> ciano -> céu
+              * Brilho / Glow neon ciano (drop-shadow)
+              * Feixe de luz varrendo o anel continuamente (shimmer sweep)
+              * Guia luminosa / ponto brilhante na ponta do progresso
+              * Calha estática de fundo preservada (cyan-400/20)
+             ======================================================== */}
           <div
             aria-hidden="true"
-            className={`pointer-events-none absolute h-32 w-32 sm:h-44 sm:w-44 rounded-full border border-cyan-400/20 shadow-[0_0_35px_rgba(34,211,238,0.25)] transition-opacity duration-500 ${
+            className={`pointer-events-none absolute h-32 w-32 sm:h-44 sm:w-44 transition-opacity duration-500 ${
               isExiting ? "opacity-0" : "opacity-100"
             }`}
-          />
+          >
+            <svg
+              className="h-full w-full overflow-visible drop-shadow-[0_0_25px_rgba(34,211,238,0.3)]"
+              viewBox="0 0 100 100"
+              role="progressbar"
+              aria-valuenow={Math.round(progress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Carregando Entre as Ilhas"
+            >
+              <defs>
+                {/* 1. Gradiente tropical (esmeralda -> ciano -> céu) */}
+                <linearGradient id="preloader-active-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#34d399" />
+                  <stop offset="50%" stopColor="#22d3ee" />
+                  <stop offset="100%" stopColor="#7dd3fc" />
+                </linearGradient>
+
+                {/* 2. Gradiente do feixe de luz que varre o anel */}
+                <linearGradient id="preloader-sweep-linear" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset="42%" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset="50%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="58%" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                </linearGradient>
+
+                {/* 3. Máscara que limita o feixe de luz apenas ao trecho já preenchido */}
+                <mask id="preloader-progress-mask">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    transform="rotate(-90 50 50)"
+                    style={{ transition: "stroke-dashoffset 200ms ease-out" }}
+                  />
+                </mask>
+
+                {/* 4. Filtro de brilho intenso na ponta do feixe */}
+                <filter id="preloader-tip-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="1.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Calha/Trilho náutico de fundo (anel estático apontado com a seta amarela) */}
+              <circle
+                cx="50"
+                cy="50"
+                r={radius}
+                fill="none"
+                stroke="rgba(34, 211, 238, 0.22)"
+                strokeWidth="2.5"
+              />
+
+              {/* Arco de progresso ativo com gradiente tropical e glow neon */}
+              <circle
+                cx="50"
+                cy="50"
+                r={radius}
+                fill="none"
+                stroke="url(#preloader-active-gradient)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                transform="rotate(-90 50 50)"
+                style={{
+                  transition: "stroke-dashoffset 200ms ease-out",
+                  filter:
+                    "drop-shadow(0 0 8px rgba(34, 211, 238, 0.9)) drop-shadow(0 0 14px rgba(52, 211, 153, 0.45))",
+                }}
+              />
+
+              {/* Feixe de luz varrendo o anel circular continuamente (onda de brilho de 1.8s) */}
+              <g mask="url(#preloader-progress-mask)">
+                <g
+                  style={{
+                    transformOrigin: "50px 50px",
+                    animation: "preloader-halo-spin 1.8s linear infinite",
+                  }}
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="none"
+                    stroke="url(#preloader-sweep-linear)"
+                    strokeWidth="3.5"
+                  />
+                </g>
+              </g>
+
+              {/* Ponto luminoso guia na ponta do arco em rotação sincronizada */}
+              <g
+                style={{
+                  transform: `rotate(${(progress / 100) * 360 - 90}deg)`,
+                  transformOrigin: "50px 50px",
+                  transition: "transform 200ms ease-out",
+                  opacity: progress > 1 ? 1 : 0,
+                }}
+              >
+                <circle
+                  cx={50 + radius}
+                  cy="50"
+                  r="2.8"
+                  fill="#ffffff"
+                  filter="url(#preloader-tip-glow)"
+                  style={{
+                    filter:
+                      "drop-shadow(0 0 4px #ffffff) drop-shadow(0 0 8px rgba(34, 211, 238, 1))",
+                  }}
+                />
+              </g>
+            </svg>
+          </div>
 
           {/* ========================================================
               ÁREA DA LOGO DO ENTRE AS ILHAS
@@ -191,7 +330,8 @@ export function SitePreloader() {
         </div>
 
         {/* ========================================================
-            EFEITO DE LOADING E TEXTO ABAIXO DA LOGO
+            TEXTO DA MARCA ABAIXO DA LOGO
+            (A barra de loading foi transferida para o anel da logo)
            ======================================================== */}
         <div
           className={`mt-8 flex flex-col items-center text-center transition-all duration-500 ${
@@ -202,28 +342,9 @@ export function SitePreloader() {
           <h2 className="text-sm sm:text-base font-extrabold uppercase tracking-[0.28em] text-white drop-shadow-sm">
             Entre as Ilhas
           </h2>
-          <p className="mt-1 text-[11px] sm:text-xs font-medium tracking-[0.16em] text-cyan-300/80 uppercase">
+          <p className="mt-1.5 text-[11px] sm:text-xs font-medium tracking-[0.16em] text-cyan-300/85 uppercase">
             Experiências Náuticas
           </p>
-
-          {/* Barra de Carregamento com Onda de Brilho */}
-          <div className="relative mt-6 h-1.5 w-44 sm:w-56 overflow-hidden rounded-full bg-white/10 p-[1px] shadow-inner backdrop-blur-sm">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-300 transition-all duration-200 ease-out shadow-[0_0_12px_rgba(34,211,238,0.8)]"
-              style={{ width: `${progress}%` }}
-            />
-            {/* Feixe de luz varrendo a barra */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-preloader-sweep"
-            />
-          </div>
-
-          {/* Porcentagem sutil e status */}
-          <div className="mt-2.5 flex items-center gap-2 text-[10px] sm:text-[11px] font-semibold text-slate-400 tracking-wider">
-            <span>Carregando</span>
-            <span className="text-cyan-300 font-mono">{Math.round(progress)}%</span>
-          </div>
         </div>
       </div>
     </div>
