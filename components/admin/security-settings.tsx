@@ -177,6 +177,7 @@ export function SecuritySettings() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           currentPassword,
+          securityEmail: "entreasilhasturismo@gmail.com",
           smtp: smtpPayload
         })
       });

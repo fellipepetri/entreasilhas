@@ -11,9 +11,14 @@ export async function POST(request: Request) {
     const config = getSecurityConfig();
     const testCode = Math.floor(100000 + Math.random() * 900000).toString();
 
+    const targetEmail =
+      config.securityEmail && !config.securityEmail.includes("felipepetri")
+        ? config.securityEmail
+        : "entreasilhasturismo@gmail.com";
+
     const result = await sendSecurityEmail({
-      to: config.securityEmail,
-      subject: `🧪 Teste de Conexão 2FA Entre as Ilhas: ${testCode}`,
+      to: targetEmail,
+      subject: "🧪 Teste de Conexão 2FA Entre as Ilhas",
       code: testCode,
       username: config.username
     });

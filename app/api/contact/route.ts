@@ -13,14 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("[Novo Contato Recebido]", {
-      data: new Date().toISOString(),
-      nome,
-      email,
-      telefone,
-      tipo,
-      mensagem
-    });
+    console.log("[Contato] Nova mensagem de atendimento recebida pelo site.");
 
     // Dispara email automático para a caixa institucional do Entre as Ilhas
     await sendTransactionalEmail({

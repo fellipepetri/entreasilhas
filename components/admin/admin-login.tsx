@@ -82,10 +82,10 @@ export function AdminLogin({
       // Se exigir 2FA, avança para a etapa do código de segurança
       if (data.requires2FA) {
         setTempToken(data.tempToken);
-        setMaskedEmail(data.maskedEmail || "contato.felipepetri@gmail.com");
+        setMaskedEmail(data.maskedEmail || "entreasilhasturismo@gmail.com");
         setStep("2fa");
         setResendCooldown(60);
-        setInfoMessage(`Código de verificação de 6 dígitos enviado para ${data.maskedEmail}.`);
+        setInfoMessage(`Código de verificação de 6 dígitos enviado para ${data.maskedEmail || "seu e-mail institucional"}.`);
         return;
       }
 

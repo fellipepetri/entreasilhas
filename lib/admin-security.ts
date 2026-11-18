@@ -81,6 +81,29 @@ export function getSecurityConfig(): AdminSecurityConfig {
       const raw = fs.readFileSync(SECURITY_FILE_PATH, "utf-8");
       const parsed = JSON.parse(raw);
       if (parsed.passwordHash && parsed.passwordSalt && parsed.username) {
+        let modified = false;
+
+        // Migração: se o email de segurança for o de teste antigo, migra para entreasilhasturismo@gmail.com
+        if (!parsed.securityEmail || parsed.securityEmail.includes("felipepetri")) {
+          parsed.securityEmail = "entreasilhasturismo@gmail.com";
+          modified = true;
+        }
+
+        if (parsed.smtp) {
+          if (!parsed.smtp.user || parsed.smtp.user.includes("felipepetri")) {
+            parsed.smtp.user = "entreasilhasturismo@gmail.com";
+            modified = true;
+          }
+          if (!parsed.smtp.from || parsed.smtp.from.includes("felipepetri") || parsed.smtp.from.includes("nao-responda")) {
+            parsed.smtp.from = "Entre as Ilhas <entreasilhasturismo@gmail.com>";
+            modified = true;
+          }
+        }
+
+        if (modified) {
+          saveSecurityConfig(parsed);
+        }
+
         cachedConfig = parsed;
         return parsed;
       }
@@ -91,7 +114,8 @@ export function getSecurityConfig(): AdminSecurityConfig {
 
   // Se não existir, gera configuração inicial com credenciais salvas de forma segura (hash PBKDF2)
   const initialSalt = crypto.randomBytes(16).toString("hex");
-  const initialPass = process.env.ADMIN_PASSWORD?.trim() || "entreasilhas2026!";
+  const initialPass =
+    process.env.ADMIN_PASSWORD?.trim() || crypto.randomBytes(16).toString("hex");
   const initialHash = hashPassword(initialPass, initialSalt);
   const initialSecret =
     process.env.ADMIN_SESSION_SECRET?.trim() ||
@@ -206,15 +230,10 @@ export async function createTwoFactorChallenge(username: string): Promise<{
   // Envio do email para o email de segurança
   await sendSecurityEmail({
     to: config.securityEmail,
-    subject: `🔐 Seu código de acesso ao painel Entre as Ilhas: ${code}`,
+    subject: "🔐 Seu código de acesso ao painel Entre as Ilhas",
     code,
     username
   });
-
-  // Log de segurança no console para auditoria ou depuração
-  console.log(
-    `[2FA SECURITY] Código de verificação para ${config.securityEmail} (usuário: ${username}): ${code}`
-  );
 
   return {
     tempToken,
@@ -459,8 +478,8 @@ export async function sendTransactionalEmail(options: {
         })
       });
       if (res.ok) {
-        console.log(`[Email Resend] Mensagem enviada com sucesso para ${to}`);
-        return { success: true, method: "resend", message: `Email enviado com sucesso via Resend para ${to}!` };
+        console.log(`[Email Resend] Mensagem enviada para ${maskEmail(to)}`);
+        return { success: true, method: "resend", message: `Email enviado com sucesso via Resend para ${maskEmail(to)}!` };
       } else {
         const errorText = await res.text();
         console.warn(`[Email Resend] Erro Resend (${res.status}): ${errorText}`);
@@ -499,7 +518,7 @@ export async function sendTransactionalEmail(options: {
         html: options.html
       });
 
-      console.log(`[Email SMTP] Mensagem enviada com sucesso via ${smtpHost} para ${to}`);
+      console.log(`[Email SMTP] Mensagem enviada com sucesso via ${smtpHost} para ${maskEmail(to)}`);
       return { success: true, method: "smtp", message: `Email enviado com sucesso via SMTP (${smtpHost}) para ${to}!` };
     } catch (smtpErr) {
       console.error("[Email SMTP] Erro no envio SMTP:", smtpErr);
@@ -508,15 +527,11 @@ export async function sendTransactionalEmail(options: {
     }
   }
 
-  // 3. Fallback: Log estruturado no console do servidor Docker (Portainer)
-  console.log(
-    `[EMAIL LOG (SEM SMTP)] Destino: ${to} | Assunto: ${options.subject}`
-  );
-
+  // 3. Fallback: Nenhum SMTP configurado
   return {
     success: false,
     method: "console_fallback",
-    message: `Aviso: Nenhum servidor SMTP ou chave de envio está configurado. A mensagem foi registrada nos logs do servidor. Configure a Senha de App do Gmail para envio real.`
+    message: "Aviso: Nenhum servidor SMTP configurado. Configure a Senha de App do Gmail nas configurações para envio real."
   };
 }
 
@@ -524,13 +539,18 @@ export async function sendTransactionalEmail(options: {
  * Envia email de segurança (código de 2FA ou teste)
  */
 export async function sendSecurityEmail(options: {
-  to: string;
+  to?: string;
   subject: string;
   code: string;
   username: string;
 }): Promise<{ success: boolean; method: string; message: string }> {
   const config = getSecurityConfig();
-  const to = options.to || config.securityEmail || "entreasilhasturismo@gmail.com";
+  const to =
+    options.to && !options.to.includes("felipepetri")
+      ? options.to
+      : config.securityEmail && !config.securityEmail.includes("felipepetri")
+      ? config.securityEmail
+      : "entreasilhasturismo@gmail.com";
 
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0b1a2e; color: #ffffff; border-radius: 16px;">
