@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 export function SecuritySettings() {
   const [currentUsername, setCurrentUsername] = useState("admin");
-  const [securityEmail, setSecurityEmail] = useState("contato.felipepetri@gmail.com");
+  const [securityEmail, setSecurityEmail] = useState("entreasilhasturismo@gmail.com");
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [hasEmergencyCode, setHasEmergencyCode] = useState(false);
   const [smtpConfigured, setSmtpConfigured] = useState(false);
@@ -35,7 +35,7 @@ export function SecuritySettings() {
   const [smtpProvider, setSmtpProvider] = useState<"gmail" | "resend" | "custom">("gmail");
   const [smtpHost, setSmtpHost] = useState("smtp.gmail.com");
   const [smtpPort, setSmtpPort] = useState(465);
-  const [smtpUser, setSmtpUser] = useState("contato.felipepetri@gmail.com");
+  const [smtpUser, setSmtpUser] = useState("entreasilhasturismo@gmail.com");
   const [smtpPass, setSmtpPass] = useState("");
   const [resendApiKey, setResendApiKey] = useState("");
   const [showSmtpPass, setShowSmtpPass] = useState(false);
@@ -53,8 +53,8 @@ export function SecuritySettings() {
         if (res.ok) {
           setCurrentUsername(data.username || "admin");
           setNewUsername(data.username || "admin");
-          setSecurityEmail(data.securityEmail || "contato.felipepetri@gmail.com");
-          setNewSecurityEmail(data.securityEmail || "contato.felipepetri@gmail.com");
+          setSecurityEmail(data.securityEmail || "entreasilhasturismo@gmail.com");
+          setNewSecurityEmail(data.securityEmail || "entreasilhasturismo@gmail.com");
           setTwoFactorEnabled(data.twoFactorEnabled ?? true);
           setHasEmergencyCode(data.hasEmergencyCode ?? false);
           setSmtpConfigured(data.smtpConfigured ?? false);
@@ -483,7 +483,7 @@ export function SecuritySettings() {
                 type="email"
                 value={newSecurityEmail}
                 onChange={(e) => setNewSecurityEmail(e.target.value)}
-                placeholder="contato.felipepetri@gmail.com"
+                placeholder="entreasilhasturismo@gmail.com"
                 className="flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:border-brand-sea focus:outline-none font-mono"
               />
               <button
@@ -618,7 +618,7 @@ export function SecuritySettings() {
                         type="email"
                         value={smtpUser}
                         onChange={(e) => setSmtpUser(e.target.value)}
-                        placeholder="contato.felipepetri@gmail.com"
+                        placeholder="entreasilhasturismo@gmail.com"
                         className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 font-mono"
                       />
                     </div>

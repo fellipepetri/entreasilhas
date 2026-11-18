@@ -87,7 +87,7 @@ export function SiteFooter() {
                     {footer?.baseSchedule || "Atendimento por reserva e planejamento prévio"}
                   </p>
                   <p className="text-white">
-                    {footer?.baseEmail || "contato@entreasilhas.com.br"}
+                    {footer?.baseEmail || "entreasilhasturismo@gmail.com"}
                   </p>
                 </div>
               </div>

@@ -27,7 +27,7 @@ export function AdminLogin({
 
   // 2FA
   const [tempToken, setTempToken] = useState<string | null>(null);
-  const [maskedEmail, setMaskedEmail] = useState<string>("contato.felipepetri@gmail.com");
+  const [maskedEmail, setMaskedEmail] = useState<string>("entreasilhasturismo@gmail.com");
   const [otpCode, setOtpCode] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [isResending, setIsResending] = useState(false);

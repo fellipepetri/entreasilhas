@@ -182,7 +182,7 @@ export function TabFooter({ data, onChange }: TabFooterProps) {
               type="email"
               value={data.baseEmail}
               onChange={(e) => handleUpdate("baseEmail", e.target.value)}
-              placeholder="contato@entreasilhas.com.br"
+              placeholder="entreasilhasturismo@gmail.com"
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-mono"
             />
           </div>

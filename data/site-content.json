@@ -958,5 +958,11 @@
       "showAdminLink": true
     }
   },
-  "lastUpdated": "2026-10-15T04:00:22.208Z"
+  "lastUpdated": "2026-10-15T04:00:22.208Z",
+  "contact": {
+    "email": "entreasilhasturismo@gmail.com"
+  },
+  "footer": {
+    "baseEmail": "entreasilhasturismo@gmail.com"
+  }
 }

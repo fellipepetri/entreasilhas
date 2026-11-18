@@ -151,7 +151,7 @@ export function TabContact({ data, onChange }: TabContactProps) {
                 type="email"
                 value={data.email}
                 onChange={(e) => handleUpdate("email", e.target.value)}
-                placeholder="contato@entreasilhas.com.br"
+                placeholder="entreasilhasturismo@gmail.com"
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-brand-sea focus:outline-none font-mono"
               />
               <p className="text-[11px] text-slate-400 mt-1">

@@ -101,12 +101,15 @@ export function getSecurityConfig(): AdminSecurityConfig {
     username: process.env.ADMIN_USERNAME?.trim() || "admin",
     passwordHash: initialHash,
     passwordSalt: initialSalt,
-    securityEmail: "contato.felipepetri@gmail.com",
+    securityEmail: "entreasilhasturismo@gmail.com",
     twoFactorEnabled: true,
     emergencyRecoveryCode: generateEmergencyCode(),
     sessionSecret: initialSecret,
     smtp: {
-      from: "Entre as Ilhas <nao-responda@entreasilhas.com.br>"
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 465,
+      user: process.env.SMTP_USER || "entreasilhasturismo@gmail.com",
+      from: process.env.SMTP_FROM || "Entre as Ilhas <entreasilhasturismo@gmail.com>"
     },
     updatedAt: new Date().toISOString()
   };
@@ -424,6 +427,100 @@ export function regenerateEmergencyCode(currentPassword: string): {
 }
 
 /**
+ * Envia qualquer email transacional (ex.: novo contato, nova reserva, alertas do sistema)
+ */
+export async function sendTransactionalEmail(options: {
+  to?: string;
+  subject: string;
+  text?: string;
+  html: string;
+  replyTo?: string;
+}): Promise<{ success: boolean; method: string; message: string }> {
+  const config = getSecurityConfig();
+  const to = options.to || config.securityEmail || "entreasilhasturismo@gmail.com";
+
+  // 1. Tentar envio via Resend API se chave configurada
+  const resendApiKey = config.smtp?.resendApiKey || process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          from: config.smtp?.from || process.env.SMTP_FROM || "Entre as Ilhas <entreasilhasturismo@gmail.com>",
+          to: [to],
+          reply_to: options.replyTo,
+          subject: options.subject,
+          text: options.text,
+          html: options.html
+        })
+      });
+      if (res.ok) {
+        console.log(`[Email Resend] Mensagem enviada com sucesso para ${to}`);
+        return { success: true, method: "resend", message: `Email enviado com sucesso via Resend para ${to}!` };
+      } else {
+        const errorText = await res.text();
+        console.warn(`[Email Resend] Erro Resend (${res.status}): ${errorText}`);
+      }
+    } catch (e) {
+      console.error("[Email Resend] Falha ao enviar via API:", e);
+    }
+  }
+
+  // 2. Tentar envio via SMTP com Nodemailer (Gmail, etc.)
+  const smtpHost = config.smtp?.host || process.env.SMTP_HOST || "smtp.gmail.com";
+  const smtpPort = Number(config.smtp?.port || process.env.SMTP_PORT || 465);
+  const smtpUser = config.smtp?.user || process.env.SMTP_USER || "entreasilhasturismo@gmail.com";
+  const smtpPass = config.smtp?.pass || process.env.SMTP_PASS;
+  const smtpFrom = config.smtp?.from || process.env.SMTP_FROM || `Entre as Ilhas <${smtpUser}>`;
+
+  if (smtpHost && smtpUser && smtpPass) {
+    try {
+      const nodemailer = await import("nodemailer");
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass
+        }
+      });
+
+      await transporter.sendMail({
+        from: smtpFrom,
+        to,
+        replyTo: options.replyTo,
+        subject: options.subject,
+        text: options.text || options.subject,
+        html: options.html
+      });
+
+      console.log(`[Email SMTP] Mensagem enviada com sucesso via ${smtpHost} para ${to}`);
+      return { success: true, method: "smtp", message: `Email enviado com sucesso via SMTP (${smtpHost}) para ${to}!` };
+    } catch (smtpErr) {
+      console.error("[Email SMTP] Erro no envio SMTP:", smtpErr);
+      const errMsg = smtpErr instanceof Error ? smtpErr.message : "Erro desconhecido no servidor SMTP.";
+      return { success: false, method: "smtp", message: `Falha na conexão SMTP (${smtpHost}): ${errMsg}` };
+    }
+  }
+
+  // 3. Fallback: Log estruturado no console do servidor Docker (Portainer)
+  console.log(
+    `[EMAIL LOG (SEM SMTP)] Destino: ${to} | Assunto: ${options.subject}`
+  );
+
+  return {
+    success: false,
+    method: "console_fallback",
+    message: `Aviso: Nenhum servidor SMTP ou chave de envio está configurado. A mensagem foi registrada nos logs do servidor. Configure a Senha de App do Gmail para envio real.`
+  };
+}
+
+/**
  * Envia email de segurança (código de 2FA ou teste)
  */
 export async function sendSecurityEmail(options: {
@@ -433,7 +530,7 @@ export async function sendSecurityEmail(options: {
   username: string;
 }): Promise<{ success: boolean; method: string; message: string }> {
   const config = getSecurityConfig();
-  const to = options.to || config.securityEmail;
+  const to = options.to || config.securityEmail || "entreasilhasturismo@gmail.com";
 
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0b1a2e; color: #ffffff; border-radius: 16px;">
@@ -454,80 +551,10 @@ export async function sendSecurityEmail(options: {
     </div>
   `;
 
-  // 1. Tentar envio via Resend API se chave configurada
-  const resendApiKey = config.smtp?.resendApiKey || process.env.RESEND_API_KEY;
-  if (resendApiKey) {
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: config.smtp?.from || process.env.SMTP_FROM || "Entre as Ilhas <nao-responda@entreasilhas.com.br>",
-          to: [to],
-          subject: options.subject,
-          html: htmlContent
-        })
-      });
-      if (res.ok) {
-        console.log(`[2FA Resend] Email enviado com sucesso para ${to}`);
-        return { success: true, method: "resend", message: `Email enviado com sucesso via Resend para ${to}!` };
-      } else {
-        const errorText = await res.text();
-        console.warn(`[2FA Resend] Erro Resend (${res.status}): ${errorText}`);
-      }
-    } catch (e) {
-      console.error("[2FA Resend] Falha ao enviar via API:", e);
-    }
-  }
-
-  // 2. Tentar envio via SMTP com Nodemailer (Gmail, Hostinger, Outlook, etc.)
-  const smtpHost = config.smtp?.host || process.env.SMTP_HOST;
-  const smtpPort = Number(config.smtp?.port || process.env.SMTP_PORT || 465);
-  const smtpUser = config.smtp?.user || process.env.SMTP_USER;
-  const smtpPass = config.smtp?.pass || process.env.SMTP_PASS;
-  const smtpFrom = config.smtp?.from || process.env.SMTP_FROM || `Entre as Ilhas <${smtpUser || "nao-responda@entreasilhas.com.br"}>`;
-
-  if (smtpHost && smtpUser && smtpPass) {
-    try {
-      const nodemailer = await import("nodemailer");
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass
-        }
-      });
-
-      await transporter.sendMail({
-        from: smtpFrom,
-        to,
-        subject: options.subject,
-        text: `Olá ${options.username}! Seu código de verificação 2FA Entre as Ilhas é: ${options.code}. Válido por 10 minutos.`,
-        html: htmlContent
-      });
-
-      console.log(`[2FA SMTP] Email enviado com sucesso via ${smtpHost} para ${to}`);
-      return { success: true, method: "smtp", message: `Email enviado com sucesso via SMTP (${smtpHost}) para ${to}!` };
-    } catch (smtpErr) {
-      console.error("[2FA SMTP] Erro no envio SMTP:", smtpErr);
-      const errMsg = smtpErr instanceof Error ? smtpErr.message : "Erro desconhecido no servidor SMTP.";
-      return { success: false, method: "smtp", message: `Falha na conexão SMTP (${smtpHost}): ${errMsg}` };
-    }
-  }
-
-  // 3. Fallback: Log estruturado no console do servidor Docker (Portainer)
-  console.log(
-    `[2FA SECURITY DISPATCH] Código enviado com sucesso para ${to}: [${options.code}] (Usuário: ${options.username})`
-  );
-
-  return {
-    success: false,
-    method: "console_fallback",
-    message: `Aviso: Nenhum servidor SMTP (como Gmail) ou chave Resend foi configurado ainda. O código [${options.code}] foi gerado e registrado nos logs do servidor (Portainer). Para receber no Gmail, configure o SMTP abaixo.`
-  };
+  return sendTransactionalEmail({
+    to,
+    subject: options.subject,
+    text: `Olá ${options.username}! Seu código de verificação 2FA Entre as Ilhas é: ${options.code}. Válido por 10 minutos.`,
+    html: htmlContent
+  });
 }

@@ -173,7 +173,7 @@ export const defaultSiteContent: SiteContent = {
         "Embarques programados nas principais marinas e pontos de apoio náutico de Salvador e região.",
       note: "Atendimento mediante reserva prévia."
     },
-    email: "contato@entreasilhas.com.br",
+    email: "entreasilhasturismo@gmail.com",
     modalTitle: "Fale Conosco",
     modalSubtitle:
       "Preencha os campos abaixo e entraremos em contato o mais rápido possível."
@@ -187,7 +187,7 @@ export const defaultSiteContent: SiteContent = {
     baseTitle: "Base da operação",
     baseLocation: "Baía de Todos-os-Santos, Bahia",
     baseSchedule: "Atendimento por reserva e planejamento prévio",
-    baseEmail: "contato@entreasilhas.com.br",
+    baseEmail: "entreasilhasturismo@gmail.com",
     newsletterTitle: "Receber novidades",
     newsletterPlaceholder: "Seu melhor e-mail",
     newsletterButton: "Enviar",
