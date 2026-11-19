@@ -28,11 +28,11 @@ export function SiteFooter() {
           preserveAspectRatio="none"
           className="block h-14 sm:h-18 md:h-22 lg:h-28 w-full rotate-180"
         >
-          {/* Onda mobile mais suave com poucas cristas para não poluir telas pequenas */}
+          {/* Onda mobile equilibrada e orgânica (sem aspecto esticado ou distorcido) */}
           <path
             fill="#ffffff"
             className="sm:hidden"
-            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+            d="M0 68C30 58 60 48 90 48C120 48 150 58 180 68C210 78 240 88 270 88C300 88 330 78 360 68C390 58 420 48 450 48C480 48 510 58 540 68C570 78 600 88 630 88C660 88 690 78 720 68C750 58 780 48 810 48C840 48 870 58 900 68C930 78 960 88 990 88C1020 88 1050 78 1080 68C1110 58 1140 48 1170 48C1200 48 1230 58 1260 68C1290 78 1320 88 1350 88C1380 88 1410 78 1440 68V160H0Z"
           />
           {/* Onda padrão mais detalhada para telas a partir de tablet/desktop */}
           <path

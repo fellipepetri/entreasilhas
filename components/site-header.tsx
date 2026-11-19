@@ -629,27 +629,27 @@ export function SiteHeader() {
           </button>
         )}
 
-        {/* 2. Logo abaixo: Mensagem e WhatsApp */}
+        {/* 2. Logo abaixo: Mensagem e WhatsApp (Apenas Ícones) */}
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsContactModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/95 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-slate-800 shadow-[0_6px_18px_rgba(0,0,0,0.12)] hover:bg-slate-50 active:scale-95 transition cursor-pointer backdrop-blur-xs"
+            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-800 shadow-[0_6px_18px_rgba(0,0,0,0.14)] hover:bg-slate-50 active:scale-95 transition cursor-pointer backdrop-blur-xs"
             aria-label="Enviar mensagem"
+            title="Enviar mensagem"
           >
-            <ChatBubbleIcon className="h-3.5 w-3.5 text-brand-sea shrink-0" />
-            <span>Mensagem</span>
+            <ChatBubbleIcon className="h-5 w-5 text-brand-sea shrink-0" />
           </button>
 
           <a
             href="https://wa.me/5571992517302"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white shadow-[0_6px_18px_rgba(16,185,129,0.4)] active:scale-95 transition cursor-pointer"
+            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_6px_18px_rgba(16,185,129,0.45)] active:scale-95 transition cursor-pointer"
             aria-label="Falar no WhatsApp"
+            title="Falar no WhatsApp"
           >
-            <WhatsAppIcon className="h-3.5 w-3.5 text-white shrink-0" />
-            <span>WhatsApp</span>
+            <WhatsAppIcon className="h-5 w-5 text-white shrink-0" />
           </a>
         </div>
       </aside>
