@@ -22,19 +22,27 @@ export function SiteFooter() {
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(20,152,213,0.26),_transparent_30%),linear-gradient(180deg,_rgba(9,39,77,0.88),_rgba(7,25,52,0.96))]"
       />
-      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden pointer-events-none">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
-          className="block h-24 w-full rotate-180 md:h-28 lg:h-32"
+          className="block h-14 sm:h-18 md:h-22 lg:h-28 w-full rotate-180"
         >
+          {/* Onda mobile mais suave com poucas cristas para não poluir telas pequenas */}
           <path
             fill="#ffffff"
+            className="sm:hidden"
+            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+          />
+          {/* Onda padrão mais detalhada para telas a partir de tablet/desktop */}
+          <path
+            fill="#ffffff"
+            className="hidden sm:block"
             d="M0 68C24 58 48 48 72 48C96 48 120 58 144 68C168 78 192 88 216 88C240 88 264 78 288 68C312 58 336 48 360 48C384 48 408 58 432 68C456 78 480 88 504 88C528 88 552 78 576 68C600 58 624 48 648 48C672 48 696 58 720 68C744 78 768 88 792 88C816 88 840 78 864 68C888 58 912 48 936 48C960 48 984 58 1008 68C1032 78 1056 88 1080 88C1104 88 1128 78 1152 68C1176 58 1200 48 1224 48C1248 48 1272 58 1296 68C1320 78 1344 88 1368 88C1392 88 1416 78 1440 68V160H0Z"
           />
         </svg>
       </div>
-      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 pb-10 pt-24 sm:pt-28">
+      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 pb-10 pt-32 sm:pt-36 md:pt-40 lg:pt-44">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4 sm:gap-6 border-b border-white/12 pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div>

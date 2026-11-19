@@ -533,31 +533,35 @@ export function SiteHeader() {
           {isOpen ? (
             <>
               <div
-                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs xl:hidden"
+                className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs xl:hidden"
                 onClick={() => setIsOpen(false)}
                 aria-hidden="true"
               />
-              <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[1.8rem] border border-brand-deep/8 bg-white/98 p-5 sm:p-6 shadow-2xl backdrop-blur animate-fadeIn">
-                <nav className="flex flex-col gap-3" aria-label="Mobile">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={(e) => {
-                        handleNavigate(link.href, e);
-                        setIsOpen(false);
-                      }}
-                      className={[
-                        "text-base font-semibold py-1.5 transition border-b border-slate-100 last:border-b-0",
-                        activeSection === getSectionIdFromHref(link.href)
-                          ? "text-brand-sea"
-                          : "text-brand-deep hover:text-brand-sea"
-                      ].join(" ")}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  <div className="pt-2 flex flex-col gap-2.5">
+              <div className="relative z-50 mx-auto mt-2.5 sm:mt-3 rounded-[2rem] border border-slate-200/90 bg-white p-5 sm:p-6 shadow-[0_25px_60px_rgba(7,23,44,0.35)] animate-fadeIn">
+                <nav className="flex flex-col gap-1.5" aria-label="Mobile">
+                  {navLinks.map((link) => {
+                    const isActive = activeSection === getSectionIdFromHref(link.href);
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={(e) => {
+                          handleNavigate(link.href, e);
+                          setIsOpen(false);
+                        }}
+                        className={[
+                          "text-base sm:text-lg font-bold py-2.5 px-3.5 rounded-2xl transition flex items-center justify-between",
+                          isActive
+                            ? "bg-cyan-50/90 text-brand-deep font-extrabold border border-cyan-200/80"
+                            : "text-slate-800 hover:bg-slate-100 hover:text-brand-deep"
+                        ].join(" ")}
+                      >
+                        <span>{link.label}</span>
+                        <span className="text-slate-400 text-sm font-semibold">→</span>
+                      </Link>
+                    );
+                  })}
+                  <div className="pt-3.5 mt-2 border-t border-slate-100 flex flex-col gap-2.5">
                     {showBookingButton && (
                       <button
                         type="button"
@@ -565,10 +569,10 @@ export function SiteHeader() {
                           setIsOpen(false);
                           setIsPlanTourModalOpen(true);
                         }}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-bold text-white transition-all duration-200 ease-out hover:text-[#1249a1] shadow-sm cursor-pointer will-change-transform"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] hover:brightness-105 px-6 py-3 text-sm font-extrabold text-white transition-all duration-200 ease-out shadow-sm cursor-pointer"
                       >
-                        <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-colors duration-200 ease-out" />
-                        <span className="transition-colors duration-200 ease-out">Planejar passeio</span>
+                        <CalendarPlusIcon className="h-4 w-4 shrink-0" />
+                        <span>Planejar passeio</span>
                       </button>
                     )}
                     <div className="grid grid-cols-2 gap-2">
@@ -601,6 +605,54 @@ export function SiteHeader() {
           ) : null}
         </div>
       </header>
+
+      {/* ========================================================
+          BOTÕES FLUTUANTES MOBILE (Canto inferior direito)
+          * Exibidos apenas em telas mobile/tablet (quando o menu do header vira os 3 traços: xl:hidden)
+          * Fixos na tela mesmo com o scroll (fixed bottom-4 right-4 z-40)
+          * Botão "Planejar passeio" no topo
+          * Logo abaixo: "Mensagem" e "WhatsApp"
+         ======================================================== */}
+      <aside
+        aria-label="Ações rápidas de contato e reserva"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end gap-2 xl:hidden pointer-events-auto select-none"
+      >
+        {/* 1. Botão Principal Flutuante: Planejar Passeio */}
+        {showBookingButton && (
+          <button
+            type="button"
+            onClick={() => setIsPlanTourModalOpen(true)}
+            className="group inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#16c2c0,#1498d5)] px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-extrabold text-white shadow-[0_8px_24px_rgba(20,152,213,0.5)] hover:shadow-[0_12px_28px_rgba(20,152,213,0.65)] hover:brightness-105 active:scale-95 transition-all duration-200 ease-out border border-white/30 cursor-pointer"
+          >
+            <CalendarPlusIcon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+            <span>Planejar passeio</span>
+          </button>
+        )}
+
+        {/* 2. Logo abaixo: Mensagem e WhatsApp */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsContactModalOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white/95 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-slate-800 shadow-[0_6px_18px_rgba(0,0,0,0.12)] hover:bg-slate-50 active:scale-95 transition cursor-pointer backdrop-blur-xs"
+            aria-label="Enviar mensagem"
+          >
+            <ChatBubbleIcon className="h-3.5 w-3.5 text-brand-sea shrink-0" />
+            <span>Mensagem</span>
+          </button>
+
+          <a
+            href="https://wa.me/5571992517302"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white shadow-[0_6px_18px_rgba(16,185,129,0.4)] active:scale-95 transition cursor-pointer"
+            aria-label="Falar no WhatsApp"
+          >
+            <WhatsAppIcon className="h-3.5 w-3.5 text-white shrink-0" />
+            <span>WhatsApp</span>
+          </a>
+        </div>
+      </aside>
 
       <ContactModal
         isOpen={isContactModalOpen}

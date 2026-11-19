@@ -121,6 +121,14 @@ export function BookingPageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedBookingCode, setSubmittedBookingCode] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [activeCheckoutUrl, setActiveCheckoutUrl] = useState<string | null>(null);
+  const [paymentSuccessData, setPaymentSuccessData] = useState<{
+    code: string;
+    isPaid: boolean;
+    paidAmount?: number;
+    tourTitle?: string;
+  } | null>(null);
+  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
 
   const formId = useId();
 
@@ -216,11 +224,53 @@ export function BookingPageContent() {
     };
   }, [routesList]);
 
-  // 2. Mantém a URL sincronizada para que, se o modal abrir a qualquer momento, ele já comece com os valores atuais da página
+  // 2. Verifica se o usuário retornou de um pagamento aprovado no gateway InfinitePay
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const dateISO = selectedDate.toISOString().split("T")[0];
     const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const code = params.get("code") || params.get("order_nsu");
+    const transactionNsu = params.get("transaction_nsu");
+    const slug = params.get("slug");
+    const simulated = params.get("simulated");
+
+    if (code && (status === "sucesso" || status === "success" || transactionNsu)) {
+      setIsCheckingPayment(true);
+      const query = new URLSearchParams({ code });
+      if (transactionNsu) query.set("transaction_nsu", transactionNsu);
+      if (slug) query.set("slug", slug);
+      if (simulated) query.set("simulated", "true");
+
+      fetch(`/api/bookings/payment-check?${query.toString()}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.booking) {
+            setSubmittedBookingCode(data.booking.code);
+            setPaymentSuccessData({
+              code: data.booking.code,
+              isPaid: Boolean(data.paid),
+              paidAmount: data.booking.financial?.paidAmount,
+              tourTitle: data.booking.tourTitle
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Erro ao validar retorno da InfinitePay:", err);
+        })
+        .finally(() => {
+          setIsCheckingPayment(false);
+        });
+    }
+  }, []);
+
+  // 3. Mantém a URL sincronizada para que, se o modal abrir a qualquer momento, ele já comece com os valores atuais da página
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    // Se o cliente estiver na tela de sucesso/confirmação de pagamento, preserva os parâmetros da URL
+    if (params.get("status") === "sucesso" || params.get("code")) return;
+
+    const dateISO = selectedDate.toISOString().split("T")[0];
     params.set("data", dateISO);
     params.set("adultos", adults.toString());
     params.set("criancas", children.toString());
@@ -289,7 +339,7 @@ export function BookingPageContent() {
   });
 
   // Submissão do Formulário de Agendamento
-  const handleSubmitBooking = (e: React.FormEvent) => {
+  const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError(null);
 
@@ -321,9 +371,9 @@ export function BookingPageContent() {
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const bookingCode = `EAI-${new Date().getFullYear()}-${randomCode}`;
 
-    // Salva a reserva no backend de agendamentos
+    // Salva a reserva no backend e gera checkout caso Pix/Cartão via InfinitePay
     try {
-      fetch("/api/bookings/public-create", {
+      const response = await fetch("/api/bookings/public-create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -343,16 +393,33 @@ export function BookingPageContent() {
           lunchPreference: selectedLunchObj?.title || lunchPreference,
           paymentMethod
         })
-      }).catch(() => {});
-    } catch {
-      // Ignora erro de rede em background
-    }
+      });
 
-    setTimeout(() => {
+      const data = await response.json();
+      setIsSubmitting(false);
+
+      if (data.checkoutUrl) {
+        setActiveCheckoutUrl(data.checkoutUrl);
+        setSubmittedBookingCode(bookingCode);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Redireciona para o checkout oficial da InfinitePay
+        setTimeout(() => {
+          if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+          }
+        }, 1200);
+        return;
+      }
+
+      setSubmittedBookingCode(bookingCode);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("Erro ao registrar agendamento:", err);
       setIsSubmitting(false);
       setSubmittedBookingCode(bookingCode);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
+    }
   };
 
   // Mensagem pré-formatada para o WhatsApp
@@ -418,18 +485,54 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
         {/* Estado de Sucesso / Confirmação */}
         {submittedBookingCode ? (
           <div className="rounded-[2.5rem] bg-white border border-emerald-500/30 p-6 sm:p-10 shadow-xl space-y-8 animate-fadeIn">
+            {/* Bloco de Redirecionamento para InfinitePay se link gerado */}
+            {activeCheckoutUrl && (
+              <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-sky-950 to-brand-deep p-6 text-white text-center space-y-4 shadow-xl border border-cyan-500/30">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+                  <span>🔒</span>
+                  <span>Checkout Seguro InfinitePay</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white">
+                  Redirecionando para o Pagamento...
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                  Conclua sua reserva com tranquilidade via <strong>PIX instantâneo com taxa zero</strong> ou <strong>Cartão de Crédito em até 12x</strong> no ambiente criptografado da InfinitePay.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <a
+                    href={activeCheckoutUrl}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 hover:from-cyan-300 hover:to-teal-300 text-slate-950 font-extrabold text-sm transition shadow-lg hover:scale-105 active:scale-95"
+                  >
+                    <span>Ir para o Checkout da InfinitePay Agora</span>
+                    <span>↗</span>
+                  </a>
+                </div>
+              </div>
+            )}
+
             <div className="text-center max-w-2xl mx-auto space-y-3">
               <div className="w-20 h-20 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl shadow-inner animate-bounce">
                 ✓
               </div>
               <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
-                Solicitação Registrada com Sucesso
+                {paymentSuccessData?.isPaid
+                  ? "✓ Pagamento Confirmado via InfinitePay"
+                  : "Solicitação Registrada com Sucesso"}
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-deep">
                 Reserva <span className="text-emerald-600">#{submittedBookingCode}</span>
+                {paymentSuccessData?.isPaid ? " Confirmada!" : ""}
               </h2>
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                Olá, <strong>{nome}</strong>! Sua solicitação de passeio para <strong>{formattedDateDisplay}</strong> foi processada. Para validar a disponibilidade imediata e assinar digitalmente o Charter da embarcação, envie seu resumo para nossa equipe:
+                {paymentSuccessData?.isPaid ? (
+                  <>
+                    Olá, <strong>{nome || "Comandante"}</strong>! Seu pagamento foi aprovado com sucesso e sua embarcação está <strong>oficialmente reservada</strong>. Envie o resumo para nossa equipe no WhatsApp para combinar os detalhes de embarque e marinharia:
+                  </>
+                ) : (
+                  <>
+                    Olá, <strong>{nome}</strong>! Sua solicitação de passeio para <strong>{formattedDateDisplay}</strong> foi processada. Para validar a disponibilidade imediata e assinar digitalmente o Charter da embarcação, envie seu resumo para nossa equipe:
+                  </>
+                )}
               </p>
             </div>
 
@@ -470,9 +573,14 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
               </div>
 
               <div className="text-xs text-slate-500 space-y-1">
-                <p><strong>Titular da Reserva:</strong> {nome} (CPF: {cpf})</p>
-                <p><strong>Contato:</strong> {telefone} • {email}</p>
+                <p><strong>Titular da Reserva:</strong> {nome || "Cliente"} {cpf ? `(CPF: ${cpf})` : ""}</p>
+                {telefone && <p><strong>Contato:</strong> {telefone} {email ? `• ${email}` : ""}</p>}
                 <p><strong>Forma de Pagamento:</strong> {selectedPaymentObj?.title}</p>
+                {paymentSuccessData?.isPaid && (
+                  <p className="text-emerald-700 font-bold pt-1">
+                    Status do Gateway: Pagamento Aprovado (InfinitePay)
+                  </p>
+                )}
               </div>
             </div>
 
@@ -754,13 +862,13 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                   </div>
                 </div>
 
-                {/* Banner Informativo da Maré da Data */}
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 via-cyan-50 to-blue-50 border border-cyan-200/80 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                {/* Banner Informativo da Maré da Data (Discreto e Informativo) */}
+                <div className="p-3.5 rounded-2xl bg-cyan-50/80 border border-cyan-200/70 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-xl shrink-0">🌊</span>
+                    <span className="text-xl shrink-0">🧭</span>
                     <p className="leading-snug">
-                      Maré prevista para <strong>{formattedDateShort}</strong> ao meio-dia:{" "}
-                      <strong className="text-brand-deep">{dayTideEval.middayPhase.name}</strong>. Os roteiros com condições favoráveis estão habilitados e destacados.
+                      Maré prevista para <strong>{formattedDateShort}</strong>:{" "}
+                      <strong className="text-brand-deep">{dayTideEval.middayPhase.name}</strong>. Os roteiros ideais para esta data estão com o selo <strong className="text-emerald-700">Recomendado</strong>.
                     </p>
                   </div>
                   <span className="shrink-0 self-start sm:self-auto px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-900 border border-cyan-300">
@@ -787,23 +895,11 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                         onClick={() => handleRouteClick(route)}
                         className={[
                           "p-4 sm:p-5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-3.5",
-                          isSelected && isFavorable
+                          isSelected
                             ? "bg-cyan-50/80 border-cyan-500 ring-2 ring-cyan-400/30 shadow-md"
-                            : isSelected && !isFavorable
-                            ? "bg-slate-800/10 border-amber-400 ring-2 ring-amber-400/30 shadow-md"
-                            : !isFavorable
-                            ? "bg-slate-100/90 border-slate-300 text-slate-600 hover:bg-slate-200/80"
-                            : "bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs"
+                            : "bg-white border-slate-200/90 hover:border-cyan-300 hover:bg-slate-50/70 shadow-xs"
                         ].join(" ")}
                       >
-                        {/* Camada escura que cobre toda a área do retângulo quando desfavorável */}
-                        {!isFavorable && (
-                          <div
-                            className="absolute inset-0 bg-slate-950/20 backdrop-saturate-50 pointer-events-none rounded-2xl z-10"
-                            aria-hidden="true"
-                          />
-                        )}
-
                         <div className="relative z-10 space-y-3 w-full">
                           {/* 1. Barra Superior do Card: Badge do Roteiro à Esquerda + Status da Maré à Direita */}
                           <div className="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2.5">
@@ -823,19 +919,19 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                             {/* Badge de Maré */}
                             {isFavorable ? (
                               <span
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs shrink-0"
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs shrink-0"
                                 title={`Maré favorável: ${route.bestTidesLabel}`}
                               >
-                                <span>✓</span>
-                                <span>Maré Favorável</span>
+                                <span>✨</span>
+                                <span>Recomendado</span>
                               </span>
                             ) : (
                               <span
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs shrink-0"
-                                title={`Maré não favorável (${tideStatus.currentTide.name}). Melhor com: ${route.bestTidesLabel}`}
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs shrink-0"
+                                title={`Melhor com: ${route.bestTidesLabel}`}
                               >
-                                <span>⚠️</span>
-                                <span>Maré Desfavorável</span>
+                                <span>🌊</span>
+                                <span>{route.bestTidesLabel ? `Melhor com ${route.bestTidesLabel}` : "Opção Alternativa"}</span>
                               </span>
                             )}
                           </div>
@@ -848,10 +944,7 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                                 alt={route.name}
                                 fill
                                 sizes="80px"
-                                className={[
-                                  "object-cover transition duration-300 group-hover:scale-105",
-                                  !isFavorable ? "opacity-75 contrast-90" : ""
-                                ].join(" ")}
+                                className="object-cover transition duration-300 group-hover:scale-105"
                               />
                             </div>
 
@@ -861,8 +954,6 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                                   "font-extrabold text-base sm:text-lg leading-tight tracking-tight",
                                   isSelected
                                     ? "text-brand-deep font-black"
-                                    : !isFavorable
-                                    ? "text-slate-800"
                                     : "text-slate-900 group-hover:text-cyan-700"
                                 ].join(" ")}
                               >
@@ -876,8 +967,8 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
 
                           {/* Aviso específico de maré ou parada para o roteiro */}
                           {tideStatus.specificNotice && (
-                            <div className="p-2.5 rounded-xl bg-sky-50/90 border border-sky-200/80 text-[11px] text-sky-950 font-medium leading-relaxed">
-                              {tideStatus.specificNotice}
+                            <div className="p-2.5 rounded-xl bg-cyan-50/70 border border-cyan-200/60 text-[11px] text-cyan-950 font-medium leading-relaxed">
+                              💡 {tideStatus.specificNotice}
                             </div>
                           )}
 
@@ -1436,12 +1527,21 @@ Olá equipe Entre as Ilhas! Acabei de preencher o agendamento no site e gostaria
                   {isSubmitting ? (
                     <>
                       <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Gerando Reserva...</span>
+                      <span>
+                        {paymentMethod === "whatsapp"
+                          ? "Registrando Solicitação..."
+                          : "Gerando Pagamento Seguro InfinitePay..."}
+                      </span>
+                    </>
+                  ) : paymentMethod === "whatsapp" ? (
+                    <>
+                      <span>Confirmar e Enviar para WhatsApp</span>
+                      <span>💬</span>
                     </>
                   ) : (
                     <>
-                      <span>Confirmar e Agendar Passeio</span>
-                      <span>↗</span>
+                      <span>Pagar Sinal via InfinitePay (Pix / Cartão)</span>
+                      <span>🔒</span>
                     </>
                   )}
                 </button>

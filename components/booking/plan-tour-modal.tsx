@@ -672,12 +672,11 @@ export function PlanTourModal({
                     </span>
                   </div>
 
-                  {/* Banner Explicativo sobre a Maré Local */}
-                  <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 via-cyan-50 to-blue-50 border border-cyan-200/80 text-xs text-slate-700 flex items-start gap-3 shadow-2xs">
-                    <span className="text-xl shrink-0 mt-0.5">🧭</span>
+                  {/* Banner Explicativo sobre a Maré Local (Discreto e Informativo) */}
+                  <div className="p-3 rounded-2xl bg-cyan-50/80 border border-cyan-200/70 text-xs text-slate-700 flex items-center gap-2.5 shadow-2xs">
+                    <span className="text-lg shrink-0">🧭</span>
                     <p className="leading-relaxed">
-                      Na data selecionada, a maré durante o passeio estará como{" "}
-                      <strong className="text-brand-deep">{dayTideEval.middayPhase.name}</strong>. Roteiros com condições ideais de maré estão habilitados e destacados. Roteiros com praias ou piscinas desfavoráveis ficam esmaecidos.
+                      Maré prevista no dia: <strong className="text-brand-deep">{dayTideEval.middayPhase.name}</strong>. Roteiros ideais para esta data estão com o selo <strong className="text-emerald-700">Recomendado</strong>.
                     </p>
                   </div>
 
@@ -699,26 +698,11 @@ export function PlanTourModal({
                           onClick={() => handleRouteClick(route)}
                           className={[
                             "group relative rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer overflow-hidden",
-                            // Estado selecionado
-                            isSelected && isFavorable
+                            isSelected
                               ? "bg-cyan-50/80 border-cyan-500 shadow-md ring-2 ring-cyan-400/30"
-                              : isSelected && !isFavorable
-                              ? "bg-slate-800/10 border-amber-400 shadow-md ring-2 ring-amber-400/30"
-                              // Estado não favorável (Área escura/desativada conforme solicitação)
-                              : !isFavorable
-                              ? "bg-slate-100/90 border-slate-300 text-slate-600 hover:bg-slate-200/80"
-                              // Estado normal ativo
-                              : "bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs"
+                              : "bg-white border-slate-200/90 hover:border-cyan-300 hover:bg-slate-50/70 shadow-xs"
                           ].join(" ")}
                         >
-                          {/* Camada escura que cobre toda a área do retângulo quando a maré não está favorável */}
-                          {!isFavorable && (
-                            <div
-                              className="absolute inset-0 bg-slate-950/20 backdrop-saturate-50 pointer-events-none rounded-2xl z-10"
-                              aria-hidden="true"
-                            />
-                          )}
-
                           <div className="relative z-10 space-y-3.5 w-full">
                             {/* 1. Barra Superior do Card: Badge do Roteiro à Esquerda + Status da Maré à Direita */}
                             <div className="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2.5">
@@ -738,19 +722,19 @@ export function PlanTourModal({
                               {/* Badge de Maré */}
                               {isFavorable ? (
                                 <span
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs shrink-0"
+                                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs shrink-0"
                                   title={`Maré favorável: ${route.bestTidesLabel}`}
                                 >
-                                  <span>✓</span>
-                                  <span>Maré Favorável</span>
+                                  <span>✨</span>
+                                  <span>Recomendado</span>
                                 </span>
                               ) : (
                                 <span
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs shrink-0"
-                                  title={`Maré não favorável nesta data (${tideStatus.currentTide.name}). Melhor com: ${route.bestTidesLabel}`}
+                                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs shrink-0"
+                                  title={`Melhor com: ${route.bestTidesLabel}`}
                                 >
-                                  <span>⚠️</span>
-                                  <span>Maré Desfavorável</span>
+                                  <span>🌊</span>
+                                  <span>{route.bestTidesLabel ? `Melhor com ${route.bestTidesLabel}` : "Opção Alternativa"}</span>
                                 </span>
                               )}
                             </div>
@@ -763,10 +747,7 @@ export function PlanTourModal({
                                   alt={route.name}
                                   fill
                                   sizes="80px"
-                                  className={[
-                                    "object-cover transition duration-300 group-hover:scale-105",
-                                    !isFavorable ? "opacity-75 contrast-90" : ""
-                                  ].join(" ")}
+                                  className="object-cover transition duration-300 group-hover:scale-105"
                                 />
                               </div>
 
@@ -776,8 +757,6 @@ export function PlanTourModal({
                                     "font-extrabold text-base sm:text-lg leading-tight tracking-tight",
                                     isSelected
                                       ? "text-brand-deep font-black"
-                                      : !isFavorable
-                                      ? "text-slate-800"
                                       : "text-slate-900 group-hover:text-cyan-700"
                                   ].join(" ")}
                                 >
@@ -791,8 +770,8 @@ export function PlanTourModal({
 
                             {/* Aviso específico de maré ou parada para o roteiro */}
                             {tideStatus.specificNotice && (
-                              <div className="p-2.5 rounded-xl bg-sky-50/90 border border-sky-200/80 text-[11px] text-sky-950 font-medium leading-relaxed">
-                                {tideStatus.specificNotice}
+                              <div className="p-2.5 rounded-xl bg-cyan-50/70 border border-cyan-200/60 text-[11px] text-cyan-950 font-medium leading-relaxed">
+                                💡 {tideStatus.specificNotice}
                               </div>
                             )}
 

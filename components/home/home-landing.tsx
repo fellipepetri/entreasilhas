@@ -102,7 +102,7 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
       />
-      <div className={`relative z-[2] mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-16 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
+      <div className={`relative z-[2] mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[116rem] items-end px-5 pb-28 sm:px-6 sm:pb-20 lg:min-h-[46rem] lg:px-10 lg:pb-24 xl:px-14 ${plusJakartaSans.className}`}>
         <div className="grid w-full gap-10 md:-translate-y-8 lg:-translate-y-16 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,21rem)] lg:items-end xl:-translate-y-20 xl:gap-14">
           <div className="max-w-[58rem]">
             <div className="mb-6 flex gap-3 text-[#78c85f] sm:mb-8">
@@ -154,14 +154,22 @@ function HeroSlider({ slides: propSlides }: { slides?: HeroSlide[] }) {
           </div>
         </div>
       </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] overflow-hidden pointer-events-none">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
-          className="block h-24 w-full md:h-28 lg:h-32"
+          className="block h-14 sm:h-20 md:h-28 lg:h-32 w-full"
         >
+          {/* Onda mobile mais suave com poucas cristas para não poluir telas pequenas */}
           <path
             fill="#ffffff"
+            className="sm:hidden"
+            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+          />
+          {/* Onda padrão mais detalhada para telas a partir de tablet/desktop */}
+          <path
+            fill="#ffffff"
+            className="hidden sm:block"
             d="M0 68C24 58 48 48 72 48C96 48 120 58 144 68C168 78 192 88 216 88C240 88 264 78 288 68C312 58 336 48 360 48C384 48 408 58 432 68C456 78 480 88 504 88C528 88 552 78 576 68C600 58 624 48 648 48C672 48 696 58 720 68C744 78 768 88 792 88C816 88 840 78 864 68C888 58 912 48 936 48C960 48 984 58 1008 68C1032 78 1056 88 1080 88C1104 88 1128 78 1152 68C1176 58 1200 48 1224 48C1248 48 1272 58 1296 68C1320 78 1344 88 1368 88C1392 88 1416 78 1440 68V160H0Z"
           />
         </svg>
@@ -233,14 +241,22 @@ function HoverRouteList({
         aria-hidden="true"
         className="route-section-mask absolute inset-0 bg-brand-deep bg-[linear-gradient(180deg,rgba(11,34,68,0.92),rgba(9,57,104,0.85)),url('/images/routes-bg.svg')] bg-cover bg-center"
       />
-      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden pointer-events-none">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
           className="block h-14 w-full rotate-180 md:h-16 lg:h-20"
         >
+          {/* Onda mobile mais suave */}
           <path
             fill="#ffffff"
+            className="sm:hidden"
+            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+          />
+          {/* Onda padrão desktop */}
+          <path
+            fill="#ffffff"
+            className="hidden sm:block"
             d="M0 68C40 56 80 44 120 44C160 44 200 56 240 68C280 80 320 92 360 92C400 92 440 80 480 68C520 56 560 44 600 44C640 44 680 56 720 68C760 80 800 92 840 92C880 92 920 80 960 68C1000 56 1040 44 1080 44C1120 44 1160 56 1200 68C1240 80 1280 92 1320 92C1360 92 1400 80 1440 68V160H0Z"
           />
         </svg>
@@ -917,31 +933,47 @@ function Chamada({ data }: { data?: CtaSectionData }) {
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
       />
-      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 top-[-1px] overflow-hidden pointer-events-none">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
-          className="block h-24 w-full rotate-180 md:h-28 lg:h-32"
+          className="block h-14 sm:h-18 md:h-24 lg:h-32 w-full rotate-180"
         >
+          {/* Onda mobile mais suave */}
           <path
             fill="#ffffff"
+            className="sm:hidden"
+            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+          />
+          {/* Onda padrão desktop */}
+          <path
+            fill="#ffffff"
+            className="hidden sm:block"
             d="M0 68C24 58 48 48 72 48C96 48 120 58 144 68C168 78 192 88 216 88C240 88 264 78 288 68C312 58 336 48 360 48C384 48 408 58 432 68C456 78 480 88 504 88C528 88 552 78 576 68C600 58 624 48 648 48C672 48 696 58 720 68C744 78 768 88 792 88C816 88 840 78 864 68C888 58 912 48 936 48C960 48 984 58 1008 68C1032 78 1056 88 1080 88C1104 88 1128 78 1152 68C1176 58 1200 48 1224 48C1248 48 1272 58 1296 68C1320 78 1344 88 1368 88C1392 88 1416 78 1440 68V160H0Z"
           />
         </svg>
       </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] overflow-hidden pointer-events-none">
         <svg
           viewBox="0 0 1440 160"
           preserveAspectRatio="none"
-          className="block h-24 w-full md:h-28 lg:h-32"
+          className="block h-14 sm:h-18 md:h-24 lg:h-32 w-full"
         >
+          {/* Onda mobile mais suave */}
           <path
             fill="#ffffff"
+            className="sm:hidden"
+            d="M0,64 C240,28 480,100 720,64 C960,28 1200,100 1440,64 V160 H0 Z"
+          />
+          {/* Onda padrão desktop */}
+          <path
+            fill="#ffffff"
+            className="hidden sm:block"
             d="M0 68C24 58 48 48 72 48C96 48 120 58 144 68C168 78 192 88 216 88C240 88 264 78 288 68C312 58 336 48 360 48C384 48 408 58 432 68C456 78 480 88 504 88C528 88 552 78 576 68C600 58 624 48 648 48C672 48 696 58 720 68C744 78 768 88 792 88C816 88 840 78 864 68C888 58 912 48 936 48C960 48 984 58 1008 68C1032 78 1056 88 1080 88C1104 88 1128 78 1152 68C1176 58 1200 48 1224 48C1248 48 1272 58 1296 68C1320 78 1344 88 1368 88C1392 88 1416 78 1440 68V160H0Z"
           />
         </svg>
       </div>
-      <div className="relative z-[2] mx-auto w-full max-w-6xl px-6 py-20 text-center md:py-24">
+      <div className="relative z-[2] mx-auto w-full max-w-6xl px-6 py-24 sm:py-28 md:py-32 text-center">
         <h3 className="text-[clamp(1.8rem,4vw,3rem)] font-semibold tracking-[0.12em] text-white">
           {eyebrow}
         </h3>
